@@ -1,0 +1,20 @@
+# 哪些判读没有进展结构，因此不进拓扑图。必须写明理由——
+# 构建期会校验：行动档的每条链条，要么有通路，要么在这里声明。
+# 不允许"忘了画"这种状态存在。
+no_progression:
+  - chain: lipid.apo_paired_divergence
+    why: 这一条的问题在检测口径，不是疾病进展。下一步是复测，不存在"下一关"。
+  - chain: gastric.saliva_pepsin_vs_normal_panel
+    why: 反流与萎缩是两个并列方向，不是一条先后链。画成阶梯会暗示不存在的先后关系。
+  - chain: nutrition.vitamin_a_isolated_high
+    why: 要回答的是"来源在哪"，不是"进展到哪一关"。
+  - chain: spleen.layered_exclusion
+    why: 尺寸是一个结构性状态，不是进展阶段；三层排除后按基线复查即可。
+  - chain: coag.fib_low_is_low_inflammation
+    why: 描述的是当前的低炎症背景，不指向任何演变方向。
+  - chain: nutrition.prealbumin_isolated_high
+    why: 单次轻度偏离，没有进展含义。
+  - chain: nutrition.coq10_lab_percentile
+    why: 问题在区间口径，不在身体状态。
+  - chain: structural.baseline_ledger
+    why: 本身就是基线台账，各项的比较口径已在"下次比什么"里逐条列出。

@@ -82,6 +82,12 @@ h2.sec{font-family:var(--serif);font-size:23px;font-weight:600;margin:56px 0 6px
   border-radius:3px;margin-right:6px;vertical-align:1px}
 .gtag.recheck{background:var(--calm-bg);color:var(--calm)}
 .gtag.specialist{background:var(--act-bg);color:var(--act)}
+.scope{margin-top:16px;padding-top:15px;border-top:1px solid var(--rule-2)}
+.scope > b{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);display:block;margin-bottom:9px}
+.scope ul{margin:0;padding:0;list-style:none;display:grid;gap:7px}
+.scope li{font-size:12.5px;line-height:1.6;color:var(--muted)}
+.scope li span{color:var(--ink-2);font-weight:600;margin-right:8px}
 .nosay{margin-top:16px;background:#FDFCF8;border:1px solid #E5DCC2;border-radius:5px;
   padding:14px 16px;font-size:12.7px;line-height:1.7;color:var(--ink-2)}
 .nosay b{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
@@ -314,9 +320,11 @@ footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--rule);
 </div>
 
 {% if topo_svg %}
-<h2 class="sec" id="topo">你现在在哪一关，下一关由什么决定</h2>
+<h2 class="sec" id="topo">有进展结构的 {{ topo.tracks|length }} 条，你现在在哪一关</h2>
 <p class="sub">横轴是进展方向，不是时间轴——本图不含任何时间预测。每一关的状态都由指标判定；
-   判不了就画成判不了。只画到本次有指标能判定的那一关，再往后不展开。</p>
+   判不了就画成判不了。只画到本次有指标能判定的那一关，再往后不展开。<br>
+   这张图只画"会沿着某个方向往前走"的发现。其余 {{ topo_excluded|length }} 条不是被略过，
+   是它们本来就没有进展结构——下面逐条写明。</p>
 <div class="topo">
   <div class="vp">{{ topo_svg }}</div>
   <div class="tails">
@@ -332,6 +340,16 @@ footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--rule);
     </div>
     {% endfor %}
   </div>
+  {% if topo_excluded %}
+  <div class="scope">
+    <b>为什么另外 {{ topo_excluded|length }} 条不在图上</b>
+    <ul>
+    {% for x in topo_excluded %}
+      <li><span>{{ x.title }}</span>{{ x.why }}</li>
+    {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
   <div class="nosay">
     <b>这张图不说什么</b>
     不说"多久会到下一关"——那需要队列数据来校准，我们没有，写年数是编造。<br>

@@ -70,7 +70,8 @@ class DepthEngine:
         return errs
 
     # ---------------- 通路 ----------------
-    def topology(self, enc: Encounter, chain_ids: set[str]) -> Topology:
+    def topology(self, enc: Encounter, chain_ids: set[str],
+                 chain_order: list[str] | None = None) -> Topology:
         ctx = RuleContext(enc)
         obs = {o.code: o for o in enc.observations}
         names = {o.code: ctx.proxy(o.code) for o in enc.observations}
@@ -110,9 +111,34 @@ class DepthEngine:
                 next_gate=_fill(p.get("next_gate", ""), obs),
                 gate_kind=p.get("gate_kind", "recheck")))
 
+        order = {c: i for i, c in enumerate(chain_order)} if chain_order else {}
+        tracks.sort(key=lambda t: order.get(t.chain_id, 999))
         live = {t.upstream_id for t in tracks}
         return Topology(upstreams=tuple(u for u in ups if u.id in live),
                         tracks=tuple(tracks))
+
+    def scope(self, chains) -> tuple[list[dict], list[str]]:
+        """拓扑覆盖了谁、没覆盖谁、为什么。
+
+        行动档（现在要做 / 先弄清楚）的每条链条，要么有通路，要么在
+        no_progression 里写明理由。缺一个就是构建失败——
+        "忘了画"这种状态不允许存在。
+        """
+        from ..model import Band, band_of
+        has = {p.get("chain") for p in self.spec.get("pathways", [])}
+        why = {x["chain"]: x["why"] for x in self.spec.get("no_progression", [])}
+        excluded, errs = [], []
+        for c in chains:
+            if c.id in has:
+                continue
+            if c.id in why:
+                excluded.append({"title": c.title, "why": why[c.id],
+                                 "band": band_of(c.tag)})
+            elif band_of(c.tag) in (Band.ACT, Band.CLARIFY):
+                errs.append(
+                    f"{c.id}（{band_of(c.tag).value} 档）既没有通路，"
+                    "也没有在 no_progression 里说明为什么没有")
+        return excluded, errs
 
     # ---------------- 机制 / 修饰 / 干预 ----------------
     def depth_for(self, enc: Encounter, chain, compare_codes: set[str]) -> Depth | None:
@@ -163,10 +189,12 @@ class DepthEngine:
 
 def load_depth_spec(path: str | Path) -> dict:
     p = Path(path)
-    merged: dict = {"upstreams": [], "pathways": [], "depth": {}}
+    merged: dict = {"upstreams": [], "pathways": [], "depth": {},
+                    "no_progression": []}
     for f in sorted(p.glob("**/*.yaml")) if p.is_dir() else [p]:
         doc = yaml.safe_load(f.read_text(encoding="utf-8")) or {}
         merged["upstreams"] += doc.get("upstreams", [])
         merged["pathways"] += doc.get("pathways", [])
         merged["depth"].update(doc.get("depth") or {})
+        merged["no_progression"] += doc.get("no_progression", [])
     return merged

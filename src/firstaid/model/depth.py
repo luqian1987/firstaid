@@ -55,7 +55,7 @@ class Upstream(Frozen):
 class PathwayTrack(Frozen):
     id: str
     label: str
-    upstream_id: str
+    upstream_id: str | None = None
     chain_id: str | None = None
     stages: tuple[PathwayStage, ...] = ()
     tail: str = ""                    # 再往后为什么不展开

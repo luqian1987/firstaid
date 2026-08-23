@@ -37,6 +37,7 @@ class Analysis:
     coverage: CoverageReport | None = None
     recon: Reconciliation | None = None
     topology: Topology | None = None
+    topo_excluded: list = field(default_factory=list)
     depth: dict[str, Depth] = field(default_factory=dict)
     derived_notes: dict[str, str] = field(default_factory=dict)
     plan: ComparisonPlan | None = None
@@ -109,7 +110,10 @@ def analyze(timeline: Timeline, ontology=None, units=None, rules=None,
     de = DepthEngine(depth_spec, ontology, derived)
     a.errors += de.validate()
     chain_ids = {c.id for c in a.chains}
-    a.topology = de.topology(enc, chain_ids)
+    order = [c.id for c in sorted(a.chains, key=lambda c: -c.priority)]
+    a.topology = de.topology(enc, chain_ids, order)
+    a.topo_excluded, scope_errs = de.scope(a.chains)
+    a.errors += scope_errs
     for c in a.chains:
         d = de.depth_for(enc, c, {i.key.code for i in c.verdict.compare_next}
                          if c.verdict else set())

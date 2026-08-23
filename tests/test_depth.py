@@ -127,3 +127,44 @@ def test_topology_renders_with_breathing_animation(real):
     assert svg.count("<animate") >= 4
     assert "本次已见" in svg and "判不了" in svg
     assert not re.search(r"\d+\s*[~-]\s*\d+\s*年", svg)
+
+
+def test_topology_covers_every_action_band_chain_or_says_why_not(real):
+    """行动档的每条链条，要么在图上，要么写明为什么不在。
+    「忘了画」这种状态不允许存在——之前牙龈出血就是这样漏掉的。"""
+    from firstaid.model import Band, band_of
+    on_chart = {t.chain_id for t in real.topology.tracks}
+    declared = {x["title"] for x in real.topo_excluded}
+    for c in real.chains:
+        if band_of(c.tag) in (Band.ACT, Band.CLARIFY):
+            assert c.id in on_chart or c.title in declared, c.id
+
+
+def test_every_chain_is_accounted_for_by_the_topology_section(real):
+    on_chart = {t.chain_id for t in real.topology.tracks}
+    assert len(on_chart) + len(real.topo_excluded) == len(real.chains)
+
+
+def test_missing_declaration_fails_the_build(zhang_real, knowledge, spec):
+    """抽掉一条行动档链条的说明，构建必须失败。"""
+    from firstaid.assemble.depth import DepthEngine
+    ont, units, rules, derived = knowledge
+    a = analyze(zhang_real, ont, units, rules, derived)
+    stripped = {**spec, "no_progression":
+                [x for x in spec["no_progression"]
+                 if x["chain"] != "gastric.saliva_pepsin_vs_normal_panel"]}
+    _, errs = DepthEngine(stripped, ont, derived).scope(a.chains)
+    assert any("gastric" in e for e in errs), errs
+
+
+def test_a_track_may_have_no_upstream(real):
+    """本次没找到推动它的上游，是判读结论，不是渲染缺失。"""
+    from firstaid.render.topology import render_topology
+    renal = next(t for t in real.topology.tracks if t.id == "renal.albuminuria")
+    assert renal.upstream_id is None
+    assert "本次未找到上游" in render_topology(real.topology)
+
+
+def test_oral_chain_is_on_the_chart(real):
+    """牙龈出血在「现在要做」档，此前漏出了拓扑图。"""
+    assert "oral.gingival_bleeding_is_local" in {t.chain_id for t in real.topology.tracks}

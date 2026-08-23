@@ -113,6 +113,7 @@ def build_context(a: Analysis) -> dict:
     return {
         "topo_svg": Markup(render_topology(topo)) if topo and topo.tracks else None,
         "topo": topo,
+        "topo_excluded": a.topo_excluded,
         "kind_labels": {k.value: v for k, v in KIND_LABELS.items()},
         "subject_id": enc.subject_id.upper(),
         "age": a.timeline.subject.age_on(enc.anchor_date),

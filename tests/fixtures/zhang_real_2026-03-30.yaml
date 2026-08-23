@@ -125,6 +125,10 @@ observations:
   - {code: DENTAL_CALCULUS,    raw_name: 牙结石,   value: 轻度, kind: qualitative, source: main, page: 4}
   - {code: GINGIVAL_BLEEDING,  raw_name: 牙龈出血, value: 是, ref: 否, kind: qualitative, source: main, page: 4}
   - {code: GINGIVAL_RECESSION, raw_name: 牙龈退缩, value: 是, ref: 否, kind: qualitative, source: main, page: 4}
+  - {code: GINGIVAL_SWELLING, raw_name: 牙龈肿胀/溢脓, value: 否, ref: 否, kind: qualitative, source: main, page: 4}
+  - {code: TOOTH_MOBILITY, raw_name: 牙齿松动度, value: 无, ref: 无, kind: qualitative, source: main, page: 4}
+  - {code: MISSING_TEETH, raw_name: 缺失牙, value: 无, ref: 无, kind: qualitative, source: main, page: 4}
+  - {code: CARIES, raw_name: 龋齿, value: 无, ref: 无, kind: qualitative, source: main, page: 4}
 
   # ============ 风湿三项 / 炎症（主报告 第6页）============
   - {code: RF,    raw_name: 类风湿因子(RF),        value: 18.1,   ref: "0--30", unit: IU/mL, source: main, page: 6}

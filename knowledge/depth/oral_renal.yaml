@@ -1,0 +1,46 @@
+upstreams:
+  - id: calculus
+    label: 牙结石
+    sub: "轻度 · 局部刺激源"
+    codes: [DENTAL_CALCULUS]
+    present_when: "DENTAL_CALCULUS.present"
+    modifiable: true
+    note: 洁牙可直接去除
+
+pathways:
+  - id: oral.periodontal
+    label: 牙周
+    upstream: calculus
+    chain: oral.gingival_bleeding_is_local
+    gate_kind: recheck
+    stages:
+      - name: 牙龈炎症伴退缩
+        judged_by: [GINGIVAL_BLEEDING, GINGIVAL_RECESSION, GINGIVAL_SWELLING]
+        crossed_when: "GINGIVAL_BLEEDING.is_high or GINGIVAL_RECESSION.is_high"
+        detail: 牙龈出血与牙龈退缩同时在场；无肿胀溢脓
+      - name: 牙齿松动
+        judged_by: [TOOTH_MOBILITY, MISSING_TEETH]
+        crossed_when: "TOOTH_MOBILITY.is_high or MISSING_TEETH.is_high"
+        edge: 支持组织尚完好
+        detail: 牙齿松动度与缺失牙本次均为"无"——牙周支持组织还没有到受累的程度
+    tail: >-
+      这条是本次少数几条"上游可以直接去除"的路径：牙结石洁牙即可清除，
+      而下一关（牙齿松动）本次还没跨过。再往后的阶段不展开。
+    next_gate: 下一关由牙齿松动度判定。洁牙后 2–4 周出血是否消退，是更早的一个检验点。
+
+  # 这条没有上游：本次没找到推动它的因素。空着本身就是信息。
+  - id: renal.albuminuria
+    label: 肾
+    upstream: null
+    chain: renal.microalbumin_borderline
+    gate_kind: recheck
+    stages:
+      - name: 微量白蛋白尿
+        judged_by: [UACR, U_MALB, U_PRO]
+        crossed_when: "UACR.is_high or U_MALB.is_high or U_PRO.is_high"
+        col: 1
+        detail: "尿微量白蛋白/肌酐 {UACR}、尿微量白蛋白 {U_MALB} 都在区间内，尿蛋白定性阴性"
+    tail: >-
+      这条路径第一关就没跨过，而且本次没有找到推动它的上游——血压、血糖都正常。
+      它出现在图上的唯一理由是：两项指标双双贴近上限，值得从现在起有个可比的起点。
+    next_gate: 下一关由尿微量白蛋白/肌酐判定。要比的是这个数的走向，不是"有没有超过 30"。

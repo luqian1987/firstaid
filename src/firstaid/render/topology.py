@@ -123,6 +123,15 @@ def render_topology(topo: Topology) -> str:
                          f'marker-end="url(#tar)"{dash}/>')
 
     for t in topo.tracks:
+        if t.upstream_id is None:
+            # 没有上游不是渲染缺失，是判读结论：本次没找到推动它的因素
+            s.append(_t(102, ty[t.id] - 4, "本次未找到上游", 10.5, C["muted"], 500))
+            s.append(_t(102, ty[t.id] + 12, "血压、血糖均正常", 9.5, C["muted"]))
+            s.append(f'<line x1="196" y1="{ty[t.id]}" '
+                     f'x2="{COL_X[cols[t.id][0]] - 26}" y2="{ty[t.id]}" '
+                     f'stroke="{C["rule"]}" stroke-width="1" stroke-dasharray="2 4"/>')
+
+    for t in topo.tracks:
         y, cs = ty[t.id], cols[t.id]
         s.append(_t(COL_X[cs[0]], y - 40, t.label, 10, C["muted"], 700))
         for i, st in enumerate(t.stages):

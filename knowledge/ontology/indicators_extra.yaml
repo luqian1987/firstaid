@@ -128,6 +128,11 @@ indicators:
   - {code: DENTAL_CALCULUS, name: 牙结石, kind: qualitative, system: oral, modifiability: self_modifiable}
   - {code: GINGIVAL_BLEEDING, name: 牙龈出血, kind: qualitative, system: oral, modifiability: self_modifiable}
   - {code: GINGIVAL_RECESSION, name: 牙龈退缩, kind: qualitative, system: oral, modifiability: self_modifiable}
+  - {code: GINGIVAL_SWELLING, name: 牙龈肿胀/溢脓, kind: qualitative, system: oral, modifiability: self_modifiable}
+  - {code: TOOTH_MOBILITY, name: 牙齿松动度, kind: qualitative, system: oral, modifiability: clinical,
+     note: 牙周支持组织丧失到一定程度才出现，是这条通路上更靠后的一关}
+  - {code: MISSING_TEETH, name: 缺失牙, kind: qualitative, system: oral, modifiability: clinical}
+  - {code: CARIES, name: 龋齿, kind: qualitative, system: oral, modifiability: self_modifiable}
   # ---------------- 影像补充 ----------------
   - {code: VERTEBRAL_US, name: 双侧椎动脉彩超, kind: imaging, system: imaging, modifiability: not_modifiable}
   - {code: LIVER_ECHO, name: 肝脏超声回声, kind: imaging, system: imaging, modifiability: self_modifiable}
