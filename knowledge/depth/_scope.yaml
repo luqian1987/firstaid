@@ -33,3 +33,59 @@ no_progression:
       本次一项都没做，通路上没有任何一关判得了。整条都是虚线的图不传达信息，
       只会让"我们不知道"看起来像"我们查过了"。
       补上尿常规与残余尿之后，它要么并入泌尿系成石/排空这条路径，要么被放下。
+
+  # ---- 病例 3 带来的几条 ----
+  - chain: oral.caries_is_the_one_definite_action
+    why: >-
+      不满足判据 2：龋损往深处走的那几关（近牙髓、牙髓炎、根尖周炎）
+      本次没有任何指标能判定——体检的口腔检查是目视，看不到深度，判它要靠牙片。
+      牙周那条链（结石→炎症→退缩→松动）另有通路，两者共用同一次口腔科预约。
+  - chain: gastric.g17_high_with_atrophy_and_hp_excluded
+    why: >-
+      不满足判据 1：这一条要回答的是"胃酸为什么少了"，是一个归因问题，
+      不是"走到哪一关"。而它本来可能对应的那个演变方向（萎缩→肠化）
+      恰恰是本条判读排除掉的东西，画出来等于暗示一个已被否定的方向。
+  - chain: cardio.low_sbp_needs_symptoms_not_clinic
+    why: >-
+      不满足判据 1：低血压不是沿方向演变的过程，是一个状态；
+      它有没有意义取决于症状与体位反应，而不是走到第几关。
+  - chain: hematology.mar_low_without_bleeding
+    why: >-
+      不满足判据 1：血小板聚集率低最可能来自药物或标本条件，
+      是"这个数从哪来"的问题，不是身体在演变。
+  - chain: hematology.hematocrit_counted_twice
+    why: >-
+      不满足判据 1：要说的是同一个量被数了两遍，以及它该怎么读；
+      这是计数与口径问题，不指向任何演变方向。
+  - chain: lipid.apob_discordant_alone
+    why: >-
+      不满足判据 1：与病例 1 的载脂蛋白配对背离同理，问题在检测口径，
+      不是身体在演变。复测后比值仍背离时，它会并入血管那条路径。
+  - chain: eye.uncorrected_vision_needs_correction_test
+    why: >-
+      不满足判据 2 与 3：分开"屈光"与"眼底"这两条完全不同的路径，
+      靠的是矫正视力，而这一项本次空白，通路上没有一关判得了。
+  - chain: bone.rib_cortex_needs_history_not_followup
+    why: >-
+      不满足判据 2 与 3：分辨这处改变是新是旧，判据是外伤史与既往影像，
+      两者本次都没有。整条都是虚线的图不传达信息。
+  - chain: metabolic.co2cp_low_with_normal_gap
+    why: 不满足判据 1：轻度偏低且阴离子间隙正常，描述的是当下状态，没有演变方向。
+  - chain: glucose.low_insulin_with_normal_glucose
+    why: 不满足判据 1：这一条说的是箭头指向有利的一侧，不是身体在往某个方向走。
+  - chain: lipid.apoa1_high_is_hdl_high
+    why: 不满足判据 1：同上，是"箭头指错了方向"，不是过程。
+  - chain: cardiac.trivial_tr_on_normal_heart
+    why: >-
+      不满足判据 2：轻度反流会不会推进，判据是右心腔径线与肺动脉压随时间的变化，
+      而本次是单点、且没有反流速度，通路上没有一关能判定"有没有在往前走"。
+  - chain: gyn.cervical_cyst_with_clean_screening
+    why: 不满足判据 1：宫颈腺体潴留囊肿是修复过程的产物，不指向任何演变方向。
+  - chain: breast.birads23_nodule_downgrade
+    why: >-
+      不满足判据 2：BI-RADS 分层本身就是处理层级，而"会不会升类"
+      只能由下一次同口径超声回答，本次没有任何一关能判定它在往哪走。
+  - chain: neuro.vertebrobasilar_tortuosity_is_anatomy
+    why: 不满足判据 1：走行迂曲是解剖变异，是形状不是过程。
+  - chain: correct.urea_low_is_not_malnutrition
+    why: 不满足判据 1：这一条纠正的是原建议的前提，不描述任何演变。

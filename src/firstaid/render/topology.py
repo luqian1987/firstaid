@@ -29,6 +29,32 @@ def _t(x, y, s, size=12, fill=None, weight=400, anchor="middle"):
             f'text-anchor="{anchor}">{H.escape(str(s), quote=False)}</text>')
 
 
+def _wrap(s: str, budget: float) -> list[str]:
+    """按视觉宽度折行。中日韩字符按 1 个单位算，ASCII 按 0.55。
+
+    SVG 里的 <text> 不会自动换行，超出的部分会直接画到画布外面去
+    ——上游那个"抗过氧化物酶抗体 939.6 · ……"就是这样被截掉左半边的。
+    """
+    lines, cur, w = [], "", 0.0
+    for ch in str(s):
+        cw = 0.55 if ord(ch) < 0x2E80 else 1.0
+        if w + cw > budget and cur:
+            lines.append(cur)
+            cur, w = "", 0.0
+        cur += ch
+        w += cw
+    if cur:
+        lines.append(cur)
+    return lines or [""]
+
+
+def _tw(x, y, s, size=12, fill=None, weight=400, budget=18, lh=None):
+    """折行版 _t。返回多行 <text>，行距默认为字号的 1.25 倍。"""
+    lh = lh or size * 1.25
+    return "".join(_t(x, y + i * lh, ln, size, fill, weight)
+                   for i, ln in enumerate(_wrap(s, budget)))
+
+
 def _node(x, y, st):
     col = {StageState.CROSSED: C["act"], StageState.CLEAR: C["settle"],
            StageState.UNKNOWN: C["muted"]}[st.state]
@@ -105,13 +131,18 @@ def render_topology(topo: Topology) -> str:
         col = C["act"] if up.modifiable else C["muted"]
         bg = C["actbg"] if up.modifiable else "#FFF"
         dash = "" if up.modifiable else ' stroke-dasharray="5 3"'
+        # 上游那行小字会折行，框高和下面那句注释都得跟着让位，
+        # 否则第二行会压在框线和注释上（病例 3 的抗体那一串正好两行）。
+        nsub = len(_wrap(up.sub, 17))
+        grow = (nsub - 1) * 12
         s.append(f'<g transform="translate(102,{uy})">'
-                 f'<rect x="-92" y="-32" width="184" height="64" rx="7" fill="{bg}" '
+                 f'<rect x="-92" y="{-32 - grow // 2}" width="184" '
+                 f'height="{64 + grow}" rx="7" fill="{bg}" '
                  f'stroke="{col}" stroke-width="1.6"{dash}/>'
-                 + _t(0, -13, "上游", 9.5, C["muted"], 700)
-                 + _t(0, 4, up.label, 13, C["ink"], 700)
-                 + _t(0, 20, up.sub, 10, C["muted"]) + "</g>")
-        s.append(_t(102, uy + 46, up.note, 10, col, 600))
+                 + _t(0, -13 - grow // 2, "上游", 9.5, C["muted"], 700)
+                 + _t(0, 4 - grow // 2, up.label, 13, C["ink"], 700)
+                 + _tw(0, 20 - grow // 2, up.sub, 10, C["muted"], budget=17) + "</g>")
+        s.append(_tw(102, uy + 46 + (grow + 1) // 2, up.note, 10, col, 600, budget=19))
         for t in feeds:
             y1, x1 = ty[t.id], COL_X[cols[t.id][0]] - 26
             if abs(y1 - uy) < 3:
@@ -127,7 +158,8 @@ def render_topology(topo: Topology) -> str:
             # 没有上游不是渲染缺失，是判读结论：本次没找到推动它的因素
             s.append(_t(102, ty[t.id] - 4, "本次未找到上游", 10.5, C["muted"], 500))
             if t.no_upstream_note:
-                s.append(_t(102, ty[t.id] + 12, t.no_upstream_note, 9.5, C["muted"]))
+                s.append(_tw(102, ty[t.id] + 12, t.no_upstream_note, 9.5,
+                             C["muted"], budget=20))
             s.append(f'<line x1="196" y1="{ty[t.id]}" '
                      f'x2="{COL_X[cols[t.id][0]] - 26}" y2="{ty[t.id]}" '
                      f'stroke="{C["rule"]}" stroke-width="1" stroke-dasharray="2 4"/>')

@@ -11,18 +11,21 @@ pathways:
   - id: oral.periodontal
     label: 牙周
     upstream: calculus
-    chain: oral.gingival_bleeding_is_local
+    # 同一条牙周通路，两条判读都能把它带上图：
+    # 病例 1 是"出血在场、原因在结石"，病例 3 是"结石在场但炎症不活动"。
+    # 过程是同一个，通路定义就不该抄两份。
+    chain: [oral.gingival_bleeding_is_local, oral.calculus_without_active_inflammation]
     gate_kind: recheck
     stages:
       - name: 牙龈炎症伴退缩
         judged_by: [GINGIVAL_BLEEDING, GINGIVAL_RECESSION, GINGIVAL_SWELLING]
         crossed_when: "GINGIVAL_BLEEDING.is_high or GINGIVAL_RECESSION.is_high"
-        detail: 牙龈出血与牙龈退缩同时在场；无肿胀溢脓
+        detail: "牙龈出血 {GINGIVAL_BLEEDING}、牙龈退缩 {GINGIVAL_RECESSION}、肿胀溢脓 {GINGIVAL_SWELLING}"
       - name: 牙齿松动
         judged_by: [TOOTH_MOBILITY, MISSING_TEETH]
         crossed_when: "TOOTH_MOBILITY.is_high or MISSING_TEETH.is_high"
         edge: 支持组织尚完好
-        detail: 牙齿松动度与缺失牙本次均为"无"——牙周支持组织还没有到受累的程度
+        detail: "牙齿松动度 {TOOTH_MOBILITY}、缺失牙 {MISSING_TEETH}——支持组织还没有到受累的程度"
     tail: >-
       这条是本次少数几条"上游可以直接去除"的路径：牙结石洁牙即可清除，
       而下一关（牙齿松动）本次还没跨过。再往后的阶段不展开。

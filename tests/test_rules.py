@@ -38,7 +38,7 @@ def test_rule_fixtures(knowledge, request):
             if not t.fixture:
                 continue
             enc = build(t.fixture, t.overrides, ont, units, derived)
-            hit = evaluate(rule, enc)
+            hit = evaluate(rule, enc, ont)
             if hit.state.value != t.expect:
                 failures.append(
                     f"{rule.id} / {t.name}: 期望 {t.expect}，实际 {hit.state.value}"

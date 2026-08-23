@@ -1,0 +1,246 @@
+rules:
+  # 模式 5：多层排除 —— 轻度三尖瓣反流长在一颗各项径线都正常的心脏上
+  - id: cardiac.trivial_tr_on_normal_heart
+    archetype: layered_exclusion
+    title: 三尖瓣轻度反流，而心腔径线、室壁厚度与收缩功能都在正常范围
+    headline: 长在一颗各项都正常的心脏上，这是超声灵敏度的产物
+    lede: >-
+      彩色多普勒能看到极少量的瓣膜返流信号，在没有任何瓣膜病的健康人身上
+      也常常能看到。判断它要不要紧，看的不是"有没有反流"，
+      是它有没有让心脏发生改变。
+    tag: reassure
+    chapter: downgrade
+    modifiability: not_modifiable
+    priority: 28
+    params:
+      finding: TRICUSPID_REGURG
+      layers:
+        - {name: 心腔径线, codes: [LA_DIAM, LVDD, LVDS, AO_ROOT],
+           expect: in_range_or_advisory_in_range}
+        - {name: 室壁厚度, codes: [IVSD, LVPW], expect: in_range_or_advisory_in_range}
+        - {name: 收缩功能, codes: [EF, FS], expect: in_range_or_advisory_in_range}
+        - {name: 肺动脉, codes: [PA_DIAM], expect: in_range_or_advisory_in_range}
+    narration:
+      single_read: >-
+        原报告把它列进"定期复检"，建议每年复查心超，有胸闷气喘时到心内科。
+        "反流"两个字容易被读成瓣膜坏了。
+      joint_read: >-
+        同一份心超把每个径线都量了：左房 {LA_DIAM} mm、左室舒张末 {LVDD} mm、
+        左室收缩末 {LVDS} mm、主动脉根部 {AO_ROOT} mm、室间隔 {IVSD} mm、
+        左室后壁 {LVPW} mm、肺动脉 {PA_DIAM} mm，射血分数 {EF}%、
+        短轴缩短率 {FS}%——按成人心腔定量的常用切点，全部在正常范围内。
+        轻度三尖瓣反流真正需要关注的情形，是它已经把右心撑大或把肺动脉压推高；
+        本次这两条都没有发生。
+        另外要说明的是：原报告没有给这些径线任何参考区间，
+        上面用的是指南切点，出处已在证据里标出——它不是原报告自带的区间。
+      must_convey:
+        - 心腔径线、室壁厚度、收缩功能、肺动脉内径四层全部正常
+        - 轻度反流在没有瓣膜病的人身上很常见
+        - 用的是指南切点，不是原报告自带的参考区间
+      must_not_claim:
+        - 不得说反流会自行消失或加重
+        - 不得由本次单点判断趋势
+        - 不得用它解释任何症状
+    verdict:
+      certain: >-
+        以本次心超看，这一条不需要任何处理。原报告"每年复查"的建议偏密——
+        在各项径线都正常的轻度反流上，复查的价值在于出现症状时，而不是按年计时。
+      not_certain: >-
+        本次报告没有给出三尖瓣反流速度，因此无法估算肺动脉收缩压。
+        没有它就不能说"肺动脉压一定正常"，只能说肺动脉内径正常、
+        右心没有被撑大——这是间接证据。
+      next_steps:
+        - 出现活动后气喘、下肢水肿、颈静脉怒张时再查心超，比按年复查更有意义
+        - 下次做心超时，可以请医生一并给出三尖瓣反流速度
+      compare_next:
+        - code: LA_DIAM
+          what: 心腔径线。反流真正开始有意义时，最先变化的是它们
+          caveat: 必须同一台设备、同一切面
+        - code: EF
+          what: 收缩功能。与径线一起看
+    tests:
+      - {name: 病例3真实数据, fixture: case3_2026-03-30, expect: triggered}
+      - {name: 左房增大时不成立, fixture: case3_2026-03-30, expect: not_triggered,
+         overrides: {LA_DIAM: 46}}
+      - {name: 病例2没做完整心腔径线, fixture: case2_2024-08-03, expect: indeterminate}
+
+  # 模式 5：多层排除 —— 宫颈囊肿，而宫颈风险的真正判据是筛查那两项
+  - id: gyn.cervical_cyst_with_clean_screening
+    archetype: layered_exclusion
+    title: 宫颈囊肿，而宫颈癌筛查的两项都是阴性
+    headline: 宫颈风险由 TCT 与 HPV 决定，这两项都阴性；囊肿不是筛查对象
+    lede: >-
+      宫颈腺体的开口被覆盖后形成潴留囊肿，是宫颈自我修复过程的常见产物。
+      它与宫颈病变不是一回事，而后者本次有直接判据。
+    tag: reassure
+    chapter: downgrade
+    modifiability: not_modifiable
+    priority: 26
+    params:
+      finding: CERVICAL_CYST
+      layers:
+        - {name: 细胞学, codes: [TCT], expect: negative_or_in_range}
+        - {name: 病毒, codes: [HPV_HIGH_RISK, HPV_LOW_RISK], expect: negative_or_in_range}
+        - {name: 视诊, codes: [GYN_EXAM], expect: normal_text}
+    narration:
+      single_read: >-
+        原报告把它列进"定期复检"，建议半年复查妇科超声。
+        "囊肿"这个词容易让人以为是长了东西。
+      joint_read: >-
+        同一次体检里，宫颈癌筛查的两项都做了而且都是阴性：
+        液基细胞学 TCT 未见上皮内病变及恶性病变，
+        高危型与低危型 HPV 分型全部阴性；妇科视诊记录的宫颈是"光滑"。
+        这三条才是判断宫颈风险的依据。
+        超声上的 {CERVICAL_CYST} mm 潴留囊肿与它们说的不是同一件事——
+        超声本来就不是宫颈癌的筛查手段，所以"半年复查妇科超声"
+        既回答不了宫颈风险，也不针对这个囊肿本身。
+      must_convey:
+        - 宫颈风险的判据是 TCT 与 HPV，本次两项都阴性
+        - 潴留囊肿是宫颈修复过程的常见产物，不是筛查对象
+        - 超声不是宫颈癌的筛查手段
+      must_not_claim:
+        - 不得说宫颈完全没有风险——筛查有窗口期，且本次是单点
+        - 不得建议穿刺、物理治疗或任何针对囊肿的处理
+    verdict:
+      certain: >-
+        这一条不需要半年复查超声。宫颈这条线上该按节奏做的是 TCT 与 HPV，
+        而这两项本次刚做完且都是阴性。
+      not_certain: >-
+        TCT 与 HPV 联合筛查的检出率很高但不是 100%，且本次是单点。
+        下一次筛查的间隔由本次结果与年龄决定，需要妇科按指南给。
+      next_steps:
+        - 到妇科时问清楚下一次 TCT 与 HPV 的间隔，这才是宫颈这条线上要记的日期
+        - 出现接触性出血、异常排液时不必等到下次筛查，直接就诊
+      compare_next:
+        - code: TCT
+          what: 与 HPV 同次做，两项一起才构成筛查
+        - code: CERVICAL_CYST
+          what: 不需要为它单独复查超声；下次做妇科超声时看它还在不在即可
+          caveat: 大小随充盈与切面变化，小幅差异不说明问题
+    tests:
+      - {name: 病例3真实数据, fixture: case3_2026-03-30, expect: triggered}
+      - {name: HPV阳性时不成立, fixture: case3_2026-03-30, expect: not_triggered,
+         overrides: {HPV_HIGH_RISK: 阳性}}
+      - {name: 病例1没做妇科筛查, fixture: zhang_real_2026-03-30, expect: indeterminate}
+
+  # 模式 5：多层排除 —— BI-RADS 2-3 类结节，排除层已在同一份超声里写清
+  - id: breast.birads23_nodule_downgrade
+    archetype: layered_exclusion
+    title: 双乳结节 BI-RADS 2-3 类，血流与引流区淋巴结均为阴性
+    headline: 分类本身已经给出了处理层级：按间隔复查超声，不是去确诊
+    lede: >-
+      BI-RADS 是超声形态学的风险分层，2 类是良性，3 类是"大致良性"，
+      对应的标准处理是按间隔复查，而不是进一步确诊。
+    tag: reassure
+    chapter: downgrade
+    modifiability: not_modifiable
+    priority: 34
+    params:
+      finding: BREAST_BIRADS
+      layers:
+        - {name: 血流, codes: [BREAST_FLOW], expect: negative_or_in_range}
+        - {name: 引流区淋巴结, codes: [BREAST_NODES], expect: negative_or_in_range}
+    extra_evidence: [BREAST_NODULE]
+    narration:
+      single_read: >-
+        原报告建议"完善乳腺钼靶或核磁检查明确诊断及治疗"，
+        再加上一串生活建议：少吃雌激素含量高的食物与滋补品、不用含激素的化妆品、
+        低脂饮食、胸罩不要太紧、睡前松解胸罩。
+        "明确诊断"四个字会让人以为诊断还没定。
+      joint_read: >-
+        分类本身就是结论。同一份超声给出的两个排除层都是阴性：
+        结节内未见异常血流信号，双侧引流区未扫及肿大淋巴结；
+        结节最大径 {BREAST_NODULE} mm，远小于通常需要处理的尺寸。
+        BI-RADS 2–3 类对应的标准处理是按间隔复查超声——间隔多长由专科定，
+        而不是先去做钼靶或核磁。
+        致密腺体上钼靶的增益本来就有限，是否加做由腺体密度、年龄与家族史决定。
+        至于那串生活建议：胸罩松紧、含激素化妆品与乳腺结节之间没有已确立的因果关系，
+        它们不会改变这个分类，只会增加不必要的紧张。
+      must_convey:
+        - BI-RADS 2-3 类本身就是结论，对应的是复查间隔而不是进一步确诊
+        - 血流与引流区淋巴结两个排除层在同一份超声里都是阴性
+        - 是否加做钼靶或核磁由专科结合腺体密度与家族史决定
+        - 胸罩松紧、含激素化妆品与结节之间没有已确立的因果关系
+      must_not_claim:
+        - 不得说结节一定是良性——2-3 类是概率分层，不是病理诊断
+        - 不得替专科决定要不要做钼靶或核磁
+        - 不得给出复查的具体月数；那要由专科按分类与腺体情况定
+    verdict:
+      certain: >-
+        当下要做的是把复查间隔定下来，而不是先去做别的影像。
+        那串生活建议可以不执行——它们对这个分类没有作用。
+      not_certain: >-
+        BI-RADS 是形态学概率分层，2–3 类之间也还有差别，本报告只给了区间没有定档。
+        家族史（尤其一级亲属乳腺癌）会改变随访策略，而这一项本报告完全空白。
+      next_steps:
+        - 到甲乳外科时先问一句：按这个分类，复查间隔应该是多久
+        - 补上一级亲属的乳腺与卵巢肿瘤家族史——这一项不需要任何检查
+        - 复查尽量约同一台设备、同一位医生，位置用"几点钟方向"记下来
+      compare_next:
+        - code: BREAST_NODULE
+          what: 最大径与钟点位置一起记，两侧分开记
+          caveat: 必须同一台设备、同一切面；换设备的径线不可比
+    tests:
+      - {name: 病例3真实数据, fixture: case3_2026-03-30, expect: triggered}
+      - {name: 出现异常血流时不成立, fixture: case3_2026-03-30, expect: not_triggered,
+         overrides: {BREAST_FLOW: 阳性}}
+      - {name: 病例1没做乳腺超声, fixture: zhang_real_2026-03-30, expect: indeterminate}
+
+  # 模式 1：上游异常 / 下游全阴 —— 走行迂曲是解剖变异，同一份 MRA 已经答了狭窄
+  - id: neuro.vertebrobasilar_tortuosity_is_anatomy
+    archetype: upstream_contradicted
+    title: 椎基底动脉走行迂曲，而同一份 MRA 明确写了未见狭窄
+    headline: 迂曲说的是形状不是通畅度，同一份 MRA 已经回答了狭窄这个问题
+    lede: >-
+      血管的走行弯不弯，与它通不通，是两件事。
+      同一次检查把两件事都答了，而结论里只挑了前一件写进随访条目。
+    tag: reassure
+    chapter: downgrade
+    modifiability: not_modifiable
+    priority: 24
+    params:
+      upstream: VERTEBROBASILAR
+      direction: abnormal
+      downstream: [BRAIN_MRI_PLAIN, CAROTID_US, VERTEBRAL_US]
+      downstream_expect: negative_or_in_range
+    extra_evidence: [LDL_C, HCY, TC]
+    narration:
+      single_read: >-
+        原报告把"颅脑TOF-MRA示椎基底动脉走行稍迂曲"列进定期复检，
+        建议定期复查，有头晕黑曚时到神经内科。
+        单看这一句，很容易理解成后循环的血管出了问题。
+      joint_read: >-
+        同一份 MRA 报告的原文写的是：椎基底动脉结构完整、走行稍迂曲，
+        两侧颈内动脉、双侧大脑前中后动脉主干及主要分支走行自然，
+        未见明显扩张、狭窄。也就是说，通畅度这个问题这次已经明确回答过了。
+        脑实质平扫与 DWI 未见异常信号，颈动脉与椎动脉超声内膜连续良好、血流充盈丰富。
+        走行迂曲是血管的解剖形状，属于个体变异，多数人终生不变也不产生症状。
+        原报告"有头晕黑曚再就诊"这半句是对的——症状才是就诊的理由；
+        但把迂曲本身列成需要定期复查的条目，会让人以为血管有病。
+      must_convey:
+        - 迂曲说的是形状，狭窄说的是通畅度，同一份报告已经回答了后者
+        - 脑实质、颈动脉、椎动脉三处下游证据都是阴性
+        - 症状才是就诊的理由，迂曲本身不是
+      must_not_claim:
+        - 不得说迂曲不会引起任何症状——个别情况下存在，但需要症状与体位相关性来支持
+        - 不得据此排除将来发生脑血管事件
+    verdict:
+      certain: >-
+        这一条不需要为它安排复查。同一次检查里更值得记住的是那句
+        "未见明显扩张、狭窄"，而它没有被写进结论。
+      not_certain: >-
+        MRA 是形态学检查，看不到血流速度与储备。
+        如果确实存在与转头、起身相关的头晕，那需要的是经颅多普勒或体位试验，
+        而不是复查 MRA。本报告的经颅多普勒结果在附件里，本次未拿到。
+      next_steps:
+        - 取回经颅多普勒附件，它才是回答后循环血流的那一项
+        - 记录头晕是否与转头、起身、颈部姿势相关；有相关性再就诊
+      compare_next:
+        - code: VERTEBROBASILAR
+          what: 不需要为它复查。下次做颅脑 MRA 时看"有无狭窄"那句话即可
+          caveat: 迂曲的描述受序列与个体解剖影响，不同次之间不可比
+    tests:
+      - {name: 病例3真实数据, fixture: case3_2026-03-30, expect: triggered}
+      - {name: 脑实质异常时不成立, fixture: case3_2026-03-30, expect: not_triggered,
+         overrides: {BRAIN_MRI_PLAIN: 阳性}}
+      - {name: 病例1没有迂曲描述, fixture: zhang_real_2026-03-30, expect: indeterminate}

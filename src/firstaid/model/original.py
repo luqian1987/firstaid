@@ -89,7 +89,11 @@ class ReconciliationRow(Frozen):
     chain_id: str | None = None
     correction_id: str | None = None
     needs_confirm: bool = False                # ◇ 与医生确认
-    is_new: bool = False                       # 原报告没提，本次新增
+    is_new: bool = False                       # 原报告完全没提，本次新增
+    # 原报告提到过这些指标，但这条判读没有匹配上它那一条
+    # （它那一条被另一条判读先接走了）。这与"完全没提"是两回事，
+    # 不区分就会把"原报告写了牙结石"说成"原报告未提及"。
+    also_from: tuple[int, ...] = ()
 
     @property
     def anchor(self) -> str:

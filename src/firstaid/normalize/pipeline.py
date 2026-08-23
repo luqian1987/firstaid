@@ -9,7 +9,7 @@ from datetime import date
 
 from ..model import (
     Observation, ObservationKind, Ontology, Provenance, Qualitative, RangeKind,
-    RangeStatus, RefRange,
+    RangeStatus, RefRange, Sex,
 )
 from .refrange import judge, parse_range, parse_value
 from .units import UnitTable
@@ -32,9 +32,12 @@ _QUAL_EXPECT = {"阴性", "阳性", "否", "是", "无", "有", "正常", "negat
 
 
 class Normalizer:
-    def __init__(self, ontology: Ontology, units: UnitTable | None = None):
+    def __init__(self, ontology: Ontology, units: UnitTable | None = None,
+                 sex: Sex | None = None):
         self.ontology = ontology
         self.units = units or UnitTable()
+        # 分性别切点要用它。性别未知时只用通用值，宁可判不了也不猜。
+        self.sex = sex
         self.unresolved: list[str] = []
 
     def normalize(self, row: dict, provenance: Provenance,
@@ -96,15 +99,15 @@ class Normalizer:
                 obs = obs.model_copy(update={"status": RangeStatus.NO_RANGE})
 
         # 补常用切点（只在原报告没给区间时）
-        if d and (d.advisory_low is not None or d.advisory_high is not None) \
-                and not obs.has_range and obs.value is not None:
-            adv = RefRange(low=d.advisory_low, high=d.advisory_high,
+        cut = d.cutoff(self.sex) if d else None
+        if cut is not None and not obs.has_range and obs.value is not None:
+            adv = RefRange(low=cut.low, high=cut.high,
                            kind=RangeKind.DISEASE_CUTOFF,
-                           raw=None, source_note=d.advisory_note)
+                           raw=None, source_note=cut.note)
             obs = obs.model_copy(update={
                 "advisory_ref": adv,
                 "advisory_status": judge(obs.value, obs.censor, adv),
-                "advisory_source": d.advisory_source,
+                "advisory_source": cut.source,
             })
 
         # 单位归一到本体的 canonical 单位

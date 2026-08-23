@@ -43,7 +43,14 @@ indicators:
   - {code: CYSTATIN_C, name: 胱抑素C, aliases: ["胱抑素C检测(Cys-C)", "Cys-C"], canonical_unit: mg/L, system: renal, modifiability: clinical}
   - {code: CK,    name: 肌酸激酶, aliases: ["肌酸激酶(CK)", "CK"], canonical_unit: U/L, system: cardiac, modifiability: clinical}
   - {code: CKMB,  name: 肌酸激酶同工酶, aliases: ["肌酸激酶同工酶(CK-MB)", "CK-MB"], canonical_unit: U/L, system: cardiac, modifiability: clinical}
-  - {code: POTASSIUM, name: 钾, aliases: ["钾(K)", "K"], canonical_unit: mmol/L, system: electrolyte, modifiability: clinical}
+  # 这一项的区间原报告写成 "3.5--5.3(慢性肾病和透析患者:3.5-5.0)"，带条件从句，
+  # 解析不了 → NO_RANGE。以前没关系，现在有规则要用它，就成了知识库缺口，
+  # 必须补一个带出处的切点（L016 那条不变式会直接让构建失败）。
+  - {code: POTASSIUM, name: 钾, aliases: ["钾(K)", "K"], canonical_unit: mmol/L,
+     system: electrolyte, modifiability: clinical,
+     advisory_low: 3.5, advisory_high: 5.3,
+     advisory_note: 通用成人区间 3.5–5.3；慢性肾病与透析人群上限取 5.0,
+     advisory_source: 知识库补充（原报告区间带条件从句，解析不了）}
   - {code: SODIUM, name: 钠, aliases: ["钠(Na)"], canonical_unit: mmol/L, system: electrolyte, modifiability: clinical}
   - {code: CHLORIDE, name: 氯, aliases: ["氯(CL)"], canonical_unit: mmol/L, system: electrolyte, modifiability: clinical}
   - {code: CALCIUM, name: 钙, aliases: ["钙(Ca)"], canonical_unit: mmol/L, system: electrolyte, modifiability: clinical}
@@ -122,7 +129,9 @@ indicators:
   - {code: U_SG,  name: 尿比重, aliases: ["比重[SG]"], system: urine, modifiability: clinical}
   # ---------------- 心脏 / 其他 ----------------
   - {code: HFABP, name: 心脏脂肪酸结合蛋白, aliases: ["心脏脂肪酸结合蛋白(HFABP)"], canonical_unit: ng/ml, system: cardiac, modifiability: clinical}
-  - {code: EF,   name: 左室射血分数, aliases: ["EF"], kind: imaging, canonical_unit: "%", system: cardiac, modifiability: clinical}
+  - {code: EF,   name: 左室射血分数, aliases: ["EF"], kind: imaging, canonical_unit: "%", system: cardiac, modifiability: clinical,
+     advisory_low: 50, advisory_note: 常用下限 50%，低于此为收缩功能受损,
+     advisory_source: "Lang RM 等. ASE/EACVI 成人心腔定量指南, JASE 2015;28:1-39"}
   - {code: PULSE, name: 脉搏, canonical_unit: 次/分, system: cardiovascular, modifiability: self_modifiable}
   # ---------------- 口腔 ----------------
   - {code: DENTAL_CALCULUS, name: 牙结石, kind: qualitative, system: oral, modifiability: self_modifiable}

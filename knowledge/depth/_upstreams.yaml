@@ -20,3 +20,11 @@ upstreams:
     present_when: "LPA.is_high"
     modifiable: false
     note: 饮食运动不改变它
+
+  - id: autoimmunity
+    label: 自身免疫
+    sub: "抗过氧化物酶抗体 {TPO_AB} · 抗甲状腺球蛋白抗体 {TG_AB}"
+    codes: [TPO_AB, TG_AB]
+    present_when: "TPO_AB.is_high or TG_AB.is_high"
+    modifiable: false
+    note: 免疫识别一旦建立不可逆转，能管的是它的下游

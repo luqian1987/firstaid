@@ -59,10 +59,17 @@ class ObsProxy:
 
 
 class RuleContext:
-    def __init__(self, encounter: Encounter, observations: ObservationSet | None = None):
+    def __init__(self, encounter: Encounter, observations: ObservationSet | None = None,
+                 ontology=None):
         self.encounter = encounter
         self.observations = observations or encounter.observations
+        # 少数模式要读本体属性（例如"这一项的有利方向是哪一侧"）。
+        # 那是指标的固有属性，不该在每条规则里重写一遍。
+        self.ontology = ontology
         self._cache: dict[str, Any] = {}
+
+    def indicator(self, code: str):
+        return self.ontology.get(code) if self.ontology else None
 
     def proxy(self, code: str) -> ObsProxy | MissingProxy:
         if code not in self._cache:

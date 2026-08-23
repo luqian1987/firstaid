@@ -19,21 +19,13 @@ depth:
           Ⅱ 则胃窦和十二指肠也在产。胃底腺萎缩时Ⅰ下降而Ⅱ相对不变，
           所以比值比任一单项都更能反映萎缩。本次 PGⅠ {PG1}、PGⅠ/Ⅱ {PG_RATIO}，
           都在区间中部而不是贴边。
-      - level: 生理病理
-        cites: [GASTRIN17]
-        rules_out: 同时排除了胃窦萎缩与胃体萎缩两个方向
-        pivot: >-
-          胃泌素17 由胃窦 G 细胞分泌，受胃内 pH 负反馈调节：胃窦萎缩时它下降，
-          胃体萎缩时因为胃酸减少、负反馈解除，它反而升高。本次 {GASTRIN17}，
-          落在区间中段——两个方向的萎缩都不支持。
     modifiers:
       present: []
       absent:
         - {name: 胃底腺萎缩, codes: [PG1, PG_RATIO]}
-        - {name: 胃窦萎缩, codes: [GASTRIN17]}
         - {name: 全身炎症背景, codes: [ESR, HSCRP]}
       unknown:
-        - {name: 幽门螺杆菌状态, why: 本次未检测。它是萎缩方向的主要驱动因素}
+        - {name: 幽门螺杆菌状态, why: 病例 1 未检测；它是萎缩方向的主要驱动因素}
         - {name: 反流症状（烧心 / 反酸 / 夜间呛咳）, why: 决定这条要不要按反流处理}
         - {name: 胃肠镜所见, why: 报告已生成但本次未取回。镜下所见的效力高于任何血清学筛查}
     interventions:

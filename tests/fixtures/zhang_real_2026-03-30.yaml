@@ -122,7 +122,9 @@ observations:
   - {code: PULSE,  raw_name: 脉搏,   value: 64,  unit: 次/分, ref: "[60.0-100.0]", source: main, page: 3}
 
   # ============ 口腔（主报告 第4页）============
-  - {code: DENTAL_CALCULUS,    raw_name: 牙结石,   value: 轻度, kind: qualitative, source: main, page: 4}
+  # 期望值补齐：同一张口腔表里其余各项都写了期望值，唯独这一项漏了，
+  # 于是它落进"无区间"、逃过判定。病例 3 用到它时才暴露出来。
+  - {code: DENTAL_CALCULUS,    raw_name: 牙结石,   value: 轻度, ref: 无, kind: qualitative, source: main, page: 4}
   - {code: GINGIVAL_BLEEDING,  raw_name: 牙龈出血, value: 是, ref: 否, kind: qualitative, source: main, page: 4}
   - {code: GINGIVAL_RECESSION, raw_name: 牙龈退缩, value: 是, ref: 否, kind: qualitative, source: main, page: 4}
   - {code: GINGIVAL_SWELLING, raw_name: 牙龈肿胀/溢脓, value: 否, ref: 否, kind: qualitative, source: main, page: 4}

@@ -1,0 +1,191 @@
+rules:
+  # 模式 14：判据不全的发现 —— 三条，都是"报告自己点了名要什么，却没有人去拿"
+  - id: cardio.low_sbp_needs_symptoms_not_clinic
+    archetype: unsettled_finding
+    title: 收缩压 84：判断它要不要紧，缺的是体位与症状，不是一次门诊
+    headline: 一次坐位测量说明不了什么，缺的是立卧位血压和症状记录
+    lede: >-
+      低血压与高血压不一样：高血压靠数值本身就能定义，低血压不行。
+      同一个 84 mmHg，在有头晕黑曚的人身上是问题，在没有的人身上是体质。
+      分开它们的是症状和体位变化，不是再多测几次坐位血压。
+    tag: retest_first
+    chapter: watch
+    modifiability: self_modifiable
+    priority: 58
+    params:
+      finding: SBP
+      finding_expect: low
+      settled_by:
+        - {code: ORTHOSTATIC_BP, what: 从卧位到站立 3 分钟内血压掉多少,
+           how: 在家用电子血压计就能做，躺 5 分钟测一次、站起来 1 分钟和 3 分钟各测一次}
+        - {code: HOME_BP_SERIES, what: 一周的日常血压序列，而不是体检当天的一次,
+           how: 每天固定时间测两次，记一周}
+      co_findings: [DBP, PULSE, HGB, HCT, BMI, GLU_FASTING, TSH, FT4]
+    needs_context: [symptoms, medications]
+    narration:
+      single_read: >-
+        原报告建议复测血压、排除诱因、保证睡眠、增加有氧运动、变换体位时动作缓慢以防跌倒，
+        并到心内科门诊诊治。这些建议本身没有坏处，但它们对应的是"有症状的低血压"，
+        而本报告里没有任何症状记录。
+      joint_read: >-
+        能把这一项定性的两件事本次都没有（{$absent}）。
+        在拿到它们之前，收缩压 {SBP}、舒张压 {DBP} 这一组数字既不说明有问题，
+        也不能说没问题。
+        同一份报告里几条相关的事实是：脉搏 {PULSE} 次/分不快
+        （体位性低血压时代偿性心率增快是常见伴随），
+        血红蛋白 {HGB}、体重指数 {BMI}、空腹血糖 {GLU_FASTING}、
+        促甲状腺激素 {TSH} 都在区间内——贫血、脱水、甲减这几条常见的继发原因
+        本次都没有支持证据。
+        所以这一项最可能是体质性的，但"最可能"不等于确定，
+        而把它变确定的两件事都不需要挂号。
+      must_convey:
+        - 低血压的意义取决于症状与体位反应，而不是数值本身
+        - 立卧位血压与一周家庭血压序列本次都没有，这两项不需要挂号
+        - 贫血、甲减这几条常见继发原因本次没有支持证据
+      must_not_claim:
+        - 不得诊断体位性低血压，也不得排除它
+        - 不得说这是"正常的"——没有症状记录就不能这样断言
+        - 不得建议增加盐分摄入或任何升压处理
+    verdict:
+      certain: >-
+        在补上体位血压与症状之前，不需要为这一项挂心内科。
+        要做的两件事都在家里就能完成。
+      not_certain: >-
+        体检当天的血压受空腹、等待、紧张的影响很大，单次值本来就不宜细究。
+        本报告没有任何症状记录，这不是检查缺失，是问诊没有记录。
+      next_steps:
+        - 在家做一次立卧位血压：躺 5 分钟测一次，站起来第 1 分钟和第 3 分钟各测一次
+        - 记一周的日常血压，每天固定时间两次
+        - 回想有没有起身时眼前发黑、蹲久了站起来头晕——有没有这些比血压数字更关键
+      compare_next:
+        - code: SBP
+          what: 家庭血压序列的平均，而不是下次体检的那一次
+          caveat: 体检当天的测量条件与日常不同，两者不可直接比较
+        - code: PULSE
+          what: 与血压同时记。血压低而心率不快，与血压低伴心率增快，含义不同
+    tests:
+      - {name: 病例3真实数据, fixture: case3_2026-03-30, expect: triggered}
+      - {name: 收缩压正常时不成立, fixture: case3_2026-03-30, expect: not_triggered,
+         overrides: {SBP: 118}}
+      - {name: 病例1收缩压不低, fixture: zhang_real_2026-03-30, expect: not_triggered}
+
+  - id: eye.uncorrected_vision_needs_correction_test
+    archetype: unsettled_finding
+    title: 视力右 4.9：报告表格里留了矫正视力这一栏，但没有填
+    headline: 裸眼 4.9 要不要处理，取决于能不能矫正——而那一栏是空的
+    lede: >-
+      裸眼视力低本身不构成一个需要随访的条目。
+      真正要回答的是它能不能被矫正：能矫正到 5.0，那是屈光问题，配镜即可；
+      矫正不上去，才需要查眼底与晶状体。
+    tag: retest_first
+    chapter: watch
+    modifiability: clinical
+    priority: 22
+    params:
+      finding: VISION_R
+      finding_expect: low_or_advisory_low
+      settled_by:
+        - {code: VISION_R_CORRECTED, what: 右眼戴镜或插片后能到多少,
+           how: 任何一家眼镜店或眼科门诊，几分钟}
+        - {code: VISION_L_CORRECTED, what: 左眼的对照值, how: 同上}
+      co_findings: [VISION_L, COLOR_VISION, CONJUNCTIVA]
+    narration:
+      single_read: >-
+        原报告写"视力右：4.9"，建议结合临床到眼科门诊定期复查随访。
+        4.9 相当于小数视力 0.8，与左眼 5.0 差一行。
+      joint_read: >-
+        这份报告的眼科表格里本来就印着"矫正视力右""矫正视力左"两栏，
+        本次都是空的（{$absent}）。
+        没有它们，"视力右 4.9"这一行读不出任何结论：
+        能矫正到 5.0 就只是屈光度的事，配一副合适的眼镜就结束；
+        矫正不上去才需要往下查。
+        左眼 {VISION_L}、辨色力正常、结膜与外眼未见异常，
+        说明这不是一个双眼同时下降或伴随其他眼部异常的情形。
+      must_convey:
+        - 裸眼视力低要不要处理，取决于能不能矫正
+        - 报告表格里留了矫正视力两栏，本次没有填
+        - 左眼与其余眼科检查都正常
+      must_not_claim:
+        - 不得判断是屈光问题还是眼底问题——分开它们的正是缺的那一项
+        - 不得据此推断用眼习惯或屏幕时间
+    verdict:
+      certain: >-
+        补一次矫正视力，这一条大概率就结束了。它比"眼科门诊定期复查随访"具体得多，
+        也便宜得多。
+      not_certain: >-
+        单眼相差一行在成年人里很常见，但本报告没有既往视力可比，
+        所以分不出是一直如此还是最近下降。这一点会改变紧急程度。
+      next_steps:
+        - 补一次插片验光，拿到右眼的矫正视力
+        - 找找上一次体检或配镜的视力记录，看这一行是不是一直如此
+      compare_next:
+        - code: VISION_R
+          what: 与矫正视力成对记录。只记裸眼视力的历史值意义有限
+    tests:
+      - {name: 病例3真实数据, fixture: case3_2026-03-30, expect: triggered}
+      - {name: 视力正常时不成立, fixture: case3_2026-03-30, expect: not_triggered,
+         overrides: {VISION_R: 5.0}}
+      - {name: 病例1没做眼科, fixture: zhang_real_2026-03-30, expect: indeterminate}
+
+  - id: bone.rib_cortex_needs_history_not_followup
+    archetype: unsettled_finding
+    title: 左侧第 3、4 前肋皮质欠光整——报告自己写了"请结合病史"
+    headline: 影像分不出新旧，分开它们的是外伤史和既往片子，两样都没有
+    lede: >-
+      肋骨皮质欠光整最常见于陈旧骨折愈合后的骨痂。
+      CT 本身分不出这处改变是三十年前的还是最近的——
+      分开它们的是外伤史，以及一张可比的既往片子。
+    tag: retest_first
+    chapter: watch
+    modifiability: not_modifiable
+    priority: 20
+    params:
+      finding: RIB_CORTEX
+      finding_expect: abnormal
+      settled_by:
+        - {code: PRIOR_CHEST_IMAGING, what: 既往胸片或胸部CT，用来看这处改变是不是一直都在,
+           how: 找出以前的片子，不是报告单——报告单上多半没提这一处}
+        - {code: RIB_XRAY_LOCAL, what: 必要时的肋骨局部摄片, how: 只有在既往影像也拿不到时才需要}
+      co_findings: [CHEST_CT, CALCIUM, PHOS, ALP]
+    needs_context: [trauma_history, prior_imaging]
+    narration:
+      single_read: >-
+        原报告写"左侧第3、4前肋皮质欠光整，请结合病史"，建议到骨科门诊定期复查随诊。
+        "请结合病史"这四个字是报告自己提出的要求，而它没有被执行。
+      joint_read: >-
+        能回答这一条的两样东西本次都没有（{$absent}）。
+        同一份 CT 的其余部分是干净的：两肺未见明显实质性病变，
+        纵隔未见肿大淋巴结，两侧胸腔未见积液。
+        生化里的钙 {CALCIUM}、磷 {PHOS}、碱性磷酸酶 {ALP} 都在区间内——
+        碱性磷酸酶在骨折愈合活跃期通常会升高，它正常更支持这是陈旧改变，
+        但这只是间接证据。
+        真正一句话能解决的是：以前有没有摔过、撞过胸口。
+        这个问题不需要任何检查，而它没有被问。
+      must_convey:
+        - 影像本身分不出这处改变是新是旧
+        - 报告自己要求"结合病史"，而病史没有被记录
+        - 碱性磷酸酶正常更支持陈旧改变，但只是间接证据
+      must_not_claim:
+        - 不得判断是陈旧骨折还是新发病变
+        - 不得排除任何骨病；本次没有针对性检查
+        - 不得据此建议补钙
+    verdict:
+      certain: >-
+        这一条的第一步是回想有没有胸部外伤史，第二步是找既往片子。
+        两步都做完还说不清，才轮到骨科门诊。
+      not_certain: >-
+        胸部 CT 是为肺做的，肋骨不是它的主要目标，
+        对皮质细节的显示不如肋骨专项摄片。所以"欠光整"这个描述本身也有它的不确定性。
+      next_steps:
+        - 回想左侧胸部有没有过外伤、摔伤或车祸，哪怕是很多年前
+        - 找出以前做过的胸片或胸部CT 原始影像（不是报告单）作对比
+        - 没有外伤史又找不到既往影像时，再考虑骨科门诊
+      compare_next:
+        - code: RIB_CORTEX
+          what: 与既往影像对比同一位置。同一处一直存在且不变，基本就是陈旧改变
+          caveat: 必须比原始影像，不能比报告文字——报告多半不会提这一处
+    tests:
+      - {name: 病例3真实数据, fixture: case3_2026-03-30, expect: triggered}
+      - {name: 肋骨正常时不成立, fixture: case3_2026-03-30, expect: not_triggered,
+         overrides: {RIB_CORTEX: 阴性}}
+      - {name: 病例2没做胸部CT肋骨描述, fixture: case2_2024-08-03, expect: indeterminate}

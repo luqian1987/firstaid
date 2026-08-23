@@ -1,0 +1,106 @@
+pathways:
+  - id: thyroid.autoimmune
+    label: 甲状腺
+    upstream: autoimmunity
+    chain: thyroid.hashimoto_euthyroid
+    gate_kind: recheck
+    stages:
+      # 超声的"弥漫性病变"不是抗体与功能之间的一站，它是同一件事在另一种设备上的样子。
+      # 把它画成中间那一关，会让人以为免疫→形态→功能是三步走。它属于机制那一节。
+      - name: 自身抗体阳性伴腺体形态改变
+        judged_by: [TPO_AB, TG_AB, THYROID_DIFFUSE]
+        crossed_when: "(TPO_AB.is_high or TG_AB.is_high) and THYROID_DIFFUSE.abnormal"
+        edge: 抗体与超声一致
+        detail: "抗过氧化物酶抗体 {TPO_AB}、抗甲状腺球蛋白抗体 {TG_AB} IU/mL；超声回声增粗不均匀"
+      - name: 功能开始代偿不足
+        judged_by: [TSH, FT4]
+        crossed_when: "TSH.is_high or FT4.is_low"
+        edge: 本次未到
+        emphasis: true
+        detail: "促甲状腺激素 {TSH}、游离甲状腺激素 {FT4} —— 两项都在区间内"
+    tail: >-
+      图到这一关为止。再往后（明确甲减、需要替代治疗）本次没有任何数据，
+      而且那一关跨不跨、什么时候跨，抗体的高低都预测不了——
+      所以这里不画，也不猜。
+    next_gate: >-
+      下一关只由促甲状腺激素判定。它是这条线上唯一需要按间隔复查的数，
+      抗体不需要跟着查。
+
+depth:
+  thyroid.hashimoto_euthyroid:
+    mechanisms:
+      - level: 免疫识别
+        cites: [TPO_AB, TG_AB]
+        rules_out: 解释了为什么这是一个诊断而不是两个孤立的高值
+        pivot: >-
+          甲状腺过氧化物酶是甲状腺细胞里把碘接到甲状腺球蛋白上的那个酶，
+          甲状腺球蛋白是储存甲状腺激素的那个蛋白。
+          抗这两样东西的抗体同时出现，意味着免疫系统把甲状腺自身的成分
+          当成了外来物。抗过氧化物酶抗体 {TPO_AB} IU/mL 是上限的三十倍以上，
+          这个组合的诊断意义很明确，而它的数值大小并不代表病情轻重。
+      - level: 形态学
+        cites: [THYROID_DIFFUSE, TG_THYRO]
+        rules_out: 说明超声那一条不是独立发现
+        pivot: >-
+          淋巴细胞持续浸润会让腺体的回声变粗、变得不均匀，出现小片状偏低回声——
+          这正是本次超声描述的样子。所以"甲状腺弥漫性病变"这句话不是
+          另一个需要单独随访的影像发现，它是同一件事在另一种设备上的表现。
+          顺带一提：有抗甲状腺球蛋白抗体存在时，甲状腺球蛋白 {TG_THYRO} 这项
+          测定值本身会受干扰，不宜单独解读。
+      - level: 功能储备
+        cites: [TSH, FT4, FT3]
+        rules_out: 把"有这个病"与"现在需要治疗"分开
+        pivot: >-
+          腺体的储备很大。免疫损伤是慢性的，在相当长的时间里，
+          剩下的滤泡通过被促甲状腺激素多推一点就能把激素造够，
+          这时血里的游离甲状腺激素 {FT4} 正常，促甲状腺激素 {TSH} 也还在区间内。
+          失代偿是分步的：先是促甲状腺激素升高而游离甲状腺激素仍正常
+          （亚临床），再往后才是两者都变。本次连第一步都没有跨。
+          这就是为什么"有桥本"和"要吃药"是两件不同的事。
+    modifiers:
+      present:
+        - {name: 抗过氧化物酶抗体显著升高, codes: [TPO_AB], note: 诊断依据，不是严重程度指标}
+        - {name: 抗甲状腺球蛋白抗体升高, codes: [TG_AB]}
+        - {name: 超声弥漫性改变, codes: [THYROID_DIFFUSE]}
+      absent:
+        - {name: 甲状腺功能异常, codes: [TSH, FT4, FT3, TT3, TT4], note: 五项全部在区间内}
+        - {name: 甲状腺结节, codes: [THYROID_NODULE], note: 本次超声未见}
+        - {name: 贫血, codes: [HGB, MCV], note: 血红蛋白在下限，形态正常}
+      unknown:
+        - {name: 家族甲状腺病与自身免疫病史, why: 桥本有明显家族聚集性，而本报告完全空白}
+        - {name: 怕冷、便秘、乏力、月经变化等症状, why: 功能开始变化时症状常早于指标，本报告没有问诊记录}
+        - {name: 碘摄入情况, why: 与抗体阳性者的功能变化有关联，但本次无从判断}
+        - {name: 在服药物, why: 部分药物影响甲状腺功能测定，报告空白}
+    interventions:
+      - kind: measurement
+        action: 到内分泌科时，把复查促甲状腺激素的间隔问清楚并记下来
+        rationale: >-
+          这条线上真正要做的只有这一件事。抗体不需要复查——它的滴度变化不改变处理。
+        verify_by: TSH
+        horizon: 由专科定
+      - kind: measurement
+        action: 补齐家族史：直系亲属有没有甲状腺病或其他自身免疫病
+        rationale: 桥本有明显家族聚集性，而这一项不需要做任何检查。
+        verify_by: TPO_AB
+        horizon: 立即
+      - kind: lifestyle
+        action: 记录怕冷、便秘、乏力、皮肤干燥、月经变化这几项
+        rationale: >-
+          功能开始变化时，症状常常早于指标。这几项比任何检查都便宜，
+          而且是复查间隔之间唯一的观察窗口。
+        verify_by: TSH
+        horizon: 持续
+      - kind: clinical
+        action: 内分泌科门诊可能会谈到的几件事
+        paths:
+          - 依促甲状腺激素的具体位置决定复查间隔，而不是统一按年
+          - 若将来出现亚临床甲减（促甲状腺激素升高而游离甲状腺激素仍正常），是否需要处理由专科判断
+          - 同时存在的胃泌素17 升高值得一并提出——自身免疫甲状腺病与自身免疫性胃炎常同时出现
+        ask_doctor:
+          - 我的促甲状腺激素 3.294 还在区间内，复查间隔应该定多久
+          - 抗体这么高需不需要做什么，还是只观察
+          - 我同一次报告里胃泌素17 高，要不要查抗壁细胞抗体
+        note: >-
+          以上只是让你知道门诊会谈到什么，不是建议。
+          针对抗体本身目前没有确立有效的处理，临床上通常只监测功能——
+          具体怎么安排由医生决定。

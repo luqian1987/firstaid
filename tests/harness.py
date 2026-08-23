@@ -22,6 +22,7 @@ FIXTURES = Path(__file__).resolve().parent / "fixtures"
 
 
 def build(fixture: str, overrides: dict, ont, units, derived):
+    """返回 (enc, ont)。少数模式要读本体属性，所以求值时必须带着它。"""
     raw = yaml.safe_load((FIXTURES / f"{fixture}.yaml").read_text(encoding="utf-8"))
     drop, setval, setattrs = set(), {}, {}
     for k, v in (overrides or {}).items():
@@ -59,6 +60,6 @@ def build(fixture: str, overrides: dict, ont, units, derived):
     return enc
 
 
-def evaluate(rule, enc):
+def evaluate(rule, enc, ont=None):
     impl = REGISTRY[rule.archetype]
-    return impl.run(rule.id, RuleContext(enc), rule.params)
+    return impl.run(rule.id, RuleContext(enc, ontology=ont), rule.params)

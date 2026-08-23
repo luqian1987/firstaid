@@ -123,3 +123,19 @@ derived:
     cross_check_code: BMI
     cross_check_tolerance: 0.01
     changes_what: 用于校验原报告给出的 BMI 是否与身高体重自洽
+
+  # 阴离子间隙。二氧化碳结合力单独偏低时，唯一能分开
+  # "真的有酸中毒" 与 "标本或呼吸因素" 的一步计算，而原报告从不算它。
+  - code: ANION_GAP
+    name: 阴离子间隙
+    unit: mmol/L
+    expr: "SODIUM.value - CHLORIDE.value - CO2CP.value"
+    inputs: [SODIUM, CHLORIDE, CO2CP]
+    formula_display: "{SODIUM} − {CHLORIDE} − {CO2CP}"
+    system: electrolyte
+    changes_what: 低二氧化碳结合力是不是有临床意义的代谢性酸中毒
+    advisory:
+      note: 常用区间 8–16 mmol/L（不含钾的算法）
+      source: "Emmett M, Narins RG. Clinical use of the anion gap. Medicine, 1977;56:38-54"
+      low: 8
+      high: 16

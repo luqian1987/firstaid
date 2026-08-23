@@ -1,0 +1,130 @@
+rules:
+  # 模式 15：同一个量被报了两次。
+  # 红细胞压积在血常规里叫"红细胞压积"（%），在血流变里叫"压积"（小数）。
+  # 两张单子各打一个箭头，总检就把它数成两条异常，
+  # 再加上血小板聚集率，凑成"建议血液科门诊"。
+  - id: hematology.hematocrit_counted_twice
+    archetype: duplicate_quantity
+    title: 红细胞压积在两张单子上各被标了一次低，是同一个数
+    headline: 两张单子上的压积是同一个数；红细胞形态正常，不是缺铁的样子
+    lede: >-
+      血常规的"红细胞压积 34.9%"与血流变的"压积 0.35"是同一个量的两种写法。
+      它比下限低 0.1 个百分点，而决定它意味着什么的是红细胞的形态指标。
+    tag: downgrade
+    chapter: downgrade
+    modifiability: clinical
+    priority: 45
+    params:
+      same:
+        - {code: HCT, scale: 0.01}
+        - {code: HCT_RHEO, scale: 1.0}
+      tolerance: 0.05
+      context: [HGB, RBC, MCV, MCH, MCHC, RDW, PLT, FERRITIN]
+    narration:
+      single_read: >-
+        原报告把"血小板最大聚集率MAR低""压积低""红细胞压积低"合成一条，
+        建议均衡营养、多补充含高蛋白和铁的食物，到血液科门诊复查随诊。
+        三个箭头并排，看起来像三处都出了问题。
+      joint_read: >-
+        这三条里有两条是同一个数：血常规的红细胞压积 {HCT}% 与血流变的压积 {HCT_RHEO}，
+        换算之后完全一致——两个组套都测了它，于是它被数了两遍。
+        剩下的问题只有一个：这个压积低意味着什么。
+        判据是红细胞的形态三项：平均红细胞体积 {MCV} fl、平均血红蛋白量 {MCH} pg、
+        红细胞分布宽度 {RDW}%，全部在区间内，血红蛋白 {HGB} g/L 也在区间内。
+        缺铁的样子是细胞变小、含血红蛋白变少、大小参差变大——本次三项都不是。
+        所以"多补充含铁的食物"这条建议在本次数据上没有对应的依据。
+      must_convey:
+        - 血常规的红细胞压积与血流变的压积是同一个量，被数了两遍
+        - 红细胞形态三项全部正常，不是缺铁的形态
+        - "「补铁」这条建议在本次数据上没有依据"
+      must_not_claim:
+        - 不得排除缺铁——确认它要靠铁蛋白，本次没做
+        - 不得据此断言不存在贫血；判断贫血看血红蛋白，而它正好在下限上
+    verdict:
+      certain: >-
+        压积这一项不需要按两条来处理。它低的幅度很小，而形态指标全部正常，
+        单看这一次没有指向明确病因。
+      not_certain: >-
+        本次没有查铁蛋白，所以"不像缺铁"是从形态推的，不是直接证据。
+        血红蛋白 115 正好压在下限上，育龄女性的这个位置常与月经量有关，
+        而月经史本报告完全空白——这一项不需要任何检查就能补上。
+      next_steps:
+        - 补一次铁蛋白，它是把"像不像缺铁"变成"是不是缺铁"的唯一一步
+        - 记录月经量与周期；这一项对判断育龄女性的血红蛋白位置比任何检查都直接
+        - 下次看这几项时，血常规与血流变只取其中一份的压积，不要重复计数
+      compare_next:
+        - code: HGB
+          what: 血红蛋白，它才是判断贫血的那个数
+          rationale: 压积随血浆容量波动，血红蛋白稳定得多
+        - code: MCV
+          what: 与血红蛋白同看。血红蛋白降而体积也降，才提示缺铁
+    tests:
+      - {name: 病例3真实数据, fixture: case3_2026-03-30, expect: triggered}
+      - {name: 两处都正常时不成立, fixture: case3_2026-03-30, expect: not_triggered,
+         overrides: {HCT: 40.0, HCT_RHEO: 0.40}}
+      - {name: 病例1只报了一处压积, fixture: zhang_real_2026-03-30, expect: not_triggered}
+
+  # 模式 6：孤立异常缺乏佐证
+  - id: hematology.mar_low_without_bleeding
+    archetype: isolated_abnormal
+    title: 血小板最大聚集率低，而血小板计数与凝血全套都正常
+    headline: 聚集率低而计数与凝血全正常，先要问的是在吃什么药
+    lede: >-
+      血小板最大聚集率测的是血小板被激动剂唤起后抱团的能力。
+      它是本套检查里对药物最敏感的一项——阿司匹林、氯吡格雷、部分止痛药
+      都会直接把它压下去，而这些恰恰是最容易被忽略不提的东西。
+    tag: retest_first
+    chapter: watch
+    modifiability: clinical
+    priority: 50
+    params:
+      abnormal: MAR_ADP
+      direction: low
+      corroborators: [PLT, PT, INR, APTT, TT, FIB, DDIMER, AT3, FDP]
+      optional_corroborators: [GINGIVAL_BLEEDING, PCT_PLT, MPV]
+      corroborator_expect: negative_or_in_range
+    needs_context: [medications, symptoms]
+    narration:
+      single_read: >-
+        它与压积被合成一条给了血液科，建议"均衡营养、多补充含高蛋白、铁的食物"。
+        但营养与血小板聚集功能之间没有已确立的关系，这条建议对它不成立。
+      joint_read: >-
+        同一次抽血里，血小板计数 {PLT}、凝血酶原时间 {PT}、部分凝血活酶时间 {APTT}、
+        凝血酶时间 {TT}、纤维蛋白原 {FIB}、D-二聚体 {DDIMER}、抗凝血酶Ⅲ {AT3}、
+        纤维蛋白原降解产物 {FDP} 全部在区间内，口腔检查记录的牙龈出血也是"否"。
+        也就是说：数量够、凝血通路完整、临床上没有出血表现，
+        只有体外诱导的聚集率这一项低。
+        这种"单项体外功能低、其余全阴"的组合，最常见的原因是药物——
+        而"在服药物与保健品"这一项本报告完全空白。
+        在补上这项背景之前，这个数字解释不了。
+      must_convey:
+        - 血小板计数与凝血全套都正常，临床上没有出血表现
+        - 血小板聚集率对药物极敏感，而用药史本报告空白
+        - "「补充高蛋白和铁」这条建议与血小板聚集功能没有已确立的关系"
+      must_not_claim:
+        - 不得诊断任何血小板功能障碍
+        - 不得据此建议停用任何药物——停药必须由开药的医生决定
+        - 不得说存在出血风险；本次没有任何出血证据
+    verdict:
+      certain: >-
+        在问清用药之前，这一项不构成到血液科就诊的理由。
+        先回答一个不需要检查的问题：最近两周有没有吃过阿司匹林、
+        含阿司匹林的复方感冒药、布洛芬类止痛药，或鱼油、大蒜素这类保健品。
+      not_certain: >-
+        血小板聚集率的检测本身受采血到检测的时间、标本抗凝与温度影响很大，
+        单次低值不宜细究。即使排除了药物，也需要复测确认后才谈得上进一步检查。
+      next_steps:
+        - 把最近两周吃过的所有药与保健品列出来，包括感冒药和止痛药
+        - 如果确实没有用药，隔一段时间复测一次，采血后尽快送检
+        - 不需要为这一项改变饮食
+      compare_next:
+        - code: MAR_ADP
+          what: 复测值本身，且要注明当时有没有用药
+          caveat: 采血到检测的间隔、抗凝剂与温度都会影响结果，条件不一致就不可比
+        - code: PLT
+          what: 与聚集率同看。数量与功能是两件事，同时异常才提示血小板本身的问题
+    tests:
+      - {name: 病例3真实数据, fixture: case3_2026-03-30, expect: triggered}
+      - {name: 凝血也异常时不成立, fixture: case3_2026-03-30, expect: not_triggered,
+         overrides: {APTT: 45.0}}
+      - {name: 病例1聚集率正常, fixture: zhang_real_2026-03-30, expect: not_triggered}

@@ -31,6 +31,8 @@ class Archetype(str, Enum):
     RISK_CONVERGENCE = "risk_convergence"                # 多因素同向偏离 + 已有形态学落点
     INCIDENTAL_ON_OTHER_STUDY = "incidental_on_other_study"  # 为别的目的做的检查上的附带发现
     UNSETTLED_FINDING = "unsettled_finding"              # 发现在场，但定性它所需的检查本次都没做
+    DUPLICATE_QUANTITY = "duplicate_quantity"            # 同一个量在两个组套里各报一次，被数成两条异常
+    BENIGN_DIRECTION = "benign_direction"                # 箭头指向的是有利的一侧
 
 
 class Modifiability(str, Enum):

@@ -126,6 +126,8 @@ class ContextKey(str, Enum):
     PREGNANCY = "pregnancy"
     SYMPTOMS = "symptoms"                       # 相关症状时间线
     PRIOR_ENCOUNTERS = "prior_encounters"       # 既往体检数据
+    TRAUMA_HISTORY = "trauma_history"           # 外伤/骨折史
+    PRIOR_IMAGING = "prior_imaging"             # 既往影像原片（不是报告单）
 
 
 CONTEXT_LABELS: dict[ContextKey, str] = {
@@ -135,6 +137,8 @@ CONTEXT_LABELS: dict[ContextKey, str] = {
     ContextKey.FAMILY_CVD: "家族早发心脑血管病史（男<55/女<65）",
     ContextKey.PREGNANCY: "妊娠状态",
     ContextKey.SYMPTOMS: "相关症状时间线",
+    ContextKey.TRAUMA_HISTORY: "外伤或骨折史",
+    ContextKey.PRIOR_IMAGING: "既往影像原片（不是报告单）",
     ContextKey.PRIOR_ENCOUNTERS: "既往体检数据",
 }
 

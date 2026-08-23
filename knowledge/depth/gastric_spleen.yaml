@@ -6,13 +6,19 @@ pathways:
     upstream: null
     chain: gastric.saliva_pepsin_vs_normal_panel
     gate_kind: recheck
-    no_upstream_note: 幽门螺杆菌本次未检测
+    # 写死一句"本次未检测"就是把第一个病人钉进知识库——换个人是做了且阴性。
+    no_upstream_note:
+      - {when: "C14_UBT.negative", text: "幽门螺杆菌 C14 呼气试验阴性——这条路上最主要的推手不在场"}
+      - {when: "C14_UBT.abnormal", text: "幽门螺杆菌呼气试验阳性——这条路上的主要推手在场"}
+      - {text: 幽门螺杆菌本次未检测}
     stages:
       - name: 胃黏膜萎缩
-        judged_by: [GASTRIN17, PG1, PG2, PG_RATIO]
-        crossed_when: "PG_RATIO.is_low or PG1.is_low or GASTRIN17.abnormal"
+        # 判据只用胃蛋白酶原这一组。胃泌素17 升高有好几个更常见的原因
+        # （抑酸药、胃窦炎症），拿它当萎缩的判据，会把病例 3 误判成"已跨过"。
+        judged_by: [PG1, PG2, PG_RATIO]
+        crossed_when: "PG_RATIO.is_low or PG1.is_low"
         col: 1
-        detail: "胃泌素17 {GASTRIN17}、PGⅠ {PG1}、PGⅠ/Ⅱ {PG_RATIO} 全部在区间中部"
+        detail: "PGⅠ {PG1}、PGⅡ {PG2}、PGⅠ/Ⅱ {PG_RATIO} —— 萎缩时先掉的是这一组"
     tail: >-
       本次的发现是唾液胃蛋白酶阳性，它指向的是反流方向——而反流那条缺症状记录与镜下所见，
       画不出可判定的关口，所以图上没有。这里画的是另一个方向：胃黏膜萎缩，

@@ -244,3 +244,158 @@ lessons:
     note: >-
       转录阶段的错，但它能被审计层抓到——异常项无归宿会让构建失败，
       于是"转录时多写了一个期望值"不会静默留在数据里
+
+  # ---- 以下九条来自第三份真实报告（病例 3，42 岁女，与病例 1 同院同日）。
+  #      这一份带来的是三个此前完全没有的面：第一位女性、第一例自身免疫、
+  #      第一次以"偏低"为主。九个错里有六个是"第一次遇到这类输入"才会犯的。----
+
+  - id: L020
+    phase: design
+    symptom: >-
+      新写的规则一直不命中，规则自检通过、构建全绿、没有任何报错。
+      最后发现参数名写成了 upstream_direction，而模式里那个字段叫 direction
+    root_cause: >-
+      pydantic 默认忽略多余字段。于是写错的参数名被丢掉、用默认值，
+      规则看上去写好了却永远不成立
+    layer: invariant
+    fix: >-
+      所有模式参数模型继承同一个 extra="forbid" 的基类；
+      并把参数校验提到规则自检阶段——写错的名字在加载规则时就失败，
+      不必等到某个病人恰好跑到那条规则
+    guarded_by:
+      - tests/test_rules.py::test_ruleset_shape
+      - tests/test_corpus.py::test_real_case_builds
+    note: 与 L016 同一族：静默失效比崩溃危险得多，能变成断言的都要变成断言
+
+  - id: L021
+    phase: design
+    symptom: >-
+      深读里把"胃窦萎缩"列在"已排除"，引用的指标是胃泌素17；
+      而病例 3 的胃泌素17 是三倍上限。这句"已排除"在她身上完全不成立
+    root_cause: >-
+      规则文本（叙述、机制、修饰因素）可以断言模式层根本没检查过的状态。
+      文本是照着第一个病人写的，换一个人整句话就是假的
+    layer: invariant
+    fix: >-
+      "已排除"这一栏加不变式：列在 absent 的修饰因素，它引用的指标本次不能是异常的。
+      这一条只覆盖 absent，但那恰好是最危险的一栏——"已排除"比"在场"
+      更容易被读者当成结论
+    guarded_by:
+      - tests/test_corpus.py::test_real_case_builds
+    note: >-
+      叙述文本里的定性断言（"落在区间中部""全部正常"）目前还机械校验不了。
+      能做的是：跨病例复用一条规则前，逐句重读它的断言。这一半还是靠人
+
+  - id: L022
+    phase: design
+    symptom: >-
+      拓扑图把病例 3 的"胃黏膜萎缩"画成已跨过，而同一份报告的胃镜结论
+      明确写着"非萎缩性胃炎"，本系统的判读也是"萎缩已排除"
+    root_cause: >-
+      通路那一关的 crossed_when 里塞了 GASTRIN17.abnormal。
+      胃泌素17 升高有好几个更常见的原因（抑酸药、胃窦炎症），
+      它不是萎缩的判据——病例 1 的 G17 正常，看不出这个区别
+    layer: knowledge
+    fix: 萎缩这一关只用胃蛋白酶原那一组判定；胃泌素17 另立一条判读
+    guarded_by:
+      - tests/test_corpus.py::test_real_case_builds
+    note: >-
+      同一个错在规则层也犯了一次：那条唾液胃蛋白酶的规则把 GASTRIN17
+      写进了佐证项。佐证项要按"回答同一个问题"选，不是按"印在同一张化验单上"选
+
+  - id: L023
+    phase: design
+    symptom: >-
+      "本次未找到上游"后面跟的那句"幽门螺杆菌本次未检测"，
+      在病例 3 身上是错的——她做了，而且是阴性
+    root_cause: 那句解释是写死的字符串，把第一个病人的情况钉进了知识库
+    layer: invariant
+    fix: >-
+      这句话改成一串 {when, text}，按条件求值取第一个成立的。
+      与 L011（三条通路共用一句写死的"血压血糖均正常"）同源，
+      但这次是把机制补上而不是再拆一次
+    guarded_by:
+      - tests/test_depth.py::test_tracks_without_upstream_explain_why_per_track
+      - tests/test_corpus.py::test_real_case_builds
+
+  - id: L024
+    phase: design
+    symptom: >-
+      心脏彩超把每个径线都量了，却一个参考区间都没给；
+      要判"心腔正常"就没有任何判据，而这些径线的正常上限还分性别
+    root_cause: >-
+      分性别的参考区间在前两个病人（都是男性）身上不构成需求，
+      所以本体层的切点是扁平的一套值
+    layer: knowledge
+    fix: >-
+      本体与派生表共用同一个 advisory 块，支持 by_sex；
+      性别从受检人信息一路传到归一层与派生层。
+      心脏径线、腰臀比按指南补齐切点并写明出处
+    guarded_by:
+      - tests/test_corpus.py::test_real_case_builds
+      - tests/test_audit.py::test_advisory_cutoff_counts_as_a_criterion
+    note: >-
+      是 L016 那条不变式把这件事逼出来的——规则一引用这些径线，
+      构建就失败并直接指出该补什么。这正是不变式该有的样子
+
+  - id: L025
+    phase: design
+    symptom: 拓扑图上游框里的小字被截掉左半边，另一处说明文字直接画到画布外面
+    root_cause: SVG 的 <text> 不会自动换行，超出的部分不报错、不省略，直接消失
+    layer: invariant
+    fix: 按视觉宽度折行（中日韩字符 1 单位、ASCII 0.55），并让框高随行数增长
+    guarded_by:
+      - tests/test_render.py::test_no_unrendered_template_markers
+      - tests/test_corpus.py::test_real_case_builds
+
+  - id: L026
+    phase: design
+    symptom: >-
+      牙周那条判读在对账表里被标成"原报告未提及，本次判读新增"，
+      而原报告第 1 条里明明写了"牙结石轻度"
+    root_cause: >-
+      一条原报告结论只会挂在一条判读上（先匹配到的那条）。
+      另一条回答同一件事的判读没匹配上，就被当成了"原报告没提"
+    layer: invariant
+    fix: >-
+      没匹配上时再查一次：这条判读用到的指标有没有出现在任何一条原报告结论里。
+      有就写"原报告第 N 条里提到过，但没有单独作结论"，不写"未提及"
+    guarded_by:
+      - tests/test_reconcile.py::test_every_original_finding_is_answered
+      - tests/test_corpus.py::test_real_case_answers_every_original_finding
+
+  - id: L027
+    phase: design
+    symptom: >-
+      病例 1 的牙结石落进"无区间"、逃过判定，直到病例 3 的规则要用它才暴露
+    root_cause: >-
+      同一张口腔表里其余各项都转录了期望值（"否""无"），唯独这一项漏了。
+      转录时漏一个期望值，这一项就永远判不了高低
+    layer: knowledge
+    fix: 补上期望值
+    guarded_by:
+      - tests/test_rules.py::test_rule_fixtures
+      - tests/test_corpus.py::test_real_case_builds
+    note: >-
+      这类漏转录本来会被覆盖率审计抓到（异常项无归宿即失败），
+      但"该异常却被判成无区间"的那一半抓不到——它安静地进了留档。
+      定性项的期望值缺失目前还没有可机械校验的办法
+
+  - id: L028
+    phase: design
+    symptom: >-
+      甲状腺那条通路的第三关"功能开始代偿不足"本次是判定过的（未跨过），
+      却被画进了标着"本次没有数据，不展开"的那一栏
+    root_cause: >-
+      阶段的列位置按它是第几个分配，而分栏的语义是按"有没有数据、判不判得了"定义的。
+      两者在阶段数超过两个时必然对不上
+    layer: knowledge
+    fix: >-
+      这一次是把"抗体阳性"与"超声形态改变"合并成一关——它们本来就是
+      同一件事在两种设备上的样子，画成两关会暗示不存在的先后关系
+    guarded_by:
+      - tests/test_depth.py::test_topology_covers_every_action_band_chain_or_says_why_not
+      - tests/test_corpus.py::test_real_case_builds
+    note: >-
+      真正的泛化解法是按状态语义分栏而不是按索引分栏，这一条还没做。
+      在多阶段通路变多之前，先记在这里

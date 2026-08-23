@@ -47,6 +47,8 @@ class PatternEngine:
         self.ontology = ontology
 
     def run(self, ctx: RuleContext) -> EngineResult:
+        if ctx.ontology is None:
+            ctx.ontology = self.ontology
         res = EngineResult()
         ctx_missing: dict[ContextKey, list[tuple[str, str]]] = {}
 

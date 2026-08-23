@@ -31,6 +31,37 @@ def _fill(text: str, obs: dict[str, Observation]) -> str:
     return _TOKEN.sub(sub, text or "")
 
 
+def _chains_of(p: dict) -> list[str]:
+    """一条通路可以由不止一条判读带上图。
+
+    同一个演变过程，不同的人可能是被不同的判读命中的
+    （牙周这条：病例 1 是"牙龈出血在场"，病例 3 是"结石在场但炎症不活动"）。
+    过程是同一个，没有理由抄两份通路定义。
+    """
+    c = p.get("chain")
+    if c is None:
+        return []
+    return list(c) if isinstance(c, (list, tuple)) else [c]
+
+
+def _one_of(spec, names, obs) -> str:
+    """按条件挑一句话。
+
+    "本次没有上游"后面那句解释，写死就等于把第一个病人的情况钉进知识库
+    （"幽门螺杆菌本次未检测"——换个人是做了且阴性）。
+    所以它可以写成一串 {when, text}，按顺序取第一个成立的。
+    """
+    if spec is None:
+        return ""
+    if isinstance(spec, str):
+        return _fill(spec, obs)
+    for item in spec:
+        cond = item.get("when")
+        if cond is None or evaluate(cond, names):
+            return _fill(item.get("text", ""), obs)
+    return ""
+
+
 def _pick(ctx: RuleContext, codes) -> tuple[Observation, ...]:
     return tuple(o for c in codes if (o := ctx.obs(c)) is not None)
 
@@ -87,8 +118,10 @@ class DepthEngine:
         tracks: list[PathwayTrack] = []
         for p in self.spec.get("pathways", []):
             # 只画那些对应链条本次真的命中的通路
-            if p.get("chain") and p["chain"] not in chain_ids:
+            owners = _chains_of(p)
+            if owners and not (set(owners) & chain_ids):
                 continue
+            owner = next((c for c in owners if c in chain_ids), None)
             stages = []
             for i, st in enumerate(p["stages"]):
                 if any(ctx.obs(c) is None for c in st["judged_by"]):
@@ -106,11 +139,11 @@ class DepthEngine:
                     evidence=_pick(ctx, st["judged_by"])))
             tracks.append(PathwayTrack(
                 id=p["id"], label=p["label"], upstream_id=p["upstream"],
-                chain_id=p.get("chain"), stages=tuple(stages),
+                chain_id=owner, stages=tuple(stages),
                 tail=_fill(p.get("tail", ""), obs),
                 next_gate=_fill(p.get("next_gate", ""), obs),
                 gate_kind=p.get("gate_kind", "recheck"),
-                no_upstream_note=_fill(p.get("no_upstream_note", ""), obs)))
+                no_upstream_note=_one_of(p.get("no_upstream_note"), names, obs)))
 
         order = {c: i for i, c in enumerate(chain_order)} if chain_order else {}
         tracks.sort(key=lambda t: order.get(t.chain_id, 999))
@@ -126,7 +159,7 @@ class DepthEngine:
         "忘了画"这种状态不允许存在。
         """
         from ..model import Band, band_of
-        has = {p.get("chain") for p in self.spec.get("pathways", [])}
+        has = {c for p in self.spec.get("pathways", []) for c in _chains_of(p)}
         why = {x["chain"]: x["why"] for x in self.spec.get("no_progression", [])}
         excluded, errs = [], []
         for c in chains:
@@ -142,6 +175,29 @@ class DepthEngine:
         return excluded, errs
 
     # ---------------- 机制 / 修饰 / 干预 ----------------
+    def check_absent_modifiers(self, enc: Encounter, chains) -> list[str]:
+        """说"这个因素不在场"，那它引用的指标就不能是异常的。
+
+        深读文本是按第一个病人写的，换一个人可能整句话都不成立
+        （胃那条把"胃窦萎缩：胃泌素17"列进"已排除"，而病例 3 的胃泌素17 是三倍上限）。
+        这一条只覆盖 absent 这一栏，但它恰好是最危险的一栏——
+        "已排除"比"在场"更容易被读者当成结论。
+        """
+        errs: list[str] = []
+        ids = {c.id for c in chains}
+        for cid, block in (self.spec.get("depth") or {}).items():
+            if cid not in ids:
+                continue
+            for m in ((block.get("modifiers") or {}).get("absent") or []):
+                for code in m.get("codes", []):
+                    o = enc.observations.get(code)
+                    if o is not None and o.abnormal:
+                        errs.append(
+                            f"{cid}: 修饰因素「{m['name']}」列在「已排除」，"
+                            f"但它引用的 {code}（{o.raw_name}）本次是异常的。"
+                            "这句话在这个人身上不成立——改判据，或把这一项挪出 absent")
+        return errs
+
     def depth_for(self, enc: Encounter, chain, compare_codes: set[str]) -> Depth | None:
         block = (self.spec.get("depth") or {}).get(chain.id)
         if not block:

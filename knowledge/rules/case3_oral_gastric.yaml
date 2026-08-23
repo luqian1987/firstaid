@@ -1,0 +1,190 @@
+rules:
+  # 模式 5：多层排除 —— 胃泌素17 单独高，能解释它的两条通路都被同一份报告排除了
+  - id: gastric.g17_high_with_atrophy_and_hp_excluded
+    archetype: layered_exclusion
+    title: 胃泌素17 高，而萎缩与幽门螺杆菌两条通路都已排除
+    headline: 萎缩和幽门螺杆菌都排除了，剩下最常见的解释是抑酸药——而用药史空白
+    lede: >-
+      胃泌素17 由胃窦的 G 细胞分泌，它的分泌受胃酸负反馈：胃里越不酸，它越高。
+      所以它升高时要问的不是"胃出了什么问题"，而是"胃酸为什么少了"。
+      能让胃酸变少的路径不多，而这次它们大都有直接证据。
+    tag: retest_first
+    chapter: watch
+    modifiability: clinical
+    priority: 62
+    params:
+      finding: GASTRIN17
+      layers:
+        - {name: 胃体萎缩, codes: [PG1, PG_RATIO], expect: in_range}
+        - {name: 幽门螺杆菌, codes: [C14_UBT], expect: negative_or_in_range}
+        - {name: 内镜下萎缩, codes: [GASTRIC_ATROPHY], expect: negative_or_in_range}
+    extra_evidence: [PG2, GASTRIC_MUCOSA, SALIVA_PEPSIN, HGB, MCV]
+    needs_context: [medications, symptoms]
+    narration:
+      single_read: >-
+        原报告把"胃蛋白酶：阳性""胃泌素17高""非萎缩性胃炎"合成一条，
+        建议结合自身临床症状到消化内科定期随诊。
+        22.28 是上限的三倍多，单看这个倍数会让人担心。
+      joint_read: >-
+        胃泌素17 高的经典解释是胃体萎缩：泌酸的腺体少了，胃里不酸，
+        G 细胞就一直被激。但这条路本次有直接判据而且都指向"不是"——
+        胃蛋白酶原Ⅰ {PG1} 与 PGⅠ/Ⅱ 比值 {PG_RATIO} 都正常，
+        胃镜结论明确写的是"非萎缩性胃炎"。
+        第二条常见解释是幽门螺杆菌感染，C14 呼气试验阴性，也不支持。
+        两条都排除之后，剩下最常见的一个是质子泵抑制剂——
+        奥美拉唑这类抑酸药会持续把胃酸压下去，胃泌素17 随之升高，
+        这是药物的预期作用而不是病。
+        而"在服药物与保健品"这一项本报告完全空白。
+        胃镜看到的胃窦花斑样及斑片状充血本身也会伴随 G17 升高，
+        但那是局部炎症，与萎缩不是一回事。
+      must_convey:
+        - 胃泌素17 高要问的是"胃酸为什么少了"，不是"胃里长了什么"
+        - 胃体萎缩与幽门螺杆菌两条通路本次都有直接证据排除
+        - 剩下最常见的解释是抑酸药，而用药史本报告空白
+        - 胃镜的"非萎缩性胃炎"是对萎缩这个问题的明确否定
+      must_not_claim:
+        - 不得诊断自身免疫性胃炎——那需要抗壁细胞抗体与内因子抗体，本次没做
+        - 不得建议停用任何抑酸药；停药必须由开药的医生决定
+        - 不得据此推断胃癌风险
+    verdict:
+      certain: >-
+        在问清有没有在吃抑酸药之前，这个数字解释不了，
+        也不构成到消化内科随诊的独立理由——胃镜已经做过了，它的效力高于这项血清学。
+      not_certain: >-
+        自身免疫性胃炎在早期可以只表现为胃泌素17 升高而胃蛋白酶原尚未下降，
+        本次没有做抗壁细胞抗体与内因子抗体，所以不能完全排除。
+        由于同一份报告里有明确的自身免疫甲状腺病，这一点值得在消化科门诊提一句——
+        这两类自身免疫常同时出现。
+      next_steps:
+        - 先回答一个不需要检查的问题：最近三个月有没有在吃奥美拉唑、雷贝拉唑之类的抑酸药
+        - 若在吃，停药 4 周后复测胃泌素17，届时的数值才有解释力
+        - 若没有吃过任何抑酸药，把这一条与甲状腺抗体一起带到消化科，问一句要不要查壁细胞抗体
+        - 血红蛋白 115 在下限上，若将来复查继续下滑，这条线要重新看
+      compare_next:
+        - code: GASTRIN17
+          what: 复测值，并注明当时有没有在用抑酸药
+          caveat: 用药期间的值不能与停药期间的值直接比较
+        - code: PG_RATIO
+          what: 萎缩筛查里最稳定的一个数，与胃泌素17 同次看
+    tests:
+      - {name: 病例3真实数据, fixture: case3_2026-03-30, expect: triggered}
+      - {name: PG比值下降提示萎缩时不成立, fixture: case3_2026-03-30, expect: not_triggered,
+         overrides: {PG_RATIO: 1.8}}
+      - {name: 病例1没做呼气试验与胃镜, fixture: zhang_real_2026-03-30, expect: indeterminate}
+
+  # 模式 1：上游异常 / 下游全阴 —— 牙结石在场，而牙龈的活动性炎症指标全阴
+  - id: oral.calculus_without_active_inflammation
+    archetype: upstream_contradicted
+    title: 牙结石轻度、牙龈退缩已发生，而出血、肿胀、溃疡全部阴性
+    headline: 退缩是已经发生的累积，出血肿胀全阴说明现在不在活动期
+    lede: >-
+      牙结石堆积、龈缘慢性炎症、牙龈退缩，是同一条链上前后相邻的三关。
+      退缩一旦发生就不会自己长回来，所以要判断的不是"有没有退缩"，
+      是"这条链现在还在不在往前走"。
+    tag: self_action
+    chapter: easy_win
+    modifiability: self_modifiable
+    priority: 42
+    params:
+      upstream: DENTAL_CALCULUS
+      direction: abnormal
+      downstream: [GINGIVAL_BLEEDING, GINGIVAL_SWELLING, TOOTH_MOBILITY]
+      downstream_expect: negative_or_in_range
+    extra_evidence: [GINGIVAL_RECESSION, MISSING_TEETH, MUCOSAL_ULCER, TONGUE_COATING, OCCLUSION]
+    narration:
+      single_read: >-
+        原报告把"牙结石轻度"与龋齿合成一条，一起归到"就医"，建议到口腔科。
+        牙龈退缩这一项在表格里是"是"，但没有进任何结论。
+      joint_read: >-
+        牙结石 {DENTAL_CALCULUS}、牙龈退缩 {GINGIVAL_RECESSION}——这两项说明
+        这条链已经走过一段。但同一张表上，牙龈出血、牙龈肿胀溢脓、黏膜溃疡
+        都是"否"，牙齿松动度"无"，缺失牙"无"。
+        也就是说：炎症目前不在活动期，支持组织的丧失也还没有走到松动那一关。
+        退缩本身不可逆，能改变的是它继续往前走的速度，
+        而决定速度的恰恰是结石——它是这条链上唯一一个一次洗牙就能移除的环节。
+      must_convey:
+        - 结石、慢性炎症、退缩是同一条链上前后相邻的三关
+        - 出血、肿胀、溃疡、松动四项全阴，说明现在不在活动期
+        - 退缩不可逆，能改变的是它往前走的速度
+        - 结石是这条链上唯一一次处理就能移除的环节
+      must_not_claim:
+        - 不得诊断牙周炎——分期需要牙周探诊深度与牙片，本次都没有
+        - 不得说退缩会恢复
+    verdict:
+      certain: >-
+        一次洁牙就能把这条链上可移除的那一环去掉，
+        而且它可以和补牙安排在同一次口腔科预约里——不需要跑两趟。
+      not_certain: >-
+        本次没有做牙周探诊，也没有拍牙片，所以说不出牙槽骨的实际情况。
+        "不在活动期"是从四项阴性推的，不是探诊得出的结论。
+      next_steps:
+        - 口腔科预约时一次把补牙与洁牙都做了
+        - 洁牙后请医生看一次牙周探诊深度，那才是判断这条链走到哪一关的依据
+        - 退缩的位置刷牙时避免横向用力，改用软毛牙刷与巴氏刷法
+      compare_next:
+        - code: DENTAL_CALCULUS
+          what: 洁牙后到下次体检之间重新堆积的量，反映的是日常清洁的效果
+        - code: GINGIVAL_RECESSION
+          what: 是否有新的位置出现退缩。已有的那处不会回去
+    tests:
+      - {name: 病例3真实数据, fixture: case3_2026-03-30, expect: triggered}
+      - {name: 牙龈出血时说明在活动期，不成立, fixture: case3_2026-03-30,
+         expect: not_triggered, overrides: {GINGIVAL_BLEEDING: 是}}
+      - {name: 病例1牙龈出血在场, fixture: zhang_real_2026-03-30, expect: not_triggered}
+
+  # 模式 9 之外的一条：龋齿是本报告里唯一一条确定、有明确入口、且拖延会变贵的事
+  - id: oral.caries_is_the_one_definite_action
+    archetype: isolated_abnormal
+    title: 36 龋齿伴牙体缺损：本次唯一一条确定且有明确入口的处理
+    headline: 这是整份报告里唯一确定要做、而且拖久了会变贵的一件事
+    lede: >-
+      这份报告里大多数条目要么需要先补一项判据，要么可以放下。
+      龋齿不同：它已经确诊、处理方式明确、且只会往一个方向走。
+    tag: self_action
+    chapter: act_now
+    modifiability: clinical
+    priority: 75
+    params:
+      abnormal: CARIES
+      direction: abnormal
+      corroborators: [TOOTH_MOBILITY, MISSING_TEETH]
+      optional_corroborators: [GINGIVAL_SWELLING, MUCOSAL_ULCER]
+      corroborator_expect: negative_or_in_range
+    narration:
+      single_read: >-
+        原报告把它列在"就医"第一条：36龋齿、牙体缺损，建议补牙，
+        到口腔科进一步检查后行下一步治疗。这一条原报告说得没有问题。
+      joint_read: >-
+        把它放在整份报告里看，位置就更清楚了：
+        其余条目大多是"先补一项判据"或"可以放下"，
+        只有这一条是已经确诊、处理方式明确、而且拖延有明确代价的。
+        龋损只会往深处走，从补牙到根管治疗是费用、时间与不适的数量级差别。
+        同时牙齿松动度"无"、缺失牙"无"、牙龈肿胀溢脓"否"——
+        说明还停留在牙体本身，没有波及牙髓或牙周支持组织。
+        这一次预约还可以顺带把洁牙做了。
+      must_convey:
+        - 这是本次唯一一条确定、有明确入口、且拖延有代价的处理
+        - 尚未波及牙髓与牙周支持组织
+        - 可以与洁牙安排在同一次预约
+      must_not_claim:
+        - 不得判断龋损深度或是否已近牙髓——那要靠牙片
+        - 不得预测多久会发展到需要根管
+    verdict:
+      certain: >-
+        约一次口腔科，把 36 号牙补上，同一次把洁牙做了。
+        这是本次报告里最没有争议的一件事。
+      not_certain: >-
+        体检的口腔检查是目视，看不到邻面与牙根方向的龋损，也判断不了深度。
+        实际处理方式要由牙片决定，可能不止充填。
+      next_steps:
+        - 预约口腔科，说明是 36 号牙龋坏伴牙体缺损，同次要求洁牙
+        - 就诊时要求拍一张牙片，它决定是充填还是需要更多处理
+      compare_next:
+        - code: CARIES
+          what: 补牙后下次体检看有没有新发龋，以及原充填体的边缘情况
+    tests:
+      - {name: 病例3真实数据, fixture: case3_2026-03-30, expect: triggered}
+      - {name: 已有牙齿松动时超出本条范围, fixture: case3_2026-03-30,
+         expect: not_triggered, overrides: {TOOTH_MOBILITY: 是}}
+      # 病例 1 做了口腔检查且没有龋齿 —— 明确不成立，不是判不了
+      - {name: 病例1无龋齿, fixture: zhang_real_2026-03-30, expect: not_triggered}

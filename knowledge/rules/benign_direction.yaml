@@ -1,0 +1,121 @@
+rules:
+  # 模式 16：箭头指向的是有利的一侧。
+  # 这一类的共同点是：参考区间双侧，而指标的临床意义单侧。
+  # 报告照区间打箭头，总检照箭头写建议，于是保护因素被配上了减重戒油的方案。
+
+  - id: lipid.apoa1_high_is_hdl_high
+    archetype: benign_direction
+    title: 载脂蛋白AⅠ 高与高密度脂蛋白高是同一件事，而且是有利的一侧
+    headline: 载脂蛋白AⅠ 的箭头指向好的一侧，它和高密度脂蛋白是同一批颗粒
+    lede: >-
+      载脂蛋白AⅠ 是高密度脂蛋白颗粒的主要载脂蛋白，与高密度脂蛋白胆固醇
+      计量的是同一批颗粒的两个侧面。它的参考区间 1–1.6 是双侧的，
+      于是偏高的一侧也被打了箭头。
+    tag: reassure
+    chapter: downgrade
+    modifiability: self_modifiable
+    priority: 35
+    params:
+      code: APOA1
+      partner: HDL_C
+      guards: [TG, TC, LDL_C, SDLDL_C, LPA]
+      context: [APOB, BMI, WAIST, WHR]
+    narration:
+      single_read: >-
+        原报告把"载脂蛋白AⅠ高"与"载脂蛋白B高"合成一条，
+        建议戒烟戒酒、少食动物脂肪与胆固醇含量高的食品、控制体重、体育锻炼，
+        转心内科随诊。两项都带箭头，看上去是血脂异常又加重了一层。
+      joint_read: >-
+        这两项的方向是相反的。载脂蛋白AⅠ {APOA1} g/L 对应的高密度脂蛋白
+        {HDL_C} mmol/L 同样偏高，两者比值正常——说明它不是一个孤立的怪数，
+        而是"高密度脂蛋白颗粒多"这一件事被计量了两次。
+        高密度脂蛋白负责把血管壁里的胆固醇往回运，这一侧多不是危害。
+        同时甘油三酯 {TG}、总胆固醇 {TC}、低密度脂蛋白 {LDL_C}、
+        小而密低密度脂蛋白 {SDLDL_C}、脂蛋白(a) {LPA} 全部在区间内。
+        另外，那条建议里的"控制体重"在这里没有对象：
+        体重指数 {BMI}、腰围 {WAIST} cm、腰臀比 {WHR} 都在区间内。
+      must_convey:
+        - 载脂蛋白AⅠ 与高密度脂蛋白是同一批颗粒的两种计量
+        - 它偏高的这一侧不是危害
+        - 其余血脂项全部在区间内
+        - "「控制体重」这条建议在本例没有对象：体重与腰围都正常"
+      must_not_claim:
+        - 不得说高密度脂蛋白越高越好——极高值的意义仍有争议，本例只是中度偏高
+        - 不得因此推翻同一条里载脂蛋白B 的读法，那是独立的一条
+    verdict:
+      certain: >-
+        载脂蛋白AⅠ 这一项不需要任何处理，也不该被算进"需要复查的血脂异常"。
+      not_certain: >-
+        高密度脂蛋白与载脂蛋白AⅠ 的保护作用在流行病学上成立，
+        但个体层面把它当成"可以抵消其他风险"的凭据没有依据。
+        本例只是偏高，不涉及极高值那一档争议。
+      next_steps:
+        - 下次看血脂时，把载脂蛋白AⅠ 与高密度脂蛋白放在一起读，不要分开数箭头
+      compare_next:
+        - code: HDL_C
+          what: 与载脂蛋白AⅠ 同次看。两者背离才是需要解释的信号
+          rationale: 单独一项的升降说明不了什么，配对关系才有信息
+    tests:
+      - {name: 病例3真实数据, fixture: case3_2026-03-30, expect: triggered}
+      - {name: 其余血脂也异常时不成立, fixture: case3_2026-03-30, expect: not_triggered,
+         overrides: {LDL_C: 4.5}}
+      - {name: 病例1载脂蛋白AⅠ不在有利侧, fixture: zhang_real_2026-03-30, expect: not_triggered}
+
+  - id: glucose.low_insulin_with_normal_glucose
+    archetype: benign_direction
+    title: 空腹胰岛素低，而血糖与糖化血红蛋白都正常
+    headline: 血糖正常时的低空腹胰岛素说明敏感性好，不是需要查病因的低
+    lede: >-
+      空腹胰岛素的参考区间 2.2–25 是双侧的。它的下限对一个血糖正常的人没有意义：
+      血糖正常还只需要很少的胰岛素，说明身体对胰岛素反应好。
+    tag: reassure
+    chapter: downgrade
+    modifiability: self_modifiable
+    priority: 40
+    params:
+      code: INSULIN
+      guards: [GLU_FASTING, HBA1C, HOMA_IR]
+      context: [PROINSULIN, BMI, WHR, TG, HDL_C, ALT, AST]
+    narration:
+      single_read: >-
+        原报告把它列进"进一步检查"：建议监测血糖变化，完善胰岛素抗体、C肽、
+        糖化血红蛋白等检查，到内分泌科进一步检查明确诊断。
+        单看"胰岛素低"这三个字，很容易联想到胰岛功能不足。
+      joint_read: >-
+        胰岛素低要不要担心，完全取决于血糖。同一次抽血的空腹血糖 {GLU_FASTING} mmol/L
+        在区间内，糖化血红蛋白 {HBA1C}% 反映的近两三个月平均水平也正常，
+        由这两项算出的胰岛素抵抗指数 HOMA-IR {HOMA_IR} 极低。
+        这三项合起来说的是：血糖被稳稳地维持住了，而且只用了很少的胰岛素——
+        这是敏感性好，不是分泌不足。分泌不足的样子是血糖高而胰岛素低，
+        本例血糖不高。
+        原报告建议里的糖化血红蛋白其实这次已经做了，就在同一份报告里。
+      must_convey:
+        - 胰岛素低的含义完全取决于血糖，而血糖与糖化血红蛋白都正常
+        - HOMA-IR 极低，说明胰岛素敏感性好
+        - 分泌不足的样子是血糖高而胰岛素低，本例不是
+        - 原报告建议补做的糖化血红蛋白，本次报告里已经有了
+      must_not_claim:
+        - 不得断言胰岛功能一定正常——本次没有做糖负荷试验或 C 肽
+        - 不得据此排除将来发生糖代谢异常的可能
+        - 不得建议增加碳水摄入之类的"纠正"
+    verdict:
+      certain: >-
+        在血糖与糖化血红蛋白都正常的前提下，这一项不需要进一步检查，
+        也不构成到内分泌科明确诊断的理由。
+      not_certain: >-
+        空腹胰岛素的测定受进食时间、检测方法与试剂批次影响较大，单次低值本身
+        不宜细究。若将来出现空腹血糖升高，那时再看胰岛素才有意义——
+        届时要区分的是"抵抗"还是"分泌不足"，需要同次的 C 肽。
+      next_steps:
+        - 不需要为这一项安排检查
+        - 下次体检若空腹血糖升高，再把胰岛素与 C 肽一起做
+      compare_next:
+        - code: GLU_FASTING
+          what: 血糖才是这条线上要盯的数，胰岛素只有在血糖变化时才有解释力
+        - code: HBA1C
+          what: 与空腹血糖一起看，分开单点波动与持续状态
+    tests:
+      - {name: 病例3真实数据, fixture: case3_2026-03-30, expect: triggered}
+      - {name: 血糖升高时守卫破了，不成立, fixture: case3_2026-03-30, expect: not_triggered,
+         overrides: {GLU_FASTING: 7.8}}
+      - {name: 病例1胰岛素不低, fixture: zhang_real_2026-03-30, expect: not_triggered}

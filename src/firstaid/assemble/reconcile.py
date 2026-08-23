@@ -68,12 +68,21 @@ def reconcile(enc: Encounter, chains: list[Chain],
     rows: list[ReconciliationRow] = []
     for aid, obj, band, headline, is_corr in answers:
         fs = matched.get(aid, [])
+        # 没匹配上不等于原报告没提：一条原报告结论可能同时被两条判读回答，
+        # 而它只会挂在其中一条上。另一条要说的是"原报告在第 N 条里提过"，
+        # 不是"原报告未提及"。
+        also = ()
+        if not fs:
+            mine = _codes(obj, False)
+            also = tuple(f.seq for f in enc.original_findings
+                         if not f.pending and (set(f.codes) & mine))
         rows.append(ReconciliationRow(
             band=band, headline=headline, findings=tuple(fs),
             chain_id=None if is_corr else aid,
             correction_id=aid if is_corr else None,
             needs_confirm=is_corr,
-            is_new=not fs,      # 原报告没提，本次新增
+            is_new=not fs and not also,
+            also_from=also,
         ))
     rows.sort(key=lambda r: (BAND_ORDER[r.band], 0 if r.findings else 1,
                              min((f.seq for f in r.findings), default=999)))

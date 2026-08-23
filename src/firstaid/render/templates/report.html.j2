@@ -312,6 +312,9 @@ footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--rule);
         {% if f.advised %}<span class="adv">原建议：{{ f.advised }}</span>{% endif %}
         {% if not loop.last %}<div style="height:8px"></div>{% endif %}
         {% endfor %}
+      {% elif r.also_from %}
+        <span class="src">原报告第 {{ r.also_from|join('、') }} 条里提到过</span>
+        但没有单独作结论
       {% else %}
         <span class="src">原报告未提及</span>
         本次判读新增的一条

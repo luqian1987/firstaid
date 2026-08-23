@@ -1,0 +1,418 @@
+# 回归夹具 · 病例 3 —— 42 岁女，2026-03-30，张家港澳洋医院（与病例 1 同院同日）
+#
+# 这一例给回归集补的是三个此前完全没有的面：
+#   · 第一位女性受检者 —— 妇科、乳腺、性别相关区间全部第一次进来
+#   · 第一例自身免疫 —— TPO-Ab 939.6（31 倍上限）而甲功八项全部正常
+#   · 第一次以"偏低"为主 —— 收缩压、尿素、胰岛素、二氧化碳结合力、
+#     红细胞压积、血小板最大聚集率，六项低分给了五个科室
+#   · 原报告 20 条结论，是目前三例里最多的一份
+# 已去标识：不含姓名、身份证、电话、单位。
+#
+# 原始文件被拆成两份 PDF（第 1–10 页 / 第 11–40 页），这里合并成一次体检。
+
+subject:
+  id: subj-c3
+  sex: female
+  age_at_report: 42
+
+encounter:
+  id: enc-c3-2026-03-30
+  date_from: 2026-03-30
+  date_to: 2026-04-03
+  context: {}
+  sources:
+    - {id: main, label: 综合体检主报告（澳洋医院）, kind: main_report,
+       date_from: 2026-03-30, date_to: 2026-04-03, page_count: 40,
+       merge_note: 原始 PDF 因体积过大拆成两份上传，第 1–10 页与第 11–40 页，合并为一次体检}
+
+original_findings:
+  # ---- 就医 ----
+  - {seq: 1, group: 就医, source: 全口牙病系统检查与诊疗设计, page: 1,
+     said: "36龋齿、牙体缺损；牙结石轻度；建议补牙",
+     advised: "建议到口腔科门诊就诊",
+     codes: [CARIES, DENTAL_CALCULUS, DENTAL_RESTORE_NEEDED]}
+
+  # ---- 进一步检查 ----
+  - {seq: 2, group: 进一步检查, source: 甲状腺彩超 + 甲功八项, page: 1,
+     said: "甲状腺弥漫性病变（建议结合甲功及相关抗体）；抗甲状腺球蛋白抗体测定高；抗甲状腺过氧化物酶抗体测定高",
+     advised: "结合临床，内分泌科门诊随诊，定期复查甲状腺超声及甲功八项，必要时进一步检查。注意饮食均衡、作息规律、保持良好情绪",
+     codes: [THYROID_DIFFUSE, TG_AB, TPO_AB]}
+  - {seq: 3, group: 进一步检查, source: 胰岛素（空腹）, page: 1,
+     said: "胰岛素低",
+     advised: "监测血糖变化，完善胰岛素抗体、C肽、糖化血红蛋白等检查，内分泌科进一步检查明确诊断，定期复查随诊",
+     codes: [INSULIN]}
+  - {seq: 4, group: 进一步检查, source: 唾液胃蛋白酶 + 胃功能三项 + 无痛电子胃肠镜, page: 1,
+     said: "胃蛋白酶：阳性；胃泌素17高；非萎缩性胃炎",
+     advised: "结合自身临床症状，消化内科定期随诊。如有恶心、腹胀腹痛反酸等症状，或有消化系统溃疡、肿瘤家族史，到消化内科门诊进一步检查",
+     codes: [SALIVA_PEPSIN, GASTRIN17, GASTRIC_MUCOSA]}
+  - {seq: 5, group: 进一步检查, source: 乳腺（双侧）彩超, page: 1,
+     said: "双乳结节（BI-RADS 2-3 类）",
+     advised: "甲乳外科门诊进一步完善乳腺钼靶或核磁明确诊断及治疗，定期复查随访。调整生活节奏，减轻压力；少吃雌激素含量高的食物与滋补品；低脂饮食，不吸烟少喝酒；胸罩不要太紧",
+     codes: [BREAST_NODULE, BREAST_BIRADS]}
+
+  # ---- 定期复检 ----
+  - {seq: 6, group: 定期复检, source: 心脏彩超, page: 1,
+     said: "三尖瓣轻度反流",
+     advised: "每年定期复查心超，如有胸闷、活动后气喘等不适，心内科门诊诊治",
+     codes: [TRICUSPID_REGURG]}
+  - {seq: 7, group: 定期复检, source: 一般检查, page: 1,
+     said: "收缩压低",
+     advised: "复测血压，排除各种诱因。改进生活方式，保证充足睡眠，增加有氧运动量。变换体位时动作缓慢，以防跌倒。定期监测血压，如有胸闷心悸，心内科门诊诊治",
+     codes: [SBP]}
+  - {seq: 8, group: 定期复检, source: 血小板聚集功能 + 血流变学 + 血常规五分类, page: 1,
+     said: "血小板最大聚集率MAR低；压积低；红细胞压积低",
+     advised: "均衡营养，多补充含高蛋白、铁的食物，血液科门诊复查、随诊",
+     codes: [MAR_ADP, HCT_RHEO, HCT]}
+  - {seq: 9, group: 定期复检, source: 眼科检查, page: 1,
+     said: "视力右：4.9",
+     advised: "结合临床，眼科门诊定期复查随访",
+     codes: [VISION_R]}
+  - {seq: 10, group: 定期复检, source: 颅脑MRI平扫+MRA+DWI（3.0T）, page: 1,
+     said: "颅脑TOF-MRA示椎基底动脉走行稍迂曲",
+     advised: "定期复查，如有头晕、黑曚不适，神经内科门诊诊治",
+     codes: [VERTEBROBASILAR]}
+  - {seq: 11, group: 定期复检, source: 尿液分析, page: 1,
+     said: "粘液丝高；细菌高；透明度：微浑",
+     advised: "多饮水，留取中段尿复查，泌尿外科门诊随访",
+     codes: [U_MUCUS, U_BACT, U_CLARITY]}
+  - {seq: 12, group: 定期复检, source: 胸部CT平扫（不出片）, page: 1,
+     said: "左侧第3、4前肋皮质欠光整，请结合病史",
+     advised: "结合病史，骨科门诊定期复查、随诊",
+     codes: [RIB_CORTEX]}
+  - {seq: 13, group: 定期复检, source: 生化(36项), page: 1,
+     said: "二氧化碳结合力低",
+     advised: "定期复查，内分泌科门诊随诊",
+     codes: [CO2CP]}
+  - {seq: 14, group: 定期复检, source: 经阴道子宫、附件彩超, page: 1,
+     said: "宫颈囊肿",
+     advised: "半年复查妇科超声，妇科门诊随访",
+     codes: [CERVICAL_CYST]}
+  - {seq: 15, group: 定期复检, source: 生化(36项), page: 1,
+     said: "尿素低",
+     advised: "可见于营养不良、多尿等，多吃含蛋白多的食物，加强营养，定期复查，肾内科门诊随诊",
+     codes: [UREA]}
+  - {seq: 16, group: 定期复检, source: 生化(36项), page: 1,
+     said: "载脂蛋白AⅠ高；载脂蛋白B高",
+     advised: "戒烟戒酒，少食动物脂肪、奶油、油炸类食品，少食动物内脏、鱼籽、蛋黄等胆固醇含量高的食品；控制体重；进行体育锻炼，定期复查，心内科门诊随诊",
+     codes: [APOA1, APOB]}
+
+  # ---- 其他（附件未随本次文件提供）----
+  - {seq: 17, group: 其他, source: 无创动脉硬化检测 + TMAO精准评估, page: 1,
+     said: "详见附件", advised: "详见报告，亚健康管理中心咨询随诊",
+     codes: [TMAO], pending: true}
+  - {seq: 18, group: 其他, source: 维生素B族8项 + 辅酶Q10精准评估, page: 1,
+     said: "维生素B9（叶酸）低（详见附件）；辅酶Q10 不足（详见附件）",
+     advised: "饮食均衡营养，定期复查，亚健康管理中心咨询随诊",
+     codes: [FOLATE_SERUM, COQ10], pending: true}
+  - {seq: 19, group: 其他, source: 18种肿瘤超早期当下风险评估, page: 1,
+     said: "报告自取", advised: "详见报告，亚健康管理中心咨询随诊",
+     codes: [], pending: true}
+  - {seq: 20, group: 其他, source: 经颅多普勒, page: 1,
+     said: "详见附件", advised: "详见报告，亚健康管理中心咨询随诊",
+     codes: [], pending: true}
+
+observations:
+  # ---- 身体检查（第3页）----
+  - {code: PE_HEART,  raw_name: 心脏, value: 未见明显异常, kind: qualitative, source: main, page: 3}
+  - {code: PE_LUNG,   raw_name: 肺部, value: 未见异常, kind: qualitative, source: main, page: 3,
+     text: 双肺呼吸音未闻及异常}
+  - {code: PE_LIVER,  raw_name: 肝脏, value: 未见异常, kind: qualitative, source: main, page: 3,
+     text: 肋下未触及}
+  - {code: PE_SPLEEN, raw_name: 脾脏, value: 未见异常, kind: qualitative, source: main, page: 3,
+     text: 肋下未触及}
+  - {code: WAIST,  raw_name: 腰围, value: 71, unit: cm, source: main, page: 3}
+  - {code: HIP,    raw_name: 臀围, value: 97, unit: cm, source: main, page: 3}
+  - {code: WHR,    raw_name: 腰臀比, value: 0.73, ref: "[0.67-0.8]", source: main, page: 3}
+  - {code: SBP,    raw_name: 收缩压, value: 84, unit: mmHg, ref: "[90.0-139.0]", source: main, page: 3, flag: "↓"}
+  - {code: DBP,    raw_name: 舒张压, value: 60, unit: mmHg, ref: "[60.0-89.0]", source: main, page: 3}
+  - {code: PULSE,  raw_name: 脉搏, value: 77, unit: 次/分, ref: "[60.0-100.0]", source: main, page: 3}
+  - {code: HEIGHT, raw_name: 身高, value: 162, unit: cm, source: main, page: 3}
+  - {code: WEIGHT, raw_name: 体重, value: 54.5, unit: kg, source: main, page: 3}
+  - {code: BMI,    raw_name: 体重指数, value: 20.8, unit: kg/m2, ref: "[18.5-23.9]", source: main, page: 3}
+
+  # ---- 口腔（第4页）----
+  - {code: CARIES, raw_name: 龋齿（蛀牙）, value: 阳性, ref: 阴性, kind: qualitative,
+     source: main, page: 4, text: "36龋齿；初步诊断 36龋齿、牙体缺损；治疗建议 补牙"}
+  - {code: DENTAL_CALCULUS, raw_name: 牙结石, value: 轻度, ref: 无, kind: qualitative, source: main, page: 4}
+  - {code: TOOTH_MOBILITY, raw_name: 牙齿松动度, value: 无, ref: 无, kind: qualitative, source: main, page: 4}
+  - {code: MISSING_TEETH, raw_name: 缺失牙, value: 无, ref: 无, kind: qualitative, source: main, page: 4}
+  - {code: DENTAL_RESTORE_NEEDED, raw_name: 是否需修复, value: 否, ref: 否, kind: qualitative, source: main, page: 4}
+  - {code: GINGIVAL_BLEEDING, raw_name: 牙龈出血, value: 否, ref: 否, kind: qualitative, source: main, page: 4}
+  - {code: GINGIVAL_SWELLING, raw_name: 牙龈肿胀/溢脓, value: 否, ref: 否, kind: qualitative, source: main, page: 4}
+  - {code: GINGIVAL_RECESSION, raw_name: 牙龈退缩, value: 是, ref: 否, kind: qualitative, source: main, page: 4}
+  - {code: MUCOSAL_ULCER, raw_name: 黏膜溃疡, value: 否, ref: 否, kind: qualitative, source: main, page: 4}
+  - {code: TONGUE_COATING, raw_name: 舌苔异常, value: 正常, ref: 正常, kind: qualitative, source: main, page: 4}
+  - {code: TMJ_SYMPTOM, raw_name: 颞下颌关节弹响/疼痛, value: 无, ref: 无, kind: qualitative, source: main, page: 4}
+  - {code: OCCLUSION, raw_name: 咬合关系, value: 正常, ref: 正常, kind: qualitative, source: main, page: 4}
+
+  # ---- 眼科（第5页）----
+  - {code: VISION_R, raw_name: 视力右, value: 4.9, source: main, page: 5, flag: "↓"}
+  - {code: VISION_L, raw_name: 视力左, value: 5.0, source: main, page: 5}
+  - {code: COLOR_VISION, raw_name: 辨色力, value: 正常, ref: 正常, kind: qualitative, source: main, page: 5}
+  - {code: CONJUNCTIVA, raw_name: 结膜情况, value: 未见明显异常, kind: qualitative, source: main, page: 5,
+     text: 双眼结膜未见明显异常；外眼未见异常}
+
+  # ---- 妇科（第6-7页）----
+  - {code: CLUE_CELLS,     raw_name: 线索细胞, value: 阴性, ref: 阴性, kind: qualitative, source: main, page: 6}
+  - {code: CANDIDA,        raw_name: 念珠菌, value: 阴性, ref: 阴性, kind: qualitative, source: main, page: 6}
+  - {code: TRICHOMONAS,    raw_name: 阴道毛滴虫, value: 阴性, ref: 阴性, kind: qualitative, source: main, page: 6}
+  - {code: GARDNERELLA,    raw_name: 阴道加德纳菌, value: 阴性, ref: 阴性, kind: qualitative, source: main, page: 6}
+  - {code: VAG_BACILLUS,   raw_name: 杆菌, value: 阳性, ref: 阳性, kind: qualitative, source: main, page: 6,
+     text: "阳性(++++)，参考 +++/++++ —— 乳酸杆菌为主的正常菌群"}
+  - {code: VAG_CLEANLINESS, raw_name: 清洁度, value: 正常, ref: 正常, kind: qualitative, source: main, page: 6,
+     text: "I 度（参考 I/II 度）"}
+  - {code: VAG_WBC,        raw_name: 阴道分泌物白细胞, value: 阳性, ref: 阳性, kind: qualitative, source: main, page: 6,
+     text: "阳性(+)，参考 (-)/+/++ —— 在参考范围内"}
+  - {code: HPV_HIGH_RISK,  raw_name: HPV高危型（19型合并）, value: 阴性, ref: 阴性, kind: qualitative,
+     source: main, page: 6, text: "16/18/26/31/33/35/39/45/51/52/53/56/58/59/66/68/73/82 及其余高危型全部阴性"}
+  - {code: HPV_LOW_RISK,   raw_name: HPV低危型（10型合并）, value: 阴性, ref: 阴性, kind: qualitative,
+     source: main, page: 7, text: "6/11/40/42/43/44/54/61/81/83 全部阴性"}
+  - {code: GYN_EXAM,       raw_name: 妇科检查, value: 未见异常, kind: qualitative, source: main, page: 7,
+     text: "外阴已婚式；阴道正常；宫颈光滑；宫体、附件未触及明显异常"}
+
+  # ---- 实验室：血小板聚集、唾液胃蛋白酶等（第9页）----
+  - {code: MAR_ADP, raw_name: 血小板最大聚集率MAR（ADP）, value: 32, unit: "%", ref: "52--84",
+     source: main, page: 9, flag: "↓"}
+  - {code: SALIVA_PEPSIN, raw_name: 胃蛋白酶, value: 阳性, ref: 阴性, kind: qualitative,
+     source: main, page: 9, method: 唾液胃蛋白酶检测}
+  - {code: NSE_TUMOR, raw_name: "神经元特异性烯醇化酶[NSE]", value: 11.89, ref: "0--20", unit: ng/mL,
+     source: main, page: 9}
+  - {code: UACR,   raw_name: 尿微量白蛋白/肌酐, value: 11.71, ref: "0--30", unit: mg/g, source: main, page: 9}
+  - {code: U_CREA, raw_name: 尿肌酐, value: 169.31, ref: "31.67--227.78", unit: mg/dL, source: main, page: 9}
+  - {code: U_MALB, raw_name: 尿微量白蛋白, value: 19.82, ref: "0--30", unit: mg/L, source: main, page: 9}
+
+  # ---- 同型半胱氨酸与血流变（第10页）----
+  - {code: HCY, raw_name: 同型半胱氨酸(hcy）, value: 6.36, ref: "0--15", unit: umol/L, source: main, page: 10}
+  - {code: ESR, raw_name: "血沉[ESR]", value: 9.00, ref: "0--20", unit: mm, source: main, page: 10}
+  - {code: WBV_LOW,      raw_name: "低切[1]", value: 18.24, ref: "13.79--20.13", unit: mPa.s, source: main, page: 10}
+  - {code: WBV_MID,      raw_name: "中切[5]", value: 7.97, ref: "6.81--9.59", unit: mPa.s, source: main, page: 10}
+  - {code: WBV_MID50,    raw_name: "中切[50]", value: 4.09, ref: "3.94--5.42", unit: mPa.s, source: main, page: 10}
+  - {code: WBV_HIGH,     raw_name: "高切[200]", value: 3.38, ref: "3.36--4.62", unit: mPa.s, source: main, page: 10}
+  - {code: PLASMA_VISC,  raw_name: 血浆粘度, value: 1.40, ref: "1.26--1.7", unit: mPa.s, source: main, page: 10}
+  - {code: HCT_RHEO,     raw_name: 压积, value: 0.35, ref: "0.36--0.44", source: main, page: 10, flag: "↓"}
+  - {code: WBRV_LOW,     raw_name: "全血还原粘度[低切]", value: 48.11, ref: "26.87--53.91", source: main, page: 10}
+  - {code: WBRV_MID,     raw_name: "全血还原粘度[中切]", value: 8.97, ref: "5.76--13.29", source: main, page: 10}
+  - {code: WBRV_HIGH,    raw_name: "全血还原粘度[高切]", value: 5.65, ref: "3.69--9.6", source: main, page: 10}
+  - {code: ESR_K,        raw_name: 血沉方程K值, value: 22.51, ref: "0--80.48", source: main, page: 10}
+  - {code: RBC_AGGR,     raw_name: 红细胞聚集指数, value: 5.40, ref: "2.98--5.99", source: main, page: 10}
+  - {code: RBC_RIGID,    raw_name: 红细胞刚性指数, value: 4.04, ref: "2.17--7.62", source: main, page: 10}
+  - {code: RBC_DEFORM,   raw_name: 红细胞变形指数, value: 0.85, ref: "0.53--1.16", source: main, page: 10}
+  - {code: RBC_EPHOR,    raw_name: 红细胞电泳指数, value: 15.43, ref: "6.63--17.12", source: main, page: 10}
+  - {code: WBRV_LOW_REL, raw_name: 全血低切相对粘度, value: 13.04, ref: "8.11--15.98", source: main, page: 10}
+  - {code: WBRV_HIGH_REL, raw_name: 全血高切相对粘度, value: 2.41, ref: "1.98--3.67", source: main, page: 10}
+
+  # ---- 胃功能三项 / 风湿三项 / 糖化 / 心肌 / 胰岛素原（第11页）----
+  - {code: GASTRIN17, raw_name: 胃泌素17, value: 22.28, ref: "1--7", unit: pmol/L,
+     source: main, page: 11, flag: "↑"}
+  - {code: PG1, raw_name: 胃蛋白酶原Ⅰ, value: 52.43, ref: "28.2--121.3", unit: ng/mL, source: main, page: 11}
+  - {code: PG_RATIO, raw_name: PGI/PGII, value: 7.54, ref: "≥3", source: main, page: 11}
+  - {code: PG2, raw_name: 胃蛋白酶原Ⅱ, value: 6.95, ref: "0--21.1", unit: ng/mL, source: main, page: 11}
+  - {code: RF,  raw_name: 类风湿因子（RF）, value: 23.0, ref: "0--30", unit: IU/mL, source: main, page: 11}
+  - {code: CRP, raw_name: C反应蛋白（CRP）, value: 5.00, censor: "<", ref: "≤10", unit: mg/L, source: main, page: 11}
+  - {code: ASO, raw_name: 抗链球菌溶血素O（ASO）, value: 33.3, ref: "＜200", unit: IU/mL, source: main, page: 11}
+  - {code: HBA1C, raw_name: 糖化血红蛋白（HbAlc）, value: 5.3, ref: "4--6", unit: "%", source: main, page: 11}
+  - {code: HFABP, raw_name: 心脏脂肪酸结合蛋白（HFABP）, value: 1.4, ref: "[0.0-6.0]", unit: ng/ml, source: main, page: 11}
+  - {code: PROINSULIN, raw_name: pro-Ins胰岛素原, value: 1.40, ref: "[0.0-180.0]", unit: pg/ml, source: main, page: 11}
+
+  # ---- 肿瘤标志物与炎症（第12页）----
+  - {code: CEA, raw_name: "癌胚抗原[CEA]", value: 2.31, ref: "0--5", unit: ng/mL, source: main, page: 12}
+  - {code: AFP, raw_name: "甲胎蛋白[AFP]", value: 2.00, censor: "<", ref: "0--10", unit: ng/mL, source: main, page: 12}
+  - {code: CK18_M30, raw_name: "人细胞角蛋白18片段（M30)", value: 53.53, ref: "0--200", unit: U/L, source: main, page: 12}
+  - {code: CK18_M65, raw_name: "人细胞角蛋白18片段（M65)", value: 172.6, ref: "0--460", unit: U/L, source: main, page: 12}
+  - {code: HSCRP, raw_name: C-反应蛋白, value: 0.80, ref: "0--10", unit: mg/L, source: main, page: 12, method: 超敏}
+  - {code: INSULIN, raw_name: "胰岛素[INS]", value: 1.40, ref: "2.2--25", unit: uIU/mL,
+     source: main, page: 12, flag: "↓", specimen: 空腹}
+
+  # ---- 肿瘤标志物、VEGF、尿液分析（第13-14页）----
+  - {code: CYFRA21_1, raw_name: "细胞角蛋白19片段[CYFRA21-1]", value: 1.43, ref: "0--3.3", unit: ng/mL, source: main, page: 13}
+  - {code: VEGF, raw_name: 血管内皮生长因子, value: 22.38, ref: "0--142.2", unit: pg/mL, source: main, page: 13}
+  - {code: U_COLOR,   raw_name: 颜色, value: 正常, kind: qualitative, source: main, page: 13, text: "淡黄色（参考 淡黄色）"}
+  - {code: U_CLARITY, raw_name: 透明度, value: 阳性, ref: 阴性, kind: qualitative, source: main, page: 13,
+     text: "微浑（参考 清晰透明）", flag: "↑"}
+  - {code: U_PH,  raw_name: "尿酸碱度[PH]", value: 5.5, ref: "4.5--8", source: main, page: 13}
+  - {code: U_NIT, raw_name: "尿亚硝酸盐[NIT]", value: 阴性, ref: 阴性, kind: qualitative, source: main, page: 13}
+  - {code: U_GLU, raw_name: "尿糖[GLU]", value: 阴性, ref: 阴性, kind: qualitative, source: main, page: 13}
+  - {code: U_VITC, raw_name: "维生素C[Vc]", value: 1.40, source: main, page: 13}
+  - {code: U_SG,  raw_name: "比重[SG]", value: 1.030, ref: "1.003--1.03", source: main, page: 13}
+  - {code: U_BLD, raw_name: "隐血[BLD]", value: 阴性, ref: 阴性, kind: qualitative, source: main, page: 13}
+  - {code: U_PRO, raw_name: "尿蛋白[PRO]", value: 阴性, ref: 阴性, kind: qualitative, source: main, page: 13}
+  - {code: U_BIL, raw_name: "尿胆红素[BIL]", value: 阴性, ref: 阴性, kind: qualitative, source: main, page: 13}
+  - {code: U_URO, raw_name: "尿胆原[URO]", value: 正常, ref: 正常, kind: qualitative, source: main, page: 13, text: Normal}
+  - {code: U_KET, raw_name: "尿酮体[KET]", value: 阴性, ref: 阴性, kind: qualitative, source: main, page: 13}
+  - {code: U_LE,  raw_name: "白细胞酯酶[LEU]", value: 阴性, ref: 阴性, kind: qualitative, source: main, page: 13}
+  - {code: U_MUCUS, raw_name: "粘液丝[MUCS]", value: 35, ref: "0--28", unit: 个/ul, source: main, page: 13, flag: "↑"}
+  - {code: U_NONSQ_EPI, raw_name: "非鳞状上皮细胞[NSE]", value: 0, ref: "0--6", unit: 个/ul, source: main, page: 13}
+  - {code: U_CRYSTAL, raw_name: "未分类结晶[UNCX]", value: 0, ref: "0--28", unit: 个/ul, source: main, page: 13}
+  - {code: U_YEAST, raw_name: "酵母菌[BYST]", value: 0, ref: "0--1", unit: 个/ul, source: main, page: 14}
+  - {code: U_CAST_HYAL, raw_name: "透明管型[HYAL]", value: 0, ref: "0--1", unit: 个/LPF, source: main, page: 14}
+  - {code: U_CAST_PATH, raw_name: "病理管型[UNCC]", value: 0, ref: "0--1", unit: 个/LPF, source: main, page: 14}
+  - {code: U_BACT, raw_name: "细菌[BACT]", value: 12, ref: "0--7", unit: 个/ul, source: main, page: 14, flag: "↑"}
+  - {code: U_EPI, raw_name: "上皮细胞[EC]", value: 8, ref: "0--28", unit: 个/ul, source: main, page: 14}
+  - {code: U_WBC, raw_name: "白细胞[WBC]", value: 2, ref: "0--28", unit: 个/ul, source: main, page: 14}
+  - {code: U_RBC, raw_name: "红细胞[RBC]", value: 2, ref: "0--17", unit: 个/ul, source: main, page: 14}
+  - {code: U_WBC_CLUMP, raw_name: "白细胞团[WBCC]", value: 0, ref: "0--2", unit: 个/ul, source: main, page: 14}
+
+  # ---- 血常规五分类（第14-15页）----
+  - {code: WBC,       raw_name: "白细胞计数[WBC]", value: 4.08, ref: "3.5--9.5", unit: 10^9/L, source: main, page: 14}
+  - {code: NEUT_ABS,  raw_name: "中性粒细胞绝对值[NE#]", value: 2.38, ref: "1.8--6.3", unit: 10^9/L, source: main, page: 14}
+  - {code: LYMPH_ABS, raw_name: "淋巴细胞绝对值[LY#]", value: 1.28, ref: "1.1--3.2", unit: 10^9/L, source: main, page: 14}
+  - {code: MONO_ABS,  raw_name: "单核细胞绝对值[MO#]", value: 0.26, ref: "0.1--0.6", unit: 10^9/L, source: main, page: 14}
+  - {code: EO_ABS,    raw_name: "嗜酸粒细胞绝对值[EO#]", value: 0.16, ref: "0.02--0.52", unit: 10^9/L, source: main, page: 14}
+  - {code: BASO_ABS,  raw_name: "嗜碱粒细胞绝对值[BA#]", value: 0.00, ref: "0--0.06", unit: 10^9/L, source: main, page: 14}
+  - {code: NEUT_PCT,  raw_name: "中性粒细胞百分比[NE%]", value: 58.1, ref: "40--75", unit: "%", source: main, page: 14}
+  - {code: LYMPH_PCT, raw_name: "淋巴细胞百分比[LY%]", value: 31.2, ref: "20--50", unit: "%", source: main, page: 14}
+  - {code: MONO_PCT,  raw_name: "单核细胞百分比[MO%]", value: 6.5, ref: "3--10", unit: "%", source: main, page: 14}
+  - {code: EO_PCT,    raw_name: "嗜酸粒细胞百分比[EO%]", value: 4.1, ref: "0.4--8.0", unit: "%", source: main, page: 15}
+  - {code: BASO_PCT,  raw_name: "嗜碱粒细胞百分比[BA%]", value: 0.1, ref: "0--1.0", unit: "%", source: main, page: 15}
+  - {code: RBC,   raw_name: "红细胞计数[RBC]", value: 3.82, ref: "3.8--5.1", unit: 10^12/L, source: main, page: 15}
+  - {code: HGB,   raw_name: "血红蛋白 [HGB]", value: 115, ref: "115--150", unit: g/L, source: main, page: 15}
+  - {code: HCT,   raw_name: "红细胞压积 [HCT]", value: 34.9, ref: "35--45", unit: "%", source: main, page: 15, flag: "↓"}
+  - {code: MCV,   raw_name: "平均红细胞体积[MCV]", value: 91.4, ref: "82--100", unit: fl, source: main, page: 15}
+  - {code: MCH,   raw_name: "平均血红蛋白量[MCH]", value: 30.0, ref: "27--34", unit: pg, source: main, page: 15}
+  - {code: MCHC,  raw_name: "平均血红蛋白浓度[MCHC]", value: 328, ref: "316--354", unit: g/L, source: main, page: 15}
+  - {code: RDW,   raw_name: "红细胞分布宽度[RDW]", value: 13.4, ref: "11--16", unit: "%", source: main, page: 15}
+  - {code: PLT,   raw_name: "血小板计数[PLT]", value: 275, ref: "125--350", unit: 10^9/L, source: main, page: 15}
+
+  # ---- 凝血分析（第15页）----
+  - {code: PT,     raw_name: "凝血酶原时间[PT]", value: 12.7, ref: "[9.0-13.0]", unit: S, source: main, page: 15}
+  - {code: INR,    raw_name: "国际标准化比值[INR]", value: 1.10, ref: "[0.8-1.2]", source: main, page: 15}
+  - {code: APTT,   raw_name: "部分凝血活酶时间[APTT]", value: 26.1, ref: "[25.3-33.8]", unit: S, source: main, page: 15}
+  - {code: TT,     raw_name: "凝血酶时间[TT]", value: 16.6, ref: "[14.0-21.0]", unit: S, source: main, page: 15}
+  - {code: FIB,    raw_name: "纤维蛋白原[FIB]", value: 2.87, ref: "[2.0-4.0]", unit: g/L, source: main, page: 15}
+  - {code: DDIMER, raw_name: "D-二聚体[DDI]", value: 0.23, ref: "[0.01-0.55]", unit: mg/L, source: main, page: 15}
+  - {code: AT3,    raw_name: "抗凝血酶Ⅲ[ATⅢ]", value: 90.4, ref: "[75.0-125.0]", unit: "%", source: main, page: 15}
+  - {code: FDP,    raw_name: "纤维蛋白原降解产物[FDP]", value: 2.5, ref: "[0.1-5.0]", unit: mg/L, source: main, page: 15}
+
+  # ---- 甲功八项（第16页）----
+  - {code: TSH,   raw_name: "促甲状腺激素[TSH]", value: 3.294, ref: "0.35--4.75", unit: mIU/L, source: main, page: 16}
+  - {code: FT4,   raw_name: "游离甲状腺激素[FT4]", value: 13.81, ref: "10--22", unit: pmol/L, source: main, page: 16}
+  - {code: TT3,   raw_name: "总三碘甲状腺原氨酸[T3]", value: 1.56, ref: "1.23--2.92", unit: nmol/L, source: main, page: 16}
+  - {code: FT3,   raw_name: "游离三碘甲状腺原氨酸[FT3]", value: 5.07, ref: "3.5--7", unit: pmol/L, source: main, page: 16}
+  - {code: TT4,   raw_name: "总甲状腺素[T4]", value: 75.26, ref: "64.35--167.31", unit: nmol/L, source: main, page: 16}
+  - {code: TG_AB, raw_name: "抗甲状腺球蛋白抗体测定[Tg-Ab]", value: 55.3, ref: "0--30", unit: IU/mL,
+     source: main, page: 16, flag: "↑"}
+  - {code: TPO_AB, raw_name: "抗甲状腺过氧化物酶抗体测定[TPO-Ab]", value: 939.6, ref: "0--30", unit: IU/mL,
+     source: main, page: 16, flag: "↑"}
+  - {code: TG_THYRO, raw_name: "甲状腺球蛋白[TG]", value: 17.21, ref: "1--39", unit: ng/mL, source: main, page: 16}
+
+  # ---- 生化 36 项（第16-18页）----
+  - {code: TBA,  raw_name: 总胆汁酸（TBA）, value: 3.0, censor: "<", ref: "0--10", unit: umol/L, source: main, page: 16}
+  - {code: ADA,  raw_name: 腺苷脱氨酶（ADA）, value: 8.8, ref: "0--25", unit: U/L, source: main, page: 16}
+  - {code: ALT,  raw_name: 谷丙转氨酶（ALT）, value: 19, ref: "7--40", unit: U/L, source: main, page: 16}
+  - {code: AST,  raw_name: 谷草转氨酶(AST), value: 19, ref: "13--35", unit: U/L, source: main, page: 16}
+  - {code: ALP,  raw_name: 碱性磷酸酶(ALP), value: 53, ref: "35--100", unit: U/L, source: main, page: 16}
+  - {code: LDH,  raw_name: 乳酸脱氢酶(LDH), value: 142, ref: "109--245", unit: U/L, source: main, page: 16}
+  - {code: GGT,  raw_name: 谷氨酰转肽酶(GGT), value: 20, ref: "7--45", unit: U/L, source: main, page: 16}
+  - {code: TBIL, raw_name: 总胆红素(TBIL), value: 15.2, ref: "5.1--28", unit: umol/L, source: main, page: 16}
+  - {code: DBIL, raw_name: 直接胆红素(DBIL), value: 4.1, ref: "0--10", unit: umol/L, source: main, page: 16}
+  - {code: IBIL, raw_name: 间接胆红素（IBIL）, value: 11.1, ref: "0--20", unit: umol/L, source: main, page: 16}
+  - {code: TP,   raw_name: 总蛋白（TP）, value: 68.4, ref: "65--85", unit: g/L, source: main, page: 16}
+  - {code: ALB,  raw_name: 白蛋白(ALB), value: 44.5, ref: "40--55", unit: g/L, source: main, page: 16}
+  - {code: GLOB, raw_name: 球蛋白(GLOB), value: 23.9, ref: "20--40", unit: g/L, source: main, page: 16}
+  - {code: AG_RATIO, raw_name: 白球比例(A/G), value: 1.9, ref: "1.2--2.4", source: main, page: 16}
+  - {code: PREALBUMIN, raw_name: 前白蛋白(PA), value: 236, ref: "200--400", unit: mg/L, source: main, page: 17}
+  - {code: CHE,  raw_name: 胆碱脂酶, value: 8629, ref: "4300--11000", unit: U/L, source: main, page: 17}
+  - {code: UREA, raw_name: 尿素(UREA), value: 2.02, ref: "2.6--7.5", unit: mmol/L, source: main, page: 17, flag: "↓"}
+  - {code: CREATININE, raw_name: 肌酐(CREA), value: 52, ref: "41--73", unit: umol/L, source: main, page: 17}
+  - {code: UA,   raw_name: 尿酸(UA), value: 245, ref: "155--357", unit: umol/L, source: main, page: 17}
+  - {code: CYSTATIN_C, raw_name: 胱抑素C检测（Cys-C）, value: 0.52, ref: "0--1.1", unit: mg/L, source: main, page: 17}
+  - {code: CK,   raw_name: 肌酸激酶(CK), value: 71.3, ref: "26--140", unit: U/L, source: main, page: 17}
+  - {code: CKMB, raw_name: 肌酸激酶同工酶(CK-MB), value: 9, ref: "7--25", unit: U/L, source: main, page: 17}
+  - {code: TG,   raw_name: 甘油三脂(TG), value: 0.86, ref: "0--1.7", unit: mmol/L, source: main, page: 17}
+  - {code: TC,   raw_name: 总胆固醇(CHOL), value: 4.46, ref: "0--5.2", unit: mmol/L, source: main, page: 17}
+  - {code: HDL_C, raw_name: 高密度脂蛋白(HDL-C), value: 1.77, ref: ">1.04", unit: mmol/L, source: main, page: 17}
+  - {code: LDL_C, raw_name: 低密度脂蛋白(LDL-C), value: 2.40, ref: "0--3.12", unit: mmol/L, source: main, page: 17}
+  - {code: APOA1, raw_name: 载脂蛋白AⅠ（APOAⅠ）, value: 2.08, ref: "1--1.6", unit: g/L, source: main, page: 17, flag: "↑"}
+  - {code: APOB,  raw_name: 载脂蛋白B（APOB）, value: 1.37, ref: "0.6--1.3", unit: g/L, source: main, page: 17, flag: "↑"}
+  - {code: LPA,   raw_name: 脂蛋白(a), value: 72.3, ref: "0--300", unit: mg/L, source: main, page: 17}
+  - {code: SDLDL_C, raw_name: 小而密低密度脂蛋白胆固醇, value: 0.85, ref: "0.25--1.17", unit: mmol/L, source: main, page: 17}
+  - {code: GLU_FASTING, raw_name: 葡萄糖(GLU), value: 4.36, ref: "3.9--6.1", unit: mmol/L, source: main, page: 17}
+  - {code: POTASSIUM, raw_name: 钾（K）, value: 3.98, unit: mmol/L, source: main, page: 17,
+     ref: "3.5--5.3(慢性肾病和透析患者:3.5-5.0)"}
+  - {code: SODIUM, raw_name: 钠（Na）, value: 138.8, ref: "137--147", unit: mmol/L, source: main, page: 17}
+  - {code: CHLORIDE, raw_name: 氯（CL）, value: 107.3, ref: "99--110", unit: mmol/L, source: main, page: 17}
+  - {code: CALCIUM, raw_name: 钙（Ca）, value: 2.17, ref: "2.11--2.52", unit: mmol/L, source: main, page: 17}
+  - {code: PHOS, raw_name: 磷（PHOS）, value: 1.21, ref: "0.85--1.51", unit: mmol/L, source: main, page: 17}
+  - {code: CO2CP, raw_name: 二氧化碳结合力（CO2-CP), value: 21.2, ref: "23--29", unit: mmol/L,
+     source: main, page: 17, flag: "↓"}
+  - {code: AMY,  raw_name: 淀粉酶（AMY）, value: 96, ref: "0--135", unit: U/L, source: main, page: 18}
+  - {code: SCC,  raw_name: "鳞状上皮细胞癌抗原[SCCA]", value: 0.49, ref: "0--1.5", unit: ng/mL, source: main, page: 18}
+
+  # ---- 超声（第19-30页）----
+  - {code: ABDOMEN_US, raw_name: 腹部彩超（肝胆胰脾）, value: 未见异常, kind: qualitative,
+     source: main, page: 19, method: 腹部彩超,
+     text: "肝、胆、胰、脾未见明显异常；肝内胆管不扩张，门静脉主干内径正常"}
+  - {code: LIVER_ECHO, raw_name: 肝脏超声回声, kind: imaging, source: main, page: 19, method: 腹部彩超,
+     text: "大小正常，包膜光整，形态规则，内部回声均匀，血管走行清晰"}
+  - {code: PORTAL_VEIN, raw_name: 门静脉主干内径, value: 正常, kind: qualitative, source: main, page: 19, method: 腹部彩超}
+  - {code: KIDNEY_US, raw_name: 肾输尿管膀胱彩超, value: 未见异常, kind: qualitative,
+     source: main, page: 19, method: 泌尿系彩超,
+     text: "双肾大小正常，实质回声未见异常，集合系统未见分离；双侧输尿管显示段未见扩张；膀胱未见明显异常回声"}
+  - {code: UTERUS_US, raw_name: 子宫附件彩超, value: 未见异常, kind: qualitative,
+     source: main, page: 19, method: 经阴道彩超,
+     text: "宫体前位，大小正常，肌层回声均匀，内膜居中"}
+  - {code: CERVICAL_CYST, raw_name: 宫颈囊肿, value: 6, unit: mm, kind: imaging,
+     source: main, page: 19, method: 经阴道彩超, axis: 长径, text: "宫颈见较大约 6*5mm 无回声"}
+  - {code: OVARY_US, raw_name: 双侧卵巢, value: 未见异常, kind: qualitative,
+     source: main, page: 19, method: 经阴道彩超, text: 双侧卵巢大小正常，其内未见明显异常回声}
+  - {code: AO_ROOT, raw_name: 主动脉根部内径, value: 28, unit: mm, kind: imaging, source: main, page: 22, method: 心脏彩超}
+  - {code: LA_DIAM, raw_name: 左房内径, value: 29, unit: mm, kind: imaging, source: main, page: 22, method: 心脏彩超}
+  - {code: IVSD, raw_name: 室间隔厚度, value: 7, unit: mm, kind: imaging, source: main, page: 22, method: 心脏彩超}
+  - {code: LVPW, raw_name: 左室后壁厚度, value: 7, unit: mm, kind: imaging, source: main, page: 22, method: 心脏彩超}
+  - {code: LVDD, raw_name: 左室舒张末内径, value: 45, unit: mm, kind: imaging, source: main, page: 22, method: 心脏彩超}
+  - {code: LVDS, raw_name: 左室收缩末内径, value: 29, unit: mm, kind: imaging, source: main, page: 22, method: 心脏彩超}
+  - {code: EF, raw_name: 左室射血分数, value: 64, unit: "%", kind: imaging, source: main, page: 22, method: 心脏彩超}
+  - {code: FS, raw_name: 左室短轴缩短率, value: 34, unit: "%", kind: imaging, source: main, page: 22, method: 心脏彩超}
+  - {code: PA_DIAM, raw_name: 肺动脉内径, value: 18, unit: mm, kind: imaging, source: main, page: 22, method: 心脏彩超}
+  - {code: TRICUSPID_REGURG, raw_name: 三尖瓣反流, value: 阳性, ref: 阴性, kind: qualitative,
+     source: main, page: 22, method: 心脏彩超,
+     text: "收缩期三尖瓣轻度反流；各心瓣膜形态、活动未见异常；房室间隔连续完整，未见分流"}
+  - {code: BREAST_NODULE, raw_name: 乳腺结节, value: 7.2, unit: mm, kind: imaging,
+     source: main, page: 26, method: 乳腺彩超, axis: 长径, device_note: null,
+     text: "左乳 6.0*3.3mm（10点B区）、右乳 7.2*3.3mm（9点B区）低回声及无回声；腺体结构紊乱、分布不均；CDFI 未见明显异常血流信号"}
+  - {code: BREAST_BIRADS, raw_name: 乳腺BI-RADS分类, value: 阳性, ref: 阴性, kind: qualitative,
+     source: main, page: 26, method: 乳腺彩超, text: "双乳结节（BI-RADS 2-3 类）"}
+  # 这两行原报告写在描述段里、没有单独成行，这里转成可判定的观察
+  - {code: BREAST_FLOW, raw_name: 乳腺结节血流信号, value: 阴性, ref: 阴性, kind: qualitative,
+     source: main, page: 26, method: 乳腺彩超, text: "CDFI 未见明显异常血流信号"}
+  - {code: BREAST_NODES, raw_name: 乳腺引流区淋巴结, value: 阴性, ref: 阴性, kind: qualitative,
+     source: main, page: 26, method: 乳腺彩超, text: "双侧乳腺引流区未扫及明显肿大淋巴结回声"}
+  - {code: THYROID_DIFFUSE, raw_name: 甲状腺弥漫性病变, value: 阳性, ref: 阴性, kind: qualitative,
+     source: main, page: 26, method: 甲状腺彩超,
+     text: "甲状腺大小正常、形态规则、包膜完整，回声增粗、不均匀，见小片状偏低回声，CDFI 未获异常血流信号；引流区未见肿大淋巴结"}
+  - {code: CAROTID_US, raw_name: 双侧颈动脉彩超, value: 正常, kind: qualitative, source: main, page: 28,
+     text: "走行正常，内膜连续良好，腔内未见异常回声，CDFI 血流充盈丰富"}
+  - {code: VERTEBRAL_US, raw_name: 双侧椎动脉彩超, value: 正常, kind: qualitative, source: main, page: 28,
+     text: "走行正常，内膜连续良好，CDFI 血流充盈丰富"}
+  - {code: LSM, raw_name: 肝脏硬度中位数, value: 3.6, unit: kPa, kind: imaging, source: main, page: 30,
+     device: FibroScan, method: 无创肝纤维化检测}
+  - {code: CAP, raw_name: 脂肪衰减中位数, value: 221, unit: dB/m, kind: imaging, source: main, page: 30,
+     device: FibroScan, method: 无创脂肪变量化}
+
+  # ---- 心电、CT、MRI、内镜、病理（第31-37页）----
+  - {code: ECG, raw_name: 心电图, value: 正常, kind: qualitative, source: main, page: 31,
+     text: "窦性心律，正常心电图"}
+  - {code: CHEST_CT, raw_name: 胸部CT平扫, value: 未见异常, kind: qualitative, source: main, page: 32,
+     text: "两肺未见明显实质性病变；气管主支气管通畅；纵隔未见肿大淋巴结；两侧胸腔未见积液"}
+  - {code: RIB_CORTEX, raw_name: 肋骨皮质, value: 阳性, ref: 阴性, kind: qualitative,
+     source: main, page: 32, device: 胸部CT平扫,
+     text: "左侧第3、4前肋皮质欠光整，请结合病史"}
+  - {code: BRAIN_MRI_PLAIN, raw_name: 颅脑MRI平扫+DWI, value: 正常, kind: qualitative,
+     source: main, page: 33, device: 3.0T,
+     text: "脑实质、小脑及脑干未见明显异常信号；脑室系统未见扩大；中线结构无移位"}
+  - {code: VERTEBROBASILAR, raw_name: 椎基底动脉走行, value: 阳性, ref: 阴性, kind: qualitative,
+     source: main, page: 33, device: 3.0T, method: TOF-MRA,
+     text: "椎基底动脉结构完整、走行稍迂曲；两侧颈内动脉、双侧大脑前中后动脉主干及主要分支未见明显扩张、狭窄"}
+  - {code: C14_UBT, raw_name: C14呼气试验, value: 阴性, ref: 阴性, kind: qualitative,
+     source: main, page: 34, text: "DPM=20，阴性"}
+  - {code: GASTRIC_MUCOSA, raw_name: 胃镜黏膜所见, value: 阳性, ref: 阴性, kind: qualitative,
+     source: main, page: 34, method: 无痛电子胃镜,
+     text: "非萎缩性胃炎。胃窦蠕动好，粘膜花斑样及斑片状充血，未见糜烂、溃疡及肿物；胃体光滑无充血水肿；食管、贲门、胃底、胃角、幽门、球部、降部均未见异常"}
+  - {code: GASTRIC_ATROPHY, raw_name: 胃黏膜萎缩, value: 阴性, ref: 阴性, kind: qualitative,
+     source: main, page: 34, method: 无痛电子胃镜,
+     text: "胃镜结论为「非萎缩性胃炎」——对萎缩这个问题的明确否定"}
+  - {code: COLONOSCOPY, raw_name: 结肠镜, value: 正常, kind: qualitative,
+     source: main, page: 34, method: 无痛电子肠镜,
+     text: "插至回肠末端，回盲瓣扁平型；直肠、乙状结肠、降结肠、横结肠、升结肠及盲肠黏膜均正常，无充血糜烂、溃疡、息肉、肿物"}
+  - {code: TCT, raw_name: 宫颈液基细胞学(TCT), value: 阴性, ref: 阴性, kind: qualitative,
+     source: main, page: 37, text: "未见上皮内病变及恶性病变(NILM)"}

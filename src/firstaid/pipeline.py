@@ -114,6 +114,7 @@ def analyze(timeline: Timeline, ontology=None, units=None, rules=None,
     a.topology = de.topology(enc, chain_ids, order)
     a.topo_excluded, scope_errs = de.scope(a.chains)
     a.errors += scope_errs
+    a.errors += de.check_absent_modifiers(enc, a.chains)
     for c in a.chains:
         d = de.depth_for(enc, c, {i.key.code for i in c.verdict.compare_next}
                          if c.verdict else set())

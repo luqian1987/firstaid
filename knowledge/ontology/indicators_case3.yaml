@@ -1,0 +1,249 @@
+# 病例 3 带进来的新指标。同一家医院，但第一个女性受检者、
+# 第一例自身免疫（桥本），以及第一次大量出现"偏低"而不是"偏高"。
+indicators:
+  # ---------------- 甲状腺 ----------------
+  # 注意：甲状腺球蛋白的英文缩写也是 TG，与甘油三酯撞码。
+  # 别名表里只收中文全称与 Tg，绝不收裸 TG——撞码是数据来源泛化时的常见坑。
+  - {code: TG_THYRO, name: 甲状腺球蛋白, aliases: ["Tg"], canonical_unit: ng/mL,
+     system: thyroid, modifiability: clinical,
+     note: 与甘油三酯 TG 撞缩写。有抗甲状腺球蛋白抗体时它的测定值本身不可靠}
+  - {code: THYROID_DIFFUSE, name: 甲状腺弥漫性病变, kind: qualitative, system: imaging,
+     modifiability: not_modifiable,
+     note: 超声形态学描述，本身不等于诊断；要与甲功和抗体一起读}
+
+  # ---------------- 心脏彩超径线 ----------------
+  # 心脏彩超报告只给数字、不给区间。要判"腔室正常"就必须自己带出处补切点，
+  # 而这几项的正常上限分性别 —— 第一位女性受检者才把这个需求逼出来。
+  - code: AO_ROOT
+    name: 主动脉根部内径
+    kind: imaging
+    canonical_unit: mm
+    system: imaging
+    modifiability: not_modifiable
+    device_sensitive: true
+    advisory:
+      note: 主动脉窦部内径正常上限，成人分性别
+      source: "Lang RM 等. ASE/EACVI 成人心腔定量指南, JASE 2015;28:1-39"
+      by_sex: {male: {high: 40}, female: {high: 36}}
+  - code: LA_DIAM
+    name: 左房内径
+    kind: imaging
+    canonical_unit: mm
+    system: imaging
+    modifiability: not_modifiable
+    device_sensitive: true
+    advisory:
+      note: 左房前后径正常上限，成人分性别
+      source: "Lang RM 等. ASE/EACVI 成人心腔定量指南, JASE 2015;28:1-39"
+      by_sex: {male: {high: 40}, female: {high: 38}}
+  - code: IVSD
+    name: 室间隔厚度
+    kind: imaging
+    canonical_unit: mm
+    system: imaging
+    modifiability: not_modifiable
+    device_sensitive: true
+    advisory:
+      note: 舒张末室间隔厚度正常上限，成人分性别
+      source: "Lang RM 等. ASE/EACVI 成人心腔定量指南, JASE 2015;28:1-39"
+      by_sex: {male: {high: 10}, female: {high: 9}}
+  - code: LVPW
+    name: 左室后壁厚度
+    kind: imaging
+    canonical_unit: mm
+    system: imaging
+    modifiability: not_modifiable
+    device_sensitive: true
+    advisory:
+      note: 舒张末左室后壁厚度正常上限，成人分性别
+      source: "Lang RM 等. ASE/EACVI 成人心腔定量指南, JASE 2015;28:1-39"
+      by_sex: {male: {high: 10}, female: {high: 9}}
+  - code: LVDD
+    name: 左室舒张末内径
+    kind: imaging
+    canonical_unit: mm
+    system: imaging
+    modifiability: not_modifiable
+    device_sensitive: true
+    advisory:
+      note: 左室舒张末内径正常范围，成人分性别
+      source: "Lang RM 等. ASE/EACVI 成人心腔定量指南, JASE 2015;28:1-39"
+      by_sex: {male: {low: 42, high: 58}, female: {low: 38, high: 52}}
+  - code: LVDS
+    name: 左室收缩末内径
+    kind: imaging
+    canonical_unit: mm
+    system: imaging
+    modifiability: not_modifiable
+    device_sensitive: true
+    advisory:
+      note: 左室收缩末内径正常范围，成人分性别
+      source: "Lang RM 等. ASE/EACVI 成人心腔定量指南, JASE 2015;28:1-39"
+      by_sex: {male: {low: 25, high: 40}, female: {low: 22, high: 35}}
+  - code: FS
+    name: 左室短轴缩短率
+    kind: imaging
+    canonical_unit: "%"
+    system: imaging
+    modifiability: not_modifiable
+    advisory_low: 25
+    advisory_high: 45
+    advisory_note: 常用正常范围 25%–45%
+    advisory_source: "Lang RM 等. ASE/EACVI 成人心腔定量指南, JASE 2015;28:1-39"
+  - code: PA_DIAM
+    name: 肺动脉内径
+    kind: imaging
+    canonical_unit: mm
+    system: imaging
+    modifiability: not_modifiable
+    device_sensitive: true
+    advisory_high: 27
+    advisory_note: 肺动脉主干内径常用上限约 27 mm，超过提示肺动脉高压需评估
+    advisory_source: "Lang RM 等. ASE/EACVI 成人心腔定量指南, JASE 2015;28:1-39"
+  - {code: TRICUSPID_REGURG, name: 三尖瓣反流, kind: qualitative, system: imaging,
+     modifiability: not_modifiable,
+     note: 轻度三尖瓣反流在健康人群中检出率很高，属超声敏感度提升带来的常见所见}
+
+  # ---------------- 女性专项 ----------------
+  - {code: BREAST_NODULE, name: 乳腺结节, kind: imaging, canonical_unit: mm,
+     system: imaging, modifiability: not_modifiable, device_sensitive: true,
+     note: BI-RADS 是超声形态学风险分层，不是病理诊断}
+  - {code: BREAST_BIRADS, name: 乳腺BI-RADS分类, kind: qualitative, system: imaging,
+     modifiability: not_modifiable}
+  # 下面两条报告正文里写了，但没有单独成行。不把它们转成可判定的观察，
+  # "结节的排除层已经清了" 这句话就无法机械校验，只能靠人记得读那段文字。
+  - {code: BREAST_FLOW, name: 乳腺结节血流信号, kind: qualitative, system: imaging,
+     modifiability: not_modifiable}
+  - {code: BREAST_NODES, name: 乳腺引流区淋巴结, kind: qualitative, system: imaging,
+     modifiability: not_modifiable}
+  - {code: GASTRIC_ATROPHY, name: 胃黏膜萎缩, kind: qualitative, system: gastric,
+     modifiability: clinical,
+     note: 胃镜结论"非萎缩性胃炎"是对萎缩这个问题的明确否定，要单独落成可判定的一项}
+  - {code: CERVICAL_CYST, name: 宫颈囊肿, kind: imaging, canonical_unit: mm,
+     system: imaging, modifiability: not_modifiable,
+     note: 宫颈腺体潴留囊肿，是宫颈修复过程的常见产物}
+  - {code: UTERUS_US, name: 子宫附件彩超, kind: imaging, system: imaging,
+     modifiability: not_modifiable}
+  - {code: OVARY_US, name: 双侧卵巢, kind: imaging, system: imaging,
+     modifiability: not_modifiable}
+  - {code: TCT, name: 宫颈液基细胞学(TCT), kind: qualitative, system: gyn,
+     modifiability: clinical}
+  - {code: HPV_HIGH_RISK, name: HPV高危型（合并）, kind: qualitative, system: gyn,
+     modifiability: clinical,
+     note: 本次 19 个高危型全阴。TCT 与 HPV 联合筛查是同一件事的两半}
+  - {code: HPV_LOW_RISK, name: HPV低危型（合并）, kind: qualitative, system: gyn,
+     modifiability: clinical}
+  - {code: VAG_CLEANLINESS, name: 阴道清洁度, kind: qualitative, system: gyn,
+     modifiability: clinical}
+  - {code: VAG_WBC, name: 阴道分泌物白细胞, kind: qualitative, system: gyn,
+     modifiability: clinical}
+  - {code: VAG_BACILLUS, name: 阴道杆菌, kind: qualitative, system: gyn,
+     modifiability: clinical, note: 乳酸杆菌为主是正常菌群，阳性是好事不是异常}
+  - {code: CLUE_CELLS, name: 线索细胞, kind: qualitative, system: gyn,
+     modifiability: clinical}
+  - {code: TRICHOMONAS, name: 阴道毛滴虫, kind: qualitative, system: gyn,
+     modifiability: clinical}
+  - {code: GARDNERELLA, name: 阴道加德纳菌, kind: qualitative, system: gyn,
+     modifiability: clinical}
+  - {code: CANDIDA, name: 念珠菌, kind: qualitative, system: gyn,
+     modifiability: clinical}
+  - {code: GYN_EXAM, name: 妇科检查, kind: qualitative, system: gyn,
+     modifiability: clinical}
+
+  # ---------------- 眼科 ----------------
+  - {code: VISION_R, name: 视力右, system: eye, modifiability: clinical,
+     advisory_low: 5.0, advisory_note: 5.0（小数视力 1.0）为标准，低于此需看能否矫正,
+     advisory_source: 知识库补充（原报告未给区间）}
+  - {code: VISION_L, name: 视力左, system: eye, modifiability: clinical,
+     advisory_low: 5.0, advisory_note: 5.0（小数视力 1.0）为标准，低于此需看能否矫正,
+     advisory_source: 知识库补充（原报告未给区间）}
+  - {code: VISION_R_CORRECTED, name: 矫正视力右, system: eye, modifiability: clinical,
+     note: 裸眼视力低是否需要处理，取决于它能不能被矫正——所以这一项才是判据}
+  - {code: VISION_L_CORRECTED, name: 矫正视力左, system: eye, modifiability: clinical}
+  - {code: COLOR_VISION, name: 辨色力, kind: qualitative, system: eye,
+     modifiability: not_modifiable}
+  - {code: CONJUNCTIVA, name: 结膜情况, kind: qualitative, system: eye,
+     modifiability: clinical}
+
+  # ---------------- 尿液分析补齐 ----------------
+  - {code: U_COLOR, name: 尿颜色, kind: qualitative, system: renal,
+     modifiability: clinical}
+  - {code: U_CLARITY, name: 尿透明度, kind: qualitative, system: renal,
+     modifiability: clinical}
+  - {code: U_VITC, name: "尿维生素C[Vc]", system: renal, canonical_unit: mmol/L,
+     modifiability: self_modifiable,
+     note: 高浓度维生素C 会压低隐血、尿糖等干化学项的读数，是判读尿常规时的前置条件}
+  - {code: U_URO, name: "尿胆原[URO]", kind: qualitative, system: renal,
+     modifiability: clinical}
+  - {code: U_MUCUS, name: "粘液丝[MUCS]", canonical_unit: 个/ul, system: renal,
+     modifiability: clinical,
+     note: 来自尿道与生殖道上皮，女性留样时混入外阴分泌物即可升高，非病理指标}
+  - {code: U_NONSQ_EPI, name: "非鳞状上皮细胞[NSE]", canonical_unit: 个/ul,
+     system: renal, modifiability: clinical}
+  - {code: U_CRYSTAL, name: "未分类结晶[UNCX]", canonical_unit: 个/ul, system: renal,
+     modifiability: clinical}
+  - {code: U_YEAST, name: "酵母菌[BYST]", canonical_unit: 个/ul, system: renal,
+     modifiability: clinical}
+  - {code: U_CAST_HYAL, name: "透明管型[HYAL]", canonical_unit: 个/LPF, system: renal,
+     modifiability: clinical}
+  - {code: U_CAST_PATH, name: "病理管型[UNCC]", canonical_unit: 个/LPF, system: renal,
+     modifiability: clinical}
+  - {code: U_RBC_MORPH, name: "红细胞形态[HX]", kind: qualitative, system: renal,
+     modifiability: clinical}
+
+  # ---------------- 影像与内镜 ----------------
+  - {code: ABDOMEN_US, name: 腹部彩超（肝胆胰脾）, kind: imaging, system: imaging,
+     modifiability: not_modifiable}
+  - {code: KIDNEY_US, name: 肾输尿管膀胱彩超, kind: imaging, system: imaging,
+     modifiability: not_modifiable}
+  - {code: CHEST_CT, name: 胸部CT平扫, kind: imaging, system: imaging,
+     modifiability: not_modifiable}
+  - {code: RIB_CORTEX, name: 肋骨皮质, kind: qualitative, system: imaging,
+     modifiability: not_modifiable,
+     note: "「皮质欠光整」多见于陈旧骨折愈合，但影像本身分不出新旧，要靠病史"}
+  - {code: VERTEBROBASILAR, name: 椎基底动脉走行, kind: qualitative, system: imaging,
+     modifiability: not_modifiable,
+     note: 走行迂曲是解剖变异，与狭窄是两回事}
+  - {code: C14_UBT, name: C14尿素呼气试验, kind: qualitative, system: gastric,
+     aliases: ["C14呼气试验"], modifiability: clinical,
+     note: 幽门螺杆菌现症感染的判据。近期用过抑酸药或抗生素会造成假阴性}
+  - {code: GASTRIC_MUCOSA, name: 胃镜黏膜所见, kind: qualitative, system: gastric,
+     modifiability: clinical}
+  - {code: COLONOSCOPY, name: 结肠镜, kind: qualitative, system: gastric,
+     modifiability: clinical}
+
+  # ---------------- 口腔补齐 ----------------
+  - {code: DENTAL_RESTORE_NEEDED, name: 是否需修复, kind: qualitative, system: oral,
+     modifiability: clinical}
+  - {code: MUCOSAL_ULCER, name: 黏膜溃疡, kind: qualitative, system: oral,
+     modifiability: clinical}
+  - {code: TONGUE_COATING, name: 舌苔, kind: qualitative, system: oral,
+     modifiability: self_modifiable}
+  - {code: TMJ_SYMPTOM, name: 颞下颌关节弹响/疼痛, kind: qualitative, system: oral,
+     modifiability: clinical}
+  - {code: OCCLUSION, name: 咬合关系, kind: qualitative, system: oral,
+     modifiability: clinical}
+
+  # ---------------- 内科查体 ----------------
+  - {code: PE_HEART, name: 心脏听诊, kind: qualitative, system: physical_exam,
+     modifiability: clinical}
+  - {code: PE_LUNG, name: 肺部听诊, kind: qualitative, system: physical_exam,
+     modifiability: clinical}
+  - {code: PE_LIVER, name: 肝脏触诊, kind: qualitative, system: physical_exam,
+     modifiability: clinical}
+  - {code: PE_SPLEEN, name: 脾脏触诊, kind: qualitative, system: physical_exam,
+     modifiability: clinical}
+
+  # ---------------- 本次没做、但"能给某一项定性"的检查 ----------------
+  # 它们进本体不是为了判读本次，是为了让"这一项判不了、缺的正是它们"
+  # 这句话有可校验的对象。
+  - {code: ORTHOSTATIC_BP, name: 立卧位血压, canonical_unit: mmHg, system: cardiovascular,
+     modifiability: clinical, note: 判断低血压有没有意义的第一层判据，在家就能做}
+  - {code: HOME_BP_SERIES, name: 家庭血压序列, canonical_unit: mmHg, system: cardiovascular,
+     modifiability: self_modifiable, note: 体检当天的一次坐位测量不能代表日常水平}
+  - {code: PRIOR_CHEST_IMAGING, name: 既往胸部影像, kind: imaging, system: imaging,
+     modifiability: not_modifiable, note: 分辨影像改变是新是旧，唯一可靠的是与既往原始影像对比}
+  - {code: RIB_XRAY_LOCAL, name: 肋骨局部摄片, kind: imaging, system: imaging,
+     modifiability: not_modifiable}
+  - {code: PPI_TRIAL, name: 停用抑酸药后复测, kind: qualitative, system: gastric,
+     modifiability: clinical, note: 质子泵抑制剂会持续推高胃泌素17，停药数周后复测才有解释力}

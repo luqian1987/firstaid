@@ -44,6 +44,10 @@ indicators:
     canonical_unit: mmol/L
     system: lipid
     modifiability: self_modifiable
+    beneficial_direction: high
+    beneficial_note: >-
+      各家实验室给的区间有单侧（>1.04）也有双侧（1.04-1.55）。用双侧区间时，
+      偏高的一侧会被打上"↑"，而那一侧不是危害。
 
   - code: SDLDL_C
     name: 小而密低密度脂蛋白胆固醇
@@ -67,6 +71,10 @@ indicators:
     canonical_unit: g/L
     system: lipid
     modifiability: self_modifiable
+    beneficial_direction: high
+    beneficial_note: >-
+      ApoA1 是 HDL 颗粒的主要载脂蛋白，与 HDL-C 计量的是同一批颗粒。
+      参考区间 1–1.6 是双侧的，于是偏高会被标"↑"——那一侧与 HDL 高是同一件事。
 
   # ---------------- 肝脏 ----------------
   - code: GGT
@@ -138,6 +146,10 @@ indicators:
     canonical_unit: μU/mL
     system: glucose
     modifiability: self_modifiable
+    beneficial_direction: low
+    beneficial_note: >-
+      只在血糖正常的前提下成立：空腹胰岛素低 + 血糖正常 = 胰岛素敏感性好；
+      血糖高时同样的低胰岛素含义相反，是分泌不足。所以规则必须带血糖这一层守卫。
   - code: C_PEPTIDE
     name: C肽
     canonical_unit: ng/mL

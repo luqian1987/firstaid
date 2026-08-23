@@ -123,6 +123,26 @@ class RuleSet(BaseModel):
     def by_id(self, rid: str) -> RuleSpec | None:
         return next((r for r in self.rules if r.id == rid), None)
 
+    def validate_params(self) -> list[str]:
+        """参数必须能被对应模式的参数模型接住。
+
+        参数模型都是 extra="forbid"，所以字段名写错在这里就会被抓到，
+        而不是等到某个病人恰好跑到这条规则时才炸——或者更糟，静默用默认值。
+        """
+        from .archetypes import REGISTRY
+        errs: list[str] = []
+        for r in self.rules:
+            impl = REGISTRY.get(r.archetype)
+            if impl is None:
+                errs.append(f"{r.id}: 未实现的模式 {r.archetype.value}")
+                continue
+            try:
+                impl.params_model.model_validate(r.params)
+            except Exception as e:
+                first = str(e).splitlines()[1] if "\n" in str(e) else str(e)
+                errs.append(f"{r.id}: params 不合模式 {r.archetype.value} 的定义 —— {first}")
+        return errs
+
     def validate_all(self) -> list[str]:
         errs: list[str] = []
         seen: set[str] = set()
@@ -131,6 +151,7 @@ class RuleSet(BaseModel):
                 errs.append(f"规则 id 重复: {r.id}")
             seen.add(r.id)
             errs += r.validate_shape()
+        errs += self.validate_params()
         return errs
 
 

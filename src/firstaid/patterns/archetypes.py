@@ -11,7 +11,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Any, Sequence
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from ..model import (
     Archetype, ContextKey, EvidenceRef, Observation, PatternHit, RangeStatus, TriState,
@@ -89,6 +89,17 @@ def check_state(o: Observation | None, expect: str, threshold: float | None = No
     raise ValueError(f"未知的期望状态: {expect}")
 
 
+class Params(BaseModel):
+    """所有模式参数的基类。
+
+    extra="forbid" 是一条不变式而不是洁癖：参数名写错时，pydantic 默认会
+    忽略这个字段并用默认值，于是规则看上去写好了、自检也过了，却永远不命中。
+    这类静默失效比崩溃危险得多——neuro 那条把 direction 写成 upstream_direction，
+    就是这样白白不命中了一整轮。
+    """
+    model_config = ConfigDict(extra="forbid")
+
+
 class ArchetypeImpl(ABC):
     archetype: Archetype
     params_model: type[BaseModel]
@@ -128,7 +139,7 @@ class ArchetypeImpl(ABC):
 # 1. 上游异常 / 下游全阴  → 检测可信度存疑
 #    例：血清叶酸 <0.20 属重度缺乏量级，但 Hcy、MCV、Hb、MMA 四个下游全正常。
 # --------------------------------------------------------------------------
-class UpstreamContradictedParams(BaseModel):
+class UpstreamContradictedParams(Params):
     upstream: str
     direction: str = "low"                 # low / high
     downstream: list[str]
@@ -175,7 +186,7 @@ class UpstreamContradicted(ArchetypeImpl):
 # 2. 校正值 vs 未校正值  → 未校正的异常由已知混杂解释
 #    例：低切/中切粘度升高，但扣掉压积影响的全血还原粘度完全正常。
 # --------------------------------------------------------------------------
-class CorrectedVsRawParams(BaseModel):
+class CorrectedVsRawParams(Params):
     raw: list[str]
     corrected: list[str]
     confounders: list[str] = Field(default_factory=list)
@@ -213,7 +224,7 @@ class CorrectedVsRaw(ArchetypeImpl):
 # 3. 配对同向背离  → 系统性偏差（方法学/定标），而非两个独立异常
 #    例：ApoB↔非HDL-C 与 ApoA1↔HDL-C 两组同时朝同一方向散开。
 # --------------------------------------------------------------------------
-class Pair(BaseModel):
+class Pair(Params):
     particle: str
     cargo: str
     ratio_min: float
@@ -221,7 +232,7 @@ class Pair(BaseModel):
     label: str | None = None
 
 
-class PairedDivergenceParams(BaseModel):
+class PairedDivergenceParams(Params):
     pairs: list[Pair]
     min_violations: int = 2
     require_same_direction: bool = True
@@ -269,7 +280,7 @@ class PairedDivergence(ArchetypeImpl):
 # 4. 形态脱节  → 单项升高与它本该同行的指标不同步，指向不同病因
 #    例：GGT 达上限 1.53 倍，而 ALT/AST 正常、AST/ALT 仅 0.77。
 # --------------------------------------------------------------------------
-class RatioCheck(BaseModel):
+class RatioCheck(Params):
     numerator: str
     denominator: str
     below: float | None = None
@@ -277,7 +288,7 @@ class RatioCheck(BaseModel):
     label: str | None = None
 
 
-class PatternDissociationParams(BaseModel):
+class PatternDissociationParams(Params):
     lead: str
     lead_min_ratio_to_upper: float = 1.2
     companions: list[str]
@@ -331,14 +342,14 @@ class PatternDissociation(ArchetypeImpl):
 # 5. 多层排除  → 一个命名发现，按层逐一排除后可降级
 #    例：脾大 = 尺寸层（长径仍在界值内）+ 功能层（三系正常）+ 上游层（无门脉高压）
 # --------------------------------------------------------------------------
-class Layer(BaseModel):
+class Layer(Params):
     name: str
     codes: list[str]
     expect: str = "in_range"
     threshold: float | None = None
 
 
-class LayeredExclusionParams(BaseModel):
+class LayeredExclusionParams(Params):
     finding: str
     layers: list[Layer]
 
@@ -382,10 +393,13 @@ class LayeredExclusion(ArchetypeImpl):
 # 6. 孤立异常缺乏佐证
 #    例：尿细菌 15↑，而白细胞、酯酶、亚硝酸盐、白细胞团四项全阴 → 污染而非感染
 # --------------------------------------------------------------------------
-class IsolatedAbnormalParams(BaseModel):
+class IsolatedAbnormalParams(Params):
     abnormal: str
     direction: str = "abnormal"
-    corroborators: list[str]
+    corroborators: list[str]                # 必须都做了；缺一项就说不出"孤立"
+    # 做了就必须过、没做就跳过的佐证。有些直接证据只有部分医院会做
+    # （胃镜、呼气试验），把它们写进 corroborators 会让规则在别的病人身上整条失效。
+    optional_corroborators: list[str] = Field(default_factory=list)
     corroborator_expect: str = "negative_or_in_range"
 
 
@@ -405,6 +419,8 @@ class IsolatedAbnormal(ArchetypeImpl):
         refs, missing = self._gather(ctx, p.corroborators, "corroborator")
         if missing:
             return self._hit(rule_id, TriState.INDETERMINATE, missing=missing)
+        opt, _skipped = self._gather(ctx, p.optional_corroborators, "corroborator")
+        refs = refs + opt
         states = [check_state(r.observation, p.corroborator_expect) for r in refs]
         if any(s is None for s in states):
             return self._hit(rule_id, TriState.INDETERMINATE,
@@ -422,13 +438,13 @@ class IsolatedAbnormal(ArchetypeImpl):
 # 7. 急性期蛋白一致性  → 多个指标共同描述同一个良性背景
 #    例：FIB 1.72↓ + ESR 1 + CRP<0.5 三者互证 = 低炎症背景，不是出血倾向
 # --------------------------------------------------------------------------
-class Member(BaseModel):
+class Member(Params):
     code: str
     expect: str
     threshold: float | None = None
 
 
-class AcutePhaseCoherenceParams(BaseModel):
+class AcutePhaseCoherenceParams(Params):
     members: list[Member]
     functional_normal: list[str] = Field(default_factory=list)
 
@@ -475,7 +491,7 @@ class AcutePhaseCoherence(ArchetypeImpl):
 # 8. 常规组套全正常，但组合提示风险
 #    例：血脂四项全部在区间内，而 Lp(a) 456.7 + 颅内 M1 段狭窄 + 颈动脉干净
 # --------------------------------------------------------------------------
-class NormalPanelHiddenRiskParams(BaseModel):
+class NormalPanelHiddenRiskParams(Params):
     panel: list[str]
     hidden: str
     hidden_direction: str = "high"
@@ -525,7 +541,7 @@ class NormalPanelHiddenRisk(ArchetypeImpl):
 # 9. 无区间结构性发现  → 不判高低，转"比较口径"
 #    例：CAP 272、LSM 6.1、脾 116×46、结节 4mm —— 原报告没给区间的数字
 # --------------------------------------------------------------------------
-class UnrangedStructuralParams(BaseModel):
+class UnrangedStructuralParams(Params):
     codes: list[str]
     require_no_range: bool = True
 
@@ -555,7 +571,7 @@ class UnrangedStructural(ArchetypeImpl):
 #     这一类是覆盖率审计逼出来的：两项异常反复落进 UNRESOLVED，
 #     说明知识库缺一条规则，而不是这次数据特殊。
 # --------------------------------------------------------------------------
-class RangeKindCaveatParams(BaseModel):
+class RangeKindCaveatParams(Params):
     code: str
     caveat_kinds: list[str] = Field(default_factory=lambda: ["lab_percentile"])
     # 只有这些前提都不成立时，这条"异常"才判定为无需处理
@@ -599,7 +615,7 @@ class RangeKindCaveat(ArchetypeImpl):
 #     例：尿微量白蛋白 27.74 与 尿微量白蛋白/肌酐 25.79 都在 0–30 内，
 #     但双双贴近上限，而肾功能其余项都在区间中部。单看任一项都会被略过。
 # --------------------------------------------------------------------------
-class BorderlineConcordantParams(BaseModel):
+class BorderlineConcordantParams(Params):
     codes: list[str]
     end: str = "high"                    # high / low
     threshold: float = 0.75              # 区间内相对位置阈值
@@ -659,13 +675,13 @@ class BorderlineConcordant(ArchetypeImpl):
 #     "多个指标同时偏离，而且病变已经看得见了"。后者不需要再论证风险存在，
 #     需要论证的是这些因素里哪些能动、哪些不能。
 # --------------------------------------------------------------------------
-class ConvergingFactor(BaseModel):
+class ConvergingFactor(Params):
     code: str
     expect: str = "high"
     threshold: float | None = None
 
 
-class RiskConvergenceParams(BaseModel):
+class RiskConvergenceParams(Params):
     factors: list[ConvergingFactor]
     min_deviating: int = 3
     lesion: list[str]                       # 该过程的直接形态学证据
@@ -716,7 +732,7 @@ class RiskConvergence(ArchetypeImpl):
 #     它的要害是：这项检查不是为它做的，因此阴性预测值与主目标不同，
 #     不该按主目标的标准去解读，也不该占用主要关注。
 # --------------------------------------------------------------------------
-class IncidentalParams(BaseModel):
+class IncidentalParams(Params):
     finding: str
     study_primary: str                      # 该检查的主目标结论
     primary_expect: str = "normal_text"
@@ -755,13 +771,13 @@ class IncidentalOnOtherStudy(ArchetypeImpl):
 #     它只在那些检查全都缺席时成立：只要有一项做了，就该由读那一项的规则来判，
 #     不许用这条把已有证据绕过去。
 # --------------------------------------------------------------------------
-class SettlingTest(BaseModel):
+class SettlingTest(Params):
     code: str
     what: str                               # 这项检查能定什么
     how: str | None = None                  # 怎么补（门诊/自测/下次体检加项）
 
 
-class UnsettledFindingParams(BaseModel):
+class UnsettledFindingParams(Params):
     finding: str
     finding_expect: str = "abnormal"
     settled_by: list[SettlingTest]
@@ -794,6 +810,115 @@ class UnsettledFinding(ArchetypeImpl):
                     "absent": "、".join(t.what for t in p.settled_by)})
 
 
+# --------------------------------------------------------------------------
+# 15. 同一个量被报了两次
+#     体检套餐是按组套卖的，组套之间会重叠：血常规的红细胞压积与血流变的压积、
+#     生化的血糖与单独的空腹血糖、风湿三项的 CRP 与超敏 CRP。
+#     两张单子各打一个箭头，总检就把它数成两条异常，转诊建议也跟着加倍。
+#     这一类要说的是"这是一个数不是两个"，以及那一个数到底该怎么读。
+# --------------------------------------------------------------------------
+class SameQuantity(Params):
+    code: str
+    scale: float = 1.0                      # 换算到同一口径的系数（如 % → 小数取 0.01）
+
+
+class DuplicateQuantityParams(Params):
+    same: list[SameQuantity]
+    tolerance: float = 0.05                 # 相对差，超过就不是同一个量，别硬并
+    context: list[str] = Field(default_factory=list)
+
+
+class DuplicateQuantity(ArchetypeImpl):
+    archetype = Archetype.DUPLICATE_QUANTITY
+    params_model = DuplicateQuantityParams
+
+    def evaluate(self, rule_id, ctx, p: DuplicateQuantityParams) -> PatternHit:
+        present = [(m, o) for m in p.same if (o := ctx.obs(m.code)) is not None]
+        if len(present) < 2:
+            # 只报了一次就不存在"数了两遍"这件事，交给别的规则读
+            return self._hit(rule_id, TriState.NOT_TRIGGERED)
+        vals = [(m, o, o.value * m.scale) for m, o in present if o.value is not None]
+        if len(vals) < 2:
+            return self._hit(rule_id, TriState.INDETERMINATE,
+                             missing=[m.code for m, o in present if o.value is None])
+        base = vals[0][2]
+        if base == 0:
+            return self._hit(rule_id, TriState.INDETERMINATE, missing=[vals[0][0].code])
+        spread = max(abs(v - base) / abs(base) for _, _, v in vals)
+        if spread > p.tolerance:
+            # 差太多说明它们量的不是同一件事（或有一处抄错），不许并成一条
+            return self._hit(rule_id, TriState.NOT_TRIGGERED,
+                             detail={"spread": round(spread, 4)})
+        if not any(o.abnormal for _, o, _ in vals):
+            return self._hit(rule_id, TriState.NOT_TRIGGERED)
+        refs = [EvidenceRef(observation=o, role="duplicate") for _, o, _ in vals]
+        ctx_refs, _ = self._gather(ctx, p.context, "context")
+        return self._hit(
+            rule_id, TriState.TRIGGERED, evidence=refs + ctx_refs,
+            consumed=[r.observation.code for r in refs + ctx_refs],
+            detail={"n_copies": float(len(vals)),
+                    "n_flagged": float(sum(1 for _, o, _ in vals if o.abnormal)),
+                    "spread": round(spread, 4)})
+
+
+# --------------------------------------------------------------------------
+# 16. 箭头指向有利的一侧
+#     参考区间是双侧的，而有些指标在临床上只有一侧有意义：
+#     HDL-C、载脂蛋白AⅠ 越高越好，空腹胰岛素在血糖正常时越低越说明敏感。
+#     报告按双侧区间打箭头，于是保护因素被列进"异常"，还配上一套减重戒油的建议。
+#
+#     有利方向是指标的固有属性，写在本体里，不在规则里重写；
+#     而"有利"几乎总是有条件的（血糖不正常时低胰岛素含义相反），
+#     所以 guards 是必填：守卫不成立，这条就不成立。
+# --------------------------------------------------------------------------
+class BenignDirectionParams(Params):
+    code: str
+    guards: list[str]                       # 这些必须在区间内，有利读法才成立
+    guard_expect: str = "in_range_or_advisory_in_range"
+    partner: str | None = None              # 计量同一件事的搭档（ApoA1 ↔ HDL-C）
+    context: list[str] = Field(default_factory=list)
+
+
+class BenignDirection(ArchetypeImpl):
+    archetype = Archetype.BENIGN_DIRECTION
+    params_model = BenignDirectionParams
+
+    def evaluate(self, rule_id, ctx, p: BenignDirectionParams) -> PatternHit:
+        o = ctx.obs(p.code)
+        if o is None:
+            return self._hit(rule_id, TriState.INDETERMINATE, missing=[p.code])
+        d = ctx.indicator(p.code)
+        want = getattr(d, "beneficial_direction", None) if d else None
+        if want not in ("high", "low"):
+            # 本体没声明有利方向就不许推断。这是知识库缺口，不是"未命中"。
+            return self._hit(rule_id, TriState.INDETERMINATE, missing=[p.code])
+        if not o.judged:
+            return self._hit(rule_id, TriState.INDETERMINATE, missing=[p.code])
+        flagged_beneficial = o.is_high if want == "high" else o.is_low
+        if not flagged_beneficial:
+            return self._hit(rule_id, TriState.NOT_TRIGGERED)
+        guard_refs, missing = self._gather(ctx, p.guards, "guard")
+        if missing:
+            return self._hit(rule_id, TriState.INDETERMINATE, missing=missing)
+        states = [check_state(r.observation, p.guard_expect) for r in guard_refs]
+        if any(s is None for s in states):
+            return self._hit(rule_id, TriState.INDETERMINATE,
+                             missing=[r.observation.code
+                                      for r, s in zip(guard_refs, states) if s is None])
+        if not all(states):
+            # 守卫破了，有利读法不成立 —— 交给别的规则，不要硬把它说成好事
+            return self._hit(rule_id, TriState.NOT_TRIGGERED)
+        refs = [EvidenceRef(observation=o, role="flagged")]
+        if p.partner and (po := ctx.obs(p.partner)) is not None:
+            refs.append(EvidenceRef(observation=po, role="partner"))
+        ctx_refs, _ = self._gather(ctx, p.context, "context")
+        allrefs = refs + guard_refs + ctx_refs
+        return self._hit(
+            rule_id, TriState.TRIGGERED, evidence=allrefs,
+            consumed=[r.observation.code for r in allrefs],
+            detail={"direction": want, "n_guards": float(len(guard_refs))})
+
+
 REGISTRY: dict[Archetype, ArchetypeImpl] = {
     impl.archetype: impl for impl in (
         UpstreamContradicted(), CorrectedVsRaw(), PairedDivergence(),
@@ -801,5 +926,6 @@ REGISTRY: dict[Archetype, ArchetypeImpl] = {
         AcutePhaseCoherence(), NormalPanelHiddenRisk(), UnrangedStructural(),
         RangeKindCaveat(), BorderlineConcordant(),
         RiskConvergence(), IncidentalOnOtherStudy(), UnsettledFinding(),
+        DuplicateQuantity(), BenignDirection(),
     )
 }

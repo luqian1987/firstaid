@@ -70,7 +70,7 @@ def load_fixture(path: str | Path, ontology: Ontology,
         enc.original_findings.append(OriginalFinding.model_validate(raw))
 
     labels = {s.id: s.label for s in sources}
-    norm = Normalizer(ontology, units or UnitTable())
+    norm = Normalizer(ontology, units or UnitTable(), sex=subject.sex)
     for row in doc.get("observations", []):
         row = dict(row)
         sid = row.pop("source", "unknown")

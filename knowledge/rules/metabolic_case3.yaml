@@ -1,0 +1,158 @@
+rules:
+  # 模式 6：孤立异常缺乏佐证 —— 原报告给的病因被同一份报告里的数据否掉
+  - id: correct.urea_low_is_not_malnutrition
+    archetype: isolated_abnormal
+    title: 尿素低，而全部营养指标都在区间内
+    tag: correction
+    chapter: correct
+    modifiability: unknown
+    priority: 52
+    params:
+      abnormal: UREA
+      direction: low
+      corroborators: [ALB, TP, PREALBUMIN, CHE, CREATININE, UA, GLOB]
+      optional_corroborators: [CYSTATIN_C, HGB, BMI]
+      corroborator_expect: in_range
+    correction:
+      claim: 原建议以"营养不良"为前提，而同一份报告里的营养指标全部正常
+      claim_soft: >-
+        尿素 2.02 偏低，原报告据此建议"多吃含蛋白多的食物"。
+        同一次抽血里，白蛋白 44.5、总蛋白 68.4、前白蛋白 236、胆碱酯酶 8629
+        全部在区间内——这四项正是反映蛋白营养状态的指标，
+        其中前白蛋白的半衰期只有两天，对近期摄入最敏感。
+        尿素偏低也常见于饮水多、肾小球滤过偏高这类与营养无关的情形，
+        而肌酐 52、胱抑素C 0.52 提示滤过是好的。
+        这一条建议执行前值得和医生确认一句：在这些指标都正常的情况下，
+        是否还需要按营养不良处理。
+      original_advice: 可见于营养不良，多尿等，建议您多吃含蛋白多的食物，加强营养，定期复查，肾内科门诊随诊
+      original_source: 生化(36项)
+      flagged: UREA
+      why_not: >-
+        营养不良的判据是蛋白类指标，本次白蛋白、总蛋白、前白蛋白、胆碱酯酶四项全部正常；
+        其中前白蛋白半衰期约两天，对近期蛋白摄入最敏感，它正常基本排除近期摄入不足。
+      what_to_do: >-
+        不需要为这一项改变饮食。若同时有多尿或大量饮水，可在下次抽血前记录一天的饮水量，
+        与尿素一起看；肾内科门诊不是必需的。
+    tests:
+      - {name: 病例3真实数据, fixture: case3_2026-03-30, expect: triggered}
+      - {name: 白蛋白也低时不成立, fixture: case3_2026-03-30, expect: not_triggered,
+         overrides: {ALB: 32.0}}
+      - {name: 病例1尿素不低, fixture: zhang_real_2026-03-30, expect: not_triggered}
+
+  # 模式 6，配合新派生的阴离子间隙
+  - id: metabolic.co2cp_low_with_normal_gap
+    archetype: isolated_abnormal
+    title: 二氧化碳结合力轻度偏低，而阴离子间隙与肾功能都正常
+    headline: 阴离子间隙正常、肾功能正常，这个轻度偏低不指向代谢性酸中毒
+    lede: >-
+      二氧化碳结合力反映血里的碳酸氢根。它单独偏低时，
+      唯一能把"真的在丢碱"与"标本或呼吸因素"分开的一步，是算阴离子间隙——
+      而原报告从不算它。
+    tag: downgrade
+    chapter: downgrade
+    modifiability: clinical
+    priority: 30
+    params:
+      abnormal: CO2CP
+      direction: low
+      corroborators: [ANION_GAP, POTASSIUM, SODIUM, CHLORIDE, CREATININE, GLU_FASTING]
+      optional_corroborators: [CYSTATIN_C, U_KET, U_PH, UA]
+      corroborator_expect: in_range_or_advisory_in_range
+    narration:
+      single_read: >-
+        原报告只写"二氧化碳结合力低"，建议定期复查、内分泌科门诊随诊。
+        单看这一项，无从判断它有没有意义。
+      joint_read: >-
+        用同一次抽血的钠 {SODIUM}、氯 {CHLORIDE} 和它自己，可以直接算出
+        阴离子间隙 {ANION_GAP} mmol/L，在常用区间内。
+        这一步很关键：有临床意义的代谢性酸中毒，多数会把阴离子间隙推高
+        （酮症、乳酸、肾衰时堆积的酸根都是未测定的阴离子）。
+        间隙正常，同时钾 {POTASSIUM}、肌酐 {CREATININE}、血糖 {GLU_FASTING} 都正常，
+        尿酮体阴性——丢碱的常见路径本次都没有证据。
+        剩下的常见解释是标本因素：二氧化碳结合力是全套生化里最容易受标本
+        暴露空气影响的一项，管子没封严、放置久了都会偏低。
+      must_convey:
+        - 阴离子间隙由本次数据算出，在正常范围内
+        - 酮症、肾功能、电解质这几条常见路径本次都没有证据
+        - 二氧化碳结合力对标本处理极敏感，轻度偏低常来自这里
+      must_not_claim:
+        - 不得断言不存在酸碱失衡——确认它需要动脉血气，本次没做
+        - 不得据此排除任何肾小管问题
+    verdict:
+      certain: >-
+        以本次数据看，这一项不指向需要处理的代谢性酸中毒，
+        也不构成到内分泌科就诊的理由。
+      not_certain: >-
+        二氧化碳结合力是静脉血的估算，不是血气。真正判断酸碱状态要靠动脉血气，
+        本次没有做，也没有做的理由——因为没有任何症状或其他指标提示需要它。
+      next_steps:
+        - 下次复查时与钠、氯同时看，能再算一次阴离子间隙
+        - 不需要单独为这一项安排检查
+      compare_next:
+        - code: CO2CP
+          what: 与钠、氯同次，这样才能重算阴离子间隙
+          caveat: 标本暴露空气即偏低，采血与送检条件不一致就不可比
+    tests:
+      - {name: 病例3真实数据, fixture: case3_2026-03-30, expect: triggered}
+      - {name: 阴离子间隙升高时不成立, fixture: case3_2026-03-30, expect: not_triggered,
+         overrides: {CHLORIDE: 95.0}}
+      - {name: 病例1二氧化碳结合力正常, fixture: zhang_real_2026-03-30, expect: not_triggered}
+
+  # 模式 3：配对背离（单对）—— 载脂蛋白B 与它的胆固醇载荷不同步
+  - id: lipid.apob_discordant_alone
+    archetype: paired_divergence
+    title: 载脂蛋白B 偏高，而它对应的胆固醇载荷全部正常
+    headline: 颗粒数与胆固醇量对不上，复测前不按一个风险层级处理
+    lede: >-
+      载脂蛋白B 数的是致动脉粥样硬化颗粒的个数，非高密度脂蛋白胆固醇
+      量的是这些颗粒里一共装了多少胆固醇。两者正常情况下高度同步。
+    tag: retest_first
+    chapter: watch
+    modifiability: unknown
+    priority: 48
+    params:
+      pairs:
+        - {particle: APOB_MGDL, cargo: NONHDL_C_MGDL, ratio_min: 0.95, ratio_max: 1.80,
+           label: nonHDL_over_ApoB}
+      min_violations: 1
+      require_same_direction: false
+    extra_evidence: [APOB, NONHDL_C, LDL_C, TC, TG, SDLDL_C, LPA]
+    narration:
+      single_read: >-
+        "载脂蛋白B高"被与"载脂蛋白AⅠ高"合成一条，配上戒烟戒酒、少食动物脂肪、
+        控制体重的建议。看起来是血脂异常，而且是两项。
+      joint_read: >-
+        载脂蛋白B {APOB_MGDL} mg/dL 对应的非高密度脂蛋白胆固醇只有
+        {NONHDL_C_MGDL} mg/dL，比值 {$nonHDL_over_ApoB} 低于可信范围。
+        与此同时低密度脂蛋白 {LDL_C}、总胆固醇 {TC}、甘油三酯 {TG}、
+        小而密低密度脂蛋白 {SDLDL_C}、脂蛋白(a) {LPA} 全部在区间内。
+        这个组合有两种可能：颗粒确实多而每个装得少（那是真正需要重视的一类），
+        或者这一批载脂蛋白B 的测定偏高。
+        小而密低密度脂蛋白正常、甘油三酯低，都不支持第一种；
+        但纸面数据分不开这两者，所以在复测之前不该把它单独当作一个风险层级。
+      must_convey:
+        - 颗粒数与胆固醇量的比值超出可信范围
+        - 其余血脂项全部正常，小而密颗粒不多
+        - 复测之前不按一个独立风险层级处理
+      must_not_claim:
+        - 不得断定检测出了错——纸面数据分不开方法学、定标、样本状态与个体特殊组成
+        - 不得因此忽略复测；比值持续背离才是真正要处理的信号
+    verdict:
+      certain: >-
+        这一项的正确动作是复测，而不是按"血脂异常"启动生活方式干预——
+        本例的体重、腰围、甘油三酯本来就都在理想范围。
+      not_certain: >-
+        单次的配对背离分不出是检测侧还是个体侧。
+        只有复测后比值仍然背离，才谈得上按颗粒数来重新评估风险。
+      next_steps:
+        - 复测时要求载脂蛋白B 与血脂全套同一管血、同一次出，才能再算一次比值
+        - 复测前不需要为这一项改变饮食或运动
+      compare_next:
+        - code: APOB
+          what: 与非高密度脂蛋白胆固醇的比值，不是载脂蛋白B 的绝对值
+          rationale: 单看绝对值分不出是颗粒真多还是这一批测得偏高
+    tests:
+      - {name: 病例3真实数据, fixture: case3_2026-03-30, expect: triggered}
+      - {name: 载脂蛋白B与载荷同步时不成立, fixture: case3_2026-03-30, expect: not_triggered,
+         overrides: {APOB: 0.90}}
+      - {name: 病例2载脂蛋白B与载荷同步, fixture: case2_2024-08-03, expect: not_triggered}

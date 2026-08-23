@@ -6,7 +6,8 @@ from __future__ import annotations
 
 from pydantic import Field
 
-from .common import Frozen, Mutable, ObservationKind, RangeKind
+from .common import Frozen, Mutable, ObservationKind, RangeKind, Sex
+from .derived import AdvisoryCutoff
 from .finding import Modifiability
 
 
@@ -33,6 +34,23 @@ class IndicatorDef(Frozen):
     advisory_high: float | None = None
     advisory_note: str | None = None
     advisory_source: str | None = None
+    # 分性别的切点用这个块（血红蛋白、尿酸、左室内径……分性别是常态）。
+    # 与上面四个扁平字段等价，只是多一层性别；两者不并用。
+    advisory: AdvisoryCutoff | None = None
+
+    # 这一项在临床上只有一侧有意义吗？参考区间是双侧的，
+    # 而 HDL、ApoA1、空腹胰岛素这类指标往有利的一侧越出区间会被打上"↑/↓"。
+    # 声明了它，规则才能说"这个箭头指的是好方向"。
+    beneficial_direction: str | None = None     # high / low / None
+    beneficial_note: str | None = None
+
+    def cutoff(self, sex: Sex | str | None) -> AdvisoryCutoff | None:
+        if self.advisory is not None:
+            return self.advisory.resolve(sex)
+        if self.advisory_low is None and self.advisory_high is None:
+            return None
+        return AdvisoryCutoff(low=self.advisory_low, high=self.advisory_high,
+                              note=self.advisory_note, source=self.advisory_source)
 
     note: str | None = None
 

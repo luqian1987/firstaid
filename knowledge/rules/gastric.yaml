@@ -2,8 +2,8 @@ rules:
   # 模式 6：孤立异常缺乏佐证
   - id: gastric.saliva_pepsin_vs_normal_panel
     archetype: isolated_abnormal
-    headline: 胃功能三项全部正常，不支持萎缩性胃炎，以胃肠镜为准
-    title: 唾液胃蛋白酶阳性，但胃功能三项不支持萎缩性胃炎
+    headline: 胃蛋白酶原这一组不支持萎缩，唾液这一条指向的是反流
+    title: 唾液胃蛋白酶阳性，而萎缩的直接判据（胃蛋白酶原组）正常
     lede: >-
       唾液里查到胃蛋白酶，说明胃内容物到过口腔，这是反流方向的线索；
       它和"胃黏膜有没有萎缩"是两个问题，而后者本次有直接指标。
@@ -14,19 +14,25 @@ rules:
     params:
       abnormal: SALIVA_PEPSIN
       direction: high
-      corroborators: [GASTRIN17, PG1, PG2, PG_RATIO]
+      # 要回答的是"胃体腺有没有萎缩"，判据是胃蛋白酶原这一组。
+      # 胃泌素17 由胃窦 G 细胞分泌，它高与萎缩不是同一条线——
+      # 病例 1 三项都正常时看不出这个区别，病例 3 的 G17 高才把它逼出来。
+      corroborators: [PG1, PG2, PG_RATIO]
+      optional_corroborators: [GASTRIC_ATROPHY, C14_UBT]
       corroborator_expect: in_range
     narration:
       single_read: >-
         "胃蛋白酶：阳性"被单独列为需要进一步检查，建议消化内科随诊。
         单看这一条，很难判断它到底指向什么。
       joint_read: >-
-        胃功能三项在同一份报告里给出了直接答案：胃泌素17 {GASTRIN17}、
-        胃蛋白酶原Ⅰ {PG1}、胃蛋白酶原Ⅱ {PG2}、PGⅠ/Ⅱ 比值 {PG_RATIO}，全部在区间内。
-        这一组正是用来筛查胃黏膜萎缩的，它们正常，就不支持萎缩性胃炎。
-        唾液胃蛋白酶阳性剩下的指向是反流，那属于症状问题，不是这套血清学能回答的。
+        萎缩这个问题在同一份报告里有直接判据：胃蛋白酶原Ⅰ {PG1}、
+        胃蛋白酶原Ⅱ {PG2}、PGⅠ/Ⅱ 比值 {PG_RATIO}，三项都在区间内。
+        这一组反映的是胃体腺的分泌功能，萎缩时它会先掉下来——它们正常，
+        就不支持萎缩性胃炎。
+        唾液里查到胃蛋白酶说明胃内容物到过口腔，剩下的指向是反流；
+        反流是症状问题，不是这套血清学能回答的。
       must_convey:
-        - 胃功能三项全部正常，不支持萎缩性胃炎
+        - 萎缩的直接判据是胃蛋白酶原这一组，本次三项都正常
         - 唾液胃蛋白酶阳性偏向反流方向，需要结合症状而不是结合血清学
       must_not_claim:
         - 不得诊断胃食管反流病
@@ -47,6 +53,9 @@ rules:
           what: 比 PGⅠ/Ⅱ 比值本身，这是萎缩筛查里最有意义的一个数
           rationale: 单看 PGⅠ 或 PGⅡ 都不如比值稳定
     tests:
-      - {name: 张韦韦真实数据, fixture: zhang_real_2026-03-30, expect: triggered}
+      - {name: 病例1真实数据, fixture: zhang_real_2026-03-30, expect: triggered}
+      # 病例 3 的胃泌素17 高，但那是胃窦 G 细胞的事；萎缩的判据依然全部正常，
+      # 加上胃镜与呼气试验（病例 1 没做）也阴性，这条照样成立。
+      - {name: 病例3胃泌素17高但萎缩判据仍正常, fixture: case3_2026-03-30, expect: triggered}
       - {name: PG比值下降则支持萎缩, fixture: zhang_real_2026-03-30,
          expect: not_triggered, overrides: {PG_RATIO: 1.8}}

@@ -84,7 +84,11 @@ rules:
       abnormal: U_BACT
       direction: high
       corroborators: [U_WBC, U_LE, U_NIT, U_WBC_CLUMP]
+      optional_corroborators: [U_RBC, U_PRO, U_CAST_PATH]
       corroborator_expect: negative_or_in_range
+    # 粘液丝高与"微浑"和细菌高是同一个采样问题的三种表现，不是三条异常。
+    # 病例 3 的原报告正是把它们并成一条给了泌尿外科。
+    extra_evidence: [U_MUCUS, U_CLARITY, U_EPI, U_NONSQ_EPI, U_SG]
     correction:
       claim: 不支持尿路感染，考虑留样污染
       claim_soft: >-
