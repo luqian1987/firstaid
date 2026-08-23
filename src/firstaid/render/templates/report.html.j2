@@ -31,6 +31,7 @@ a{color:inherit}
 .topbar nav a:hover{background:#fff;color:var(--ink)}
 
 .hero{padding:60px 0 38px;border-bottom:1px solid var(--rule)}
+.print-id{display:none}
 .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;
   text-transform:uppercase;color:var(--muted);margin:0 0 24px}
 .thesis{font-family:var(--serif);font-size:clamp(26px,4.2vw,42px);line-height:1.34;
@@ -171,6 +172,9 @@ footer b{color:var(--ink)}
 }
 @media print{
   .topbar{display:none} body{background:#fff}
+  .print-id{display:block;margin-bottom:10px}
+  .hero{padding-top:0}
+  .wrap{padding-bottom:0}
   .chain,.fix,.audit,table{break-inside:avoid;box-shadow:none}
 }
 </style>
@@ -189,6 +193,7 @@ footer b{color:var(--ink)}
 <div class="wrap">
 
 <header class="hero">
+  <p class="eyebrow print-id">{{ subject_id }} · {{ sex }} · {{ age }} 岁 · 健检 {{ period }}</p>
   <p class="eyebrow">体检报告二次判读 · 多联指标读法</p>
   {% if lead %}
   <h1 class="thesis"><em>{{ lead.title }}</em></h1>
