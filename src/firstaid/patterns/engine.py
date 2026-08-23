@@ -174,6 +174,7 @@ class PatternEngine:
         )
         return Chain(
             id=rule.id, title=rule.title,
+            headline=render_template(rule.headline, vals, detail),
             lede=render_template(rule.lede, vals, detail),
             tag=rule.tag, chapter=rule.chapter,
             modifiability=self._resolve_modifiability(rule, hit),
@@ -218,6 +219,7 @@ class PatternEngine:
         return Correction(
             id=rule.id,
             claim=render_template(c.claim, vals, detail),
+            claim_soft=render_template(c.claim_soft, vals, detail),
             original_advice=c.original_advice,
             original_source=c.original_source,
             flagged=flagged, contradicting=contradicting,

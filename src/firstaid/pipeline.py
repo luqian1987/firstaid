@@ -9,12 +9,13 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from .assemble.rank import check_chapters, group_by_chapter, rank
+from .assemble.reconcile import reconcile
 from .audit.coverage import build_coverage
 from .derive.engine import DeriveEngine
 from .loader import load_fixture, load_knowledge
 from .model import (
     BoundaryItem, Chain, ComparisonItem, ComparisonPlan, ConsistencyIssue, Correction,
-    CoverageReport, Encounter, MissingContextItem, Ontology, Timeline,
+    CoverageReport, Encounter, MissingContextItem, Ontology, Reconciliation, Timeline,
 )
 from .patterns.context import RuleContext
 from .patterns.engine import EngineResult, PatternEngine
@@ -30,18 +31,24 @@ class Analysis:
     missing_context: list[MissingContextItem] = field(default_factory=list)
     consistency: list[ConsistencyIssue] = field(default_factory=list)
     coverage: CoverageReport | None = None
+    recon: Reconciliation | None = None
     derived_notes: dict[str, str] = field(default_factory=dict)
     plan: ComparisonPlan | None = None
     engine: EngineResult | None = None
     errors: list[str] = field(default_factory=list)
 
     def ok(self) -> bool:
-        return not self.errors and (self.coverage is None or self.coverage.ok())
+        return (not self.errors
+                and (self.coverage is None or self.coverage.ok())
+                and (self.recon is None or self.recon.ok()))
 
     def blocking(self) -> list[str]:
         out = list(self.errors)
         if self.coverage:
             out += self.coverage.failures()
+        if self.recon:
+            out += [f"原报告第 {f.seq} 条「{f.said}」没有任何回答"
+                    for f in self.recon.unaddressed]
         return out
 
 
@@ -81,6 +88,14 @@ def analyze(timeline: Timeline, ontology=None, units=None, rules=None,
 
     # 分章不变式
     a.errors += check_chapters(a.chains)
+
+    # L4.5 对账：原报告说的每一条，本次判读怎么回答
+    a.recon = reconcile(enc, a.chains, a.corrections)
+    for f in a.recon.pending:
+        a.boundaries.append(BoundaryItem(
+            what=f"{f.source}（原报告标注「{f.said}」，本次未拿到）",
+            impact="该项结论未纳入本判读",
+        ))
 
     # L5 覆盖率
     a.coverage = build_coverage(enc, res, ontology)

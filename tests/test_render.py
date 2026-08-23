@@ -15,9 +15,14 @@ def _html(tmp_path, tl, knowledge):
 
 
 def test_renders_every_chain_and_correction(tmp_path, zhang, knowledge):
+    """每条链条与每条纠正都必须出现在页面上——「可以放下」那档是折叠的 details，
+    其余是展开的 section，两者相加应等于链条总数。"""
     a, h = _html(tmp_path, zhang, knowledge)
-    assert h.count('<section class="chain"') == len(a.chains)
-    assert h.count('<section class="fix"') == len(a.corrections)
+    for c in a.chains:
+        assert f'id="{c.id}"' in h, c.id
+    for c in a.corrections:
+        assert f'id="{c.id}"' in h, c.id
+        assert c.claim_soft in h
 
 
 def test_no_unrendered_template_markers(tmp_path, zhang, knowledge):
@@ -35,13 +40,23 @@ def test_no_internal_identifiers_leak(tmp_path, zhang, knowledge):
     assert leaked == [], leaked
 
 
-def test_hero_headline_comes_from_top_ranked_chain(tmp_path, zhang, knowledge):
-    """首屏论点不许写死在模板里——它是 L4 排序的结论。"""
+def test_hero_counts_come_from_the_data(tmp_path, zhang, knowledge):
+    """首屏数字不许写死在模板里——它们是对账层的结论。"""
+    from firstaid.model import Band
     a, h = _html(tmp_path, zhang, knowledge)
-    lead = max(a.chains, key=lambda c: c.priority)
-    assert lead.title in h
     thesis = re.search(r'<h1 class="thesis">(.*?)</h1>', h, re.S).group(1)
-    assert lead.title in thesis
+    n_act = len(a.recon.by_band()[Band.ACT])
+    assert f"<em>{n_act} 件</em>" in thesis
+
+
+def test_correction_shows_soft_wording_not_internal_claim(tmp_path, zhang, knowledge):
+    """对外只出现 claim_soft。内部精确说法（"不成立"这类）不许露给客户。"""
+    a, h = _html(tmp_path, zhang, knowledge)
+    body = h.split("<body>")[1]
+    for c in a.corrections:
+        assert c.claim_soft in body
+        if c.claim != c.claim_soft:
+            assert c.claim not in body, c.id
 
 
 def test_report_does_not_print_personal_name(tmp_path, zhang, knowledge):

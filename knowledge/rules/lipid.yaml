@@ -4,6 +4,7 @@ rules:
   # ======================================================================
   - id: lipid.lpa_intracranial_lead
     archetype: normal_panel_hidden_risk
+    headline: 常规血脂正常，但脂蛋白(a) 与颅内狭窄合起来是本次第一优先
     title: 常规血脂全部正常，而风险主线不在常规血脂里
     lede: >-
       脂蛋白(a) 是一种由基因决定、终生基本不变的脂蛋白颗粒，常规血脂四项完全测不到它。
@@ -72,6 +73,7 @@ rules:
   # ======================================================================
   - id: lipid.apo_paired_divergence
     archetype: paired_divergence
+    headline: 两个载脂蛋白与各自胆固醇同向背离，复测前不按风险层级处理
     title: 两个载脂蛋白同时偏离各自的胆固醇，方向还一致
     lede: >-
       ApoB 与非高密度脂蛋白胆固醇、ApoA1 与 HDL-C，各自是同一批颗粒的两种计量方式，

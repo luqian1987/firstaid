@@ -4,6 +4,10 @@ from .common import (
 )
 from .observation import Observation, ObservationSet, RefRange
 from .ontology import IndicatorDef, Ontology
+from .original import (
+    BAND_COLOR, BAND_META, BAND_ORDER, TAG_BAND, Band, OriginalFinding,
+    Reconciliation, ReconciliationRow, band_of,
+)
 from .subject import Encounter, Subject, Timeline
 from .derived import DerivedDef, DerivedRegistry
 from .comparison import (

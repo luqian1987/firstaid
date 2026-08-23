@@ -2,6 +2,7 @@ rules:
   # 模式 5：多层排除
   - id: spleen.layered_exclusion
     archetype: layered_exclusion
+    headline: 长径仍在界值内，三系正常无脾亢，上游无门脉高压证据
     title: 脾脏增大：三系正常、无纤维化、门静脉正常
     lede: >-
       原报告只给了"脾大"两个字，但超声描述里其实有精确尺寸。

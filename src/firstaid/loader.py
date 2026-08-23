@@ -8,7 +8,7 @@ import yaml
 
 from .model import (
     Encounter, IndicatorDef, Observation, ObservationKind, ObservationSet, Ontology,
-    Provenance, Sex, SourceDocument, Subject, Timeline,
+    OriginalFinding, Provenance, Sex, SourceDocument, Subject, Timeline,
 )
 from .normalize.pipeline import Normalizer
 from .normalize.units import UnitTable
@@ -60,6 +60,15 @@ def load_fixture(path: str | Path, ontology: Ontology,
         sources=sources, context=e.get("context", {}) or {},
         observations=ObservationSet(),
     )
+    for raw in doc.get("original_findings", []):
+        raw = dict(raw)
+        page = raw.pop("page", None)
+        raw["codes"] = tuple(raw.get("codes", []))
+        raw["provenance"] = Provenance(
+            source_id="main", source_label=sources[0].label if sources else "主报告",
+            page=page, extractor="fixture")
+        enc.original_findings.append(OriginalFinding.model_validate(raw))
+
     labels = {s.id: s.label for s in sources}
     norm = Normalizer(ontology, units or UnitTable())
     for row in doc.get("observations", []):

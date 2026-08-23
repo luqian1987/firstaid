@@ -26,6 +26,90 @@ encounter:
     - {id: tbnk, label: TBNK淋巴细胞亚群（昆山迪安）, kind: supplement,
        date_from: 2026-04-02, date_to: 2026-04-04, merge_note: 同一体检周期附件}
 
+# 原报告自己给出的结论与建议（主报告 第3–5页）。
+# 这是提取层要抽的第二类东西：半结构化文本【检查项目】结论 →（1）建议……
+# codes 声明这条结论涉及哪些指标，对账靠它机械匹配，不靠手工连线。
+original_findings:
+  - {seq: 1, group: 就医, source: 全口牙病系统检查与诊疗设计, page: 3,
+     said: "牙结石：轻度；牙龈出血；牙龈退缩",
+     advised: "建议到口腔科门诊洁牙，定期洁治",
+     codes: [DENTAL_CALCULUS, GINGIVAL_BLEEDING, GINGIVAL_RECESSION]}
+  - {seq: 2, group: 进一步检查, source: 唾液胃蛋白酶检测, page: 3,
+     said: "胃蛋白酶：阳性",
+     advised: "结合自身临床症状，消化内科定期随诊",
+     codes: [SALIVA_PEPSIN]}
+  - {seq: 3, group: 定期复检, source: 血流变学测定, page: 3,
+     said: "低切[1]高；中切[5]高",
+     advised: "低盐、低脂饮食，多饮水，心内科门诊复查、随访",
+     codes: [WBV_LOW, WBV_MID]}
+  - {seq: 4, group: 定期复检, source: 超声检查 肾、输尿管、膀胱、前列腺彩超, page: 3,
+     said: "前列腺稍大伴钙化",
+     advised: "禁酒，避免久坐少动，定期复查B超",
+     codes: [PROSTATE_SIZE]}
+  - {seq: 5, group: 定期复检, source: 超声检查腹部彩超（肝胆胰脾）, page: 3,
+     said: "脾大", advised: "定期到普外科门诊复查随访",
+     codes: [SPLEEN_LENGTH, SPLEEN_THICK]}
+  - {seq: 6, group: 定期复检, source: 超声检查腹部彩超（肝胆胰脾）, page: 3,
+     said: "胆囊息肉", advised: "3-6个月复查B超，密切观察",
+     codes: [GB_POLYP]}
+  - {seq: 7, group: 定期复检, source: 生化(36项), page: 3,
+     said: "前白蛋白高", advised: "定期复查，消化内科门诊随诊",
+     codes: [PREALBUMIN]}
+  - {seq: 8, group: 定期复检, source: 一般检查, page: 3,
+     said: "体重指数高",
+     advised: "低脂肪、低糖、低盐饮食，控制主食量，加强运动消耗多余脂肪",
+     codes: [BMI]}
+  - {seq: 9, group: 定期复检, source: 凝血分析, page: 4,
+     said: "纤维蛋白原低", advised: "定期复查，血液科门诊随诊",
+     codes: [FIB]}
+  - {seq: 10, group: 定期复检, source: 生化(36项), page: 4,
+     said: "载脂蛋白AⅠ高；载脂蛋白B高",
+     advised: "戒烟、戒酒，少食动物脂肪、油炸类食品；控制体重；心内科门诊随诊",
+     codes: [APOA1, APOB]}
+  - {seq: 11, group: 定期复检, source: 腹部彩超 + 无创肝纤维化检测 + 生化(36项), page: 4,
+     said: "脂肪肝；脂肪衰减中位数高；谷氨酰转肽酶高",
+     advised: "消化内科门诊定期复查。控制饮食、限制热量、减肥、戒酒、补充维生素",
+     codes: [LIVER_ECHO, CAP, GGT]}
+  - {seq: 12, group: 定期复检, source: 颅脑MRI平扫+MRA+DWI（3.0T）, page: 4,
+     said: "颅脑TOF-MRA示椎基底动脉走行迂曲，左侧大脑中动脉M1段管腔局限性轻度狭窄，随诊复查",
+     advised: "结合临床定期复查随诊，积极治疗基础疾病，不吸烟，少饮酒；神经内科门诊",
+     codes: [MRA_MCA_M1]}
+  - {seq: 13, group: 定期复检, source: 尿液分析, page: 4,
+     said: "细菌高",
+     advised: "尿路感染可能，多饮水，不要经常憋尿；泌尿外科诊治",
+     codes: [U_BACT]}
+  - {seq: 14, group: 定期复检, source: 胸部CT平扫（不出片）, page: 4,
+     said: "右肺下叶实性微结节，年度复查",
+     advised: "每年定期复查胸部CT，呼吸内科门诊随诊",
+     codes: [LUNG_NODULE]}
+  - {seq: 15, group: 定期复检, source: 生化(36项), page: 4,
+     said: "脂蛋白(a)高",
+     advised: "脂蛋白(a)与遗传、基因密切相关；心内科门诊随诊",
+     codes: [LPA]}
+  - {seq: 16, group: 其他, source: 维生素B族8项检测（XL）, page: 5,
+     said: "维生素B6（吡哆酸）低",
+     advised: "建议您补充维生素B6（吡哆酸），定期复查，内分泌科门诊随诊",
+     codes: [PA_B6]}
+  - {seq: 17, group: 其他, source: 维生素B族8项检测（XL）, page: 5,
+     said: "维生素B9（叶酸）低",
+     advised: "建议您补充维生素B9（叶酸），定期复查，内分泌科门诊随诊",
+     codes: [FOLATE_SERUM]}
+  - {seq: 18, group: 其他, source: 微量元素谱分析（XL）, page: 4,
+     said: "维生素A高（详见附件）", advised: "（原报告未单列建议）",
+     codes: [VIT_A]}
+  - {seq: 19, group: 其他, source: 辅酶Q10的精准评估（XL）, page: 5,
+     said: "不足（详见附件）", advised: "亚健康管理中心咨询随诊",
+     codes: [COQ10]}
+  # 以下原报告标注"详见附件 / 报告自取"，本次未拿到
+  - {seq: 20, group: 其他, source: 无痛电子胃肠镜, page: 5, pending: true,
+     said: "报告自取", advised: "结合报告，消化内科门诊咨询随诊"}
+  - {seq: 21, group: 其他, source: 18种肿瘤超早期当下风险评估（XL）, page: 5, pending: true,
+     said: "报告自取", advised: "亚健康管理中心咨询随诊"}
+  - {seq: 22, group: 其他, source: 经颅多普勒项目（XL）, page: 5, pending: true,
+     said: "详见附件", advised: "亚健康管理中心咨询随诊"}
+  - {seq: 23, group: 其他, source: 无创动脉硬化检测（XL）, page: 5, pending: true,
+     said: "详见附件", advised: "亚健康管理中心咨询随诊"}
+
 observations:
   # ============ 一般检查 / 体格（主报告 第3页）============
   - {code: HEIGHT, raw_name: 身高,   value: 164.0, unit: cm,    source: main, page: 3}

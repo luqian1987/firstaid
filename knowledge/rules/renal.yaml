@@ -2,6 +2,7 @@ rules:
   # 模式 11：多指标同处区间同一端 → 建趋势基线
   - id: renal.microalbumin_borderline
     archetype: borderline_concordant
+    headline: 两项都在区间内但双双贴近上限，值得从现在起建趋势
     title: 尿微量白蛋白两项都在区间内，但双双贴近上限
     lede: >-
       单看任何一项都是"正常"，不会出现在任何异常清单里。

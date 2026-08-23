@@ -11,6 +11,7 @@ from pydantic import Field
 
 from .common import Frozen, Mutable, Sex, SourceDocument
 from .observation import Observation, ObservationSet
+from .original import OriginalFinding
 
 
 class Subject(Frozen):
@@ -34,6 +35,8 @@ class Encounter(Mutable):
     date_to: date | None = None
     sources: list[SourceDocument] = Field(default_factory=list)
     observations: ObservationSet = Field(default_factory=ObservationSet)
+    # 原报告自己给出的结论与建议。没有它就无法对账，只能自说自话。
+    original_findings: list[OriginalFinding] = Field(default_factory=list)
     # 本人背景事实：key 为 ContextKey 的值，缺失即不在字典里
     context: dict[str, str] = Field(default_factory=dict)
 

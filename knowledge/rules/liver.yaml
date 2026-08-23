@@ -2,6 +2,7 @@ rules:
   # 模式 4：形态脱节
   - id: liver.ggt_transaminase_dissociation
     archetype: pattern_dissociation
+    headline: 纤维化尚未发生，处在可逆窗口；先量化的是饮酒而不是糖
     title: 脂肪已经不少，纤维化还没开始，而首要变量可能是酒
     lede: >-
       胰岛素敏感性与糖代谢都正常，所以"代谢型脂肪肝"的典型驱动证据其实不足；

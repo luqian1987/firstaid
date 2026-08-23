@@ -19,6 +19,8 @@ rules:
       corrected_expect: in_range
     correction:
       claim: 不建议按此补充维生素 B6
+      claim_soft: >-
+        维生素 B6 的活性形式（PLP）是正常的——开始补充前，建议先确认按哪个指标判断
       original_advice: 维生素 B6（吡哆酸）低 → 建议您补充维生素 B6，内分泌科门诊随诊。
       original_source: 功能医学附件 · B 族 8 项
       flagged: PA_B6
@@ -49,6 +51,8 @@ rules:
       downstream_expect: in_range
     correction:
       claim: 补叶酸之前，先复测叶酸
+      claim_soft: >-
+        叶酸的四个下游指标都正常——补充前建议先复测一次叶酸
       original_advice: 维生素 B9（叶酸）低 → 建议您补充维生素 B9（叶酸）。
       original_source: 功能医学附件 · B 族 8 项
       flagged: FOLATE_SERUM
@@ -83,6 +87,8 @@ rules:
       corroborator_expect: negative_or_in_range
     correction:
       claim: 不支持尿路感染，考虑留样污染
+      claim_soft: >-
+        尿细菌单项偏高，但缺少炎症证据——就诊前建议先按中段尿规范复查一次
       original_advice: 细菌高 → 尿路感染可能，建议多饮水……泌尿外科诊治。
       original_source: 综合体检主报告 · 尿液分析
       flagged: U_BACT
@@ -115,6 +121,8 @@ rules:
                     WBRV_MID, WBRV_HIGH, RBC_RIGID, WBV_MID50]
     correction:
       claim: "“血液粘稠”的说法这次不成立"
+      claim_soft: >-
+        低切与中切粘度的升高，可能由压积解释——复查时建议看还原粘度
       original_advice: 低切[1]高；中切[5]高 → 建议低盐低脂饮食，多饮水，心内科门诊复查随访。
       original_source: 综合体检主报告 · 血流变 13 项
       flagged: WBV_LOW

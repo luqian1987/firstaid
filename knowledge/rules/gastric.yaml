@@ -2,6 +2,7 @@ rules:
   # 模式 6：孤立异常缺乏佐证
   - id: gastric.saliva_pepsin_vs_normal_panel
     archetype: isolated_abnormal
+    headline: 胃功能三项全部正常，不支持萎缩性胃炎，以胃肠镜为准
     title: 唾液胃蛋白酶阳性，但胃功能三项不支持萎缩性胃炎
     lede: >-
       唾液里查到胃蛋白酶，说明胃内容物到过口腔，这是反流方向的线索；

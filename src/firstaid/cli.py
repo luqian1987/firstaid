@@ -55,6 +55,21 @@ def main(argv=None) -> int:
     w(f"\n【L3 模式】评估 {len(hits)} 条规则 → 命中 {len(fired)}，"
       f"不可评估 {len(indet)}，未命中 {len(hits)-len(fired)-len(indet)}")
 
+    if a.recon and (a.recon.rows or a.recon.pending):
+        from .model import BAND_META
+        n_orig = len([f for f in a.encounter.original_findings if not f.pending])
+        w(f"\n【L4.5 对账】原报告 {n_orig} 条结论 → {len(a.recon.rows)} 行回答"
+          f"（未拿到 {len(a.recon.pending)} 份附件）")
+        for band, rows in a.recon.by_band().items():
+            if not rows:
+                continue
+            w(f"\n  ── {BAND_META[band][0]}（{len(rows)}）──")
+            for r in rows:
+                seqs = "、".join(str(f.seq) for f in r.findings) or "新增"
+                mark = " ◇与医生确认" if r.needs_confirm else ""
+                w(f"  [原报告 {seqs}]{mark}")
+                w(f"      {r.headline}")
+
     w(f"\n【L4 判读链条】{len(a.chains)} 条 + 需纠正 {len(a.corrections)} 条")
     for ch, group in chapters(a).items():
         w(f"\n  ── {CHAPTER_TITLES.get(ch.value, ch.value)} ──")

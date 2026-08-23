@@ -2,6 +2,7 @@ rules:
   # 模式 7：急性期蛋白一致性
   - id: coag.fib_low_is_low_inflammation
     archetype: acute_phase_coherence
+    headline: 凝血功能八项全部正常，这是低炎症背景，不是出血倾向
     title: 纤维蛋白原偏低是"低炎症背景"的一部分，不是出血倾向
     lede: >-
       原报告把它列进了需要血液科随诊的条目。

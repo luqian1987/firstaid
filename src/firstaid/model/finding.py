@@ -137,6 +137,8 @@ class Chain(Frozen):
     """一条判读链条。"""
     id: str
     title: str
+    # 一句话结论。对账表里显示的就是它——读者扫一眼就该知道这条要不要管。
+    headline: str
     lede: str
     tag: Tag
     chapter: Chapter
@@ -161,13 +163,17 @@ class Chain(Frozen):
 
 
 class Correction(Frozen):
-    """需纠正：原报告的一条建议，按组合判读不成立。
+    """原报告的一条建议，按组合判读存在疑问。
 
-    责任约束写进类型里：contradicting 不能为空——每条纠正必须能引用到
-    同一份报告内的反证；action 不允许是"不用管"，必须落到复测或面诊。
+    责任约束写进类型里：
+      - contradicting 不能为空——每条必须能引用到同一份报告内的反证；
+      - claim_soft 不能为空——对外措辞不判原报告的对错，只陈述发现 + 请求确认。
+        我们不是接诊医生，"这条不成立"不该由这份文件下结论。
+      - what_to_do 必须落到复测或面诊，不允许写成"不用管"。
     """
     id: str
-    claim: str                      # 本系统的说法："不建议按此补充维生素B6"
+    claim: str                      # 内部精确说法，用于日志与审计
+    claim_soft: str                 # 对外措辞，报告里显示的是它
     original_advice: str            # 原报告原话
     original_source: str            # 原报告出处
     flagged: EvidenceRef            # 被原报告打箭头的那一项
@@ -181,6 +187,10 @@ class Correction(Frozen):
         if not self.contradicting:
             raise ValueError(
                 f"{self.id}: 纠正原报告必须引用同一份报告内的反证，否则不允许生成"
+            )
+        if not self.claim_soft.strip():
+            raise ValueError(
+                f"{self.id}: 缺对外措辞 claim_soft —— 不允许把内部说法直接展示给客户"
             )
         return self
 

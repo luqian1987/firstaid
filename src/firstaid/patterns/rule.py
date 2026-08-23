@@ -13,7 +13,7 @@ from typing import Any, Iterable
 import yaml
 from pydantic import BaseModel, ConfigDict, Field
 
-from ..model import Archetype, Chapter, ContextKey, Modifiability, Tag
+from ..model import Archetype, Band, Chapter, ContextKey, Modifiability, Tag
 
 
 class CompareNextSpec(BaseModel):
@@ -42,7 +42,8 @@ class NarrationSpec(BaseModel):
 
 class CorrectionSpec(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    claim: str
+    claim: str                 # 内部精确说法
+    claim_soft: str            # 对外措辞：陈述发现 + 请求确认，不判原报告对错
     original_advice: str
     original_source: str
     flagged: str                           # 被原报告打箭头的 code
@@ -64,9 +65,12 @@ class RuleSpec(BaseModel):
     id: str
     archetype: Archetype
     title: str
+    # 一句话结论，对账表里显示的就是它。刻意限长——写不进一行的结论说明还没想清楚。
+    headline: str = ""
     lede: str = ""
     tag: Tag
     chapter: Chapter
+    band: Band | None = None       # 覆盖 tag→band 的默认映射，通常不用写
     modifiability: Modifiability = Modifiability.UNKNOWN
     priority: float = 0.0
     params: dict[str, Any] = Field(default_factory=dict)
@@ -86,6 +90,11 @@ class RuleSpec(BaseModel):
         errs: list[str] = []
         if self.chapter is Chapter.CORRECT and self.correction is None:
             errs.append(f"{self.id}: 归入「需纠正」章必须提供 correction 块")
+        if self.correction is None and not self.headline.strip():
+            errs.append(f"{self.id}: 缺 headline —— 对账表需要一句话结论")
+        if len(self.headline) > 60:
+            errs.append(f"{self.id}: headline 超过 60 字（{len(self.headline)}），"
+                        "写不进一行的结论说明还没想清楚")
         if self.correction is not None and self.chapter is not Chapter.CORRECT:
             errs.append(f"{self.id}: 提供了 correction 块但章节不是 CORRECT")
         # 「需纠正」用「为什么不成立 / 怎么做」两段，不套用四段骨架；

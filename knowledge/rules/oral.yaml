@@ -4,6 +4,7 @@ rules:
   # 很容易被读成"凝血有问题"。凝血全套正常 + 牙结石在场，方向完全不同。
   - id: oral.gingival_bleeding_is_local
     archetype: isolated_abnormal
+    headline: 凝血全套正常，出血的入口在洁牙，不在血液科
     title: 牙龈出血的原因在牙结石，不在凝血
     lede: >-
       同一份报告里既有"牙龈出血"，又有"纤维蛋白原低"。

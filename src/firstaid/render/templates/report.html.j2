@@ -1,266 +1,278 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow,noarchive">
-<title>体检二次判读 · {{ subject_id }} · {{ period }}</title>
+<title>体检二次判读 · 改版方案</title>
 <style>
 :root{
   --ink:#1B2127; --ink-2:#3A444C; --muted:#6B757D;
-  --paper:#EDEFF0; --card:#FFFFFF; --rule:#D2D8DC; --rule-2:#E4E8EB;
-  --act:#8A3E12; --act-bg:#F6EDE5; --calm:#1F5E56; --calm-bg:#E7F0EE;
-  --hi:#A8412B; --lo:#1F5E56; --band:#D8DEE2;
+  --paper:#EDEFF0; --card:#FFF; --rule:#D2D8DC; --rule-2:#E4E8EB;
+  --act:#A8452A; --act-bg:#F7EDE9;
+  --clarify:#3A5F8A; --clarify-bg:#EAF0F7;
+  --settle:#1F5E56; --settle-bg:#E7F0EE;
+  --grey:#6B757D; --band:#D8DEE2;
   --serif:"Songti SC","Source Han Serif SC","Noto Serif CJK SC",Georgia,serif;
   --sans:"PingFang SC","Hiragino Sans GB","Source Han Sans SC","Microsoft YaHei",system-ui,sans-serif;
-  --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
-  font-size:15px;line-height:1.75;letter-spacing:.01em;-webkit-font-smoothing:antialiased}
-.wrap{max-width:940px;margin:0 auto;padding:0 22px 96px}
+  font-size:15px;line-height:1.75;-webkit-font-smoothing:antialiased}
+.wrap{max-width:920px;margin:0 auto;padding:0 22px 90px}
 a{color:inherit}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);margin:0 0 20px}
+h2.sec{font-family:var(--serif);font-size:23px;font-weight:600;margin:56px 0 6px;
+  scroll-margin-top:16px}
+.sub{color:var(--muted);font-size:13.5px;margin:0 0 18px;max-width:66ch}
 
-.topbar{position:sticky;top:0;z-index:20;background:rgba(237,239,240,.94);
-  backdrop-filter:saturate(160%) blur(8px);border-bottom:1px solid var(--rule)}
-.topbar-in{max-width:940px;margin:0 auto;padding:9px 22px;display:flex;
-  align-items:center;gap:14px;flex-wrap:wrap}
-.who{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;color:var(--muted);white-space:nowrap}
-.topbar nav{display:flex;gap:2px;flex-wrap:wrap;margin-left:auto}
-.topbar nav a{font-size:12.5px;color:var(--ink-2);text-decoration:none;padding:3px 8px;border-radius:3px}
-.topbar nav a:hover{background:#fff;color:var(--ink)}
+/* ---- 首屏 ---- */
+.hero{padding:52px 0 34px;border-bottom:1px solid var(--rule)}
+.idline{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;color:var(--muted);margin:0 0 22px}
+.thesis{font-family:var(--serif);font-size:clamp(25px,4vw,38px);line-height:1.38;font-weight:600;
+  margin:0 0 18px;text-wrap:balance}
+.thesis em{font-style:normal;color:var(--act);border-bottom:2px solid var(--act)}
+.hero p{max-width:64ch;color:var(--ink-2);margin:0 0 12px}
 
-.hero{padding:60px 0 38px;border-bottom:1px solid var(--rule)}
-.print-id{display:none}
-.eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;
-  text-transform:uppercase;color:var(--muted);margin:0 0 24px}
-.thesis{font-family:var(--serif);font-size:clamp(26px,4.2vw,42px);line-height:1.34;
-  font-weight:600;letter-spacing:-.01em;margin:0 0 20px;text-wrap:balance}
-.thesis em{font-style:normal;color:var(--act);border-bottom:2px solid var(--act);padding-bottom:1px}
-.hero p{max-width:66ch;color:var(--ink-2);margin:0 0 13px}
-.counts{display:flex;gap:32px;flex-wrap:wrap;margin:34px 0 0;padding-top:24px;border-top:1px solid var(--rule-2)}
-.counts div{display:flex;align-items:baseline;gap:9px}
-.counts b{font-family:var(--mono);font-size:25px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
-.counts span{font-size:13px;color:var(--muted)}
+/* ---- 色带总览 ---- */
+.bandbar{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:30px 0 0}
+.bandcard{background:var(--card);border:1px solid var(--rule);border-radius:5px;
+  padding:16px 18px;border-top:4px solid;text-decoration:none;display:block}
+.bandcard:hover{border-color:var(--ink-2)}
+.bandcard b{font-family:var(--mono);font-size:30px;line-height:1;display:block;margin-bottom:6px}
+.bandcard .lbl{font-size:15px;font-weight:600;display:block;margin-bottom:3px}
+.bandcard .d{font-size:12.5px;color:var(--muted);line-height:1.5}
+.chip-note{margin:14px 0 0;font-size:13px;color:var(--muted)}
+.chip{display:inline-block;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;
+  padding:2px 7px;border-radius:2px;background:#E6EAEC;color:var(--ink-2);white-space:nowrap}
+.chip.confirm{background:#F3EEE4;color:#7A5A18}
 
-h2.sec{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--muted);font-weight:500;margin:56px 0 14px}
-.index ol{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule)}
-.index li{border-bottom:1px solid var(--rule-2)}
-.index a{display:grid;grid-template-columns:32px 104px 1fr;gap:14px;align-items:baseline;
-  padding:12px 4px;text-decoration:none}
-.index a:hover{background:var(--card)}
-.index .n{font-family:var(--mono);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
-.index .t{font-size:14.5px}
+/* ---- 对账表 ---- */
+.recon{border-top:1px solid var(--rule);margin-top:8px}
+.rrow{display:grid;grid-template-columns:26px minmax(0,1.15fr) minmax(0,1.35fr);gap:16px;
+  padding:14px 4px;border-bottom:1px solid var(--rule-2);align-items:start}
+.rrow:hover{background:var(--card)}
+.dot{width:9px;height:9px;border-radius:50%;margin-top:8px}
+.rrow .said{font-size:13.5px;line-height:1.6}
+.rrow .said .src{font-family:var(--mono);font-size:10.5px;color:var(--muted);display:block;
+  letter-spacing:.04em;margin-bottom:2px}
+.rrow .said .adv{display:block;color:var(--muted);font-size:12.5px;margin-top:3px}
+.rrow .ours{font-size:13.5px;line-height:1.62}
+.rrow .ours a{font-family:var(--mono);font-size:11px;color:var(--muted);
+  text-decoration:none;border-bottom:1px solid var(--rule);white-space:nowrap}
+.rrow .ours a:hover{color:var(--ink);border-color:var(--ink)}
+.gap{grid-column:1/-1;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted);padding:16px 0 2px;border-bottom:0}
 
-.tag{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.08em;
-  padding:3px 8px;border-radius:2px;white-space:nowrap;line-height:1.5}
-.tag.act{background:var(--act-bg);color:var(--act)}
-.tag.calm{background:var(--calm-bg);color:var(--calm)}
-.tag.neutral{background:#E6EAEC;color:var(--ink-2)}
+/* ---- 章节 ---- */
+.section-band{margin:64px 0 16px;padding:14px 0 12px;border-top:3px solid;border-bottom:1px solid var(--rule)}
+.section-band h2{font-family:var(--serif);font-size:24px;margin:0 0 3px;font-weight:600}
+.section-band p{margin:0;color:var(--muted);font-size:13.5px}
+.section-band .cnt{font-family:var(--mono);font-size:12px;color:var(--muted);float:right;margin-top:8px}
 
-.chapter-head{margin:64px 0 18px;padding-bottom:12px;border-bottom:1px solid var(--rule);
-  scroll-margin-top:72px}
-.chapter-head h2{font-family:var(--serif);font-size:21px;margin:6px 0 4px;font-weight:600}
-.chapter-head p{margin:0;color:var(--muted);font-size:13.5px}
+.chain{background:var(--card);border:1px solid var(--rule);border-left:4px solid;
+  border-radius:5px;margin:16px 0;padding:24px 26px;scroll-margin-top:16px}
+.chain .title{font-family:var(--serif);font-size:20px;line-height:1.42;margin:0 0 8px;font-weight:600}
+.chain .lede{color:var(--ink-2);margin:0 0 18px;max-width:70ch;font-size:14px}
+.cap{font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--muted);margin:0 0 8px}
 
-.chain{background:var(--card);border:1px solid var(--rule);border-radius:5px;
-  margin:20px 0;padding:28px 28px 4px;scroll-margin-top:64px}
-.chain .title{font-family:var(--serif);font-size:22px;line-height:1.4;margin:12px 0 10px;font-weight:600}
-.chain .lede{color:var(--ink-2);margin:0 0 22px;max-width:70ch}
-
-.cap{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--muted);margin:0 0 10px}
-.inputs{border-top:1px solid var(--rule-2);padding-top:16px;margin-bottom:24px}
-.m{display:grid;grid-template-columns:minmax(0,1.5fr) 108px 128px 96px;gap:12px;
-  align-items:center;padding:7px 0;border-bottom:1px solid #F0F3F4}
+.inputs{border-top:1px solid var(--rule-2);padding-top:14px;margin-bottom:20px}
+.m{display:grid;grid-template-columns:minmax(0,1.5fr) 104px 120px 92px;gap:12px;align-items:center;
+  padding:6px 0;border-bottom:1px solid #F1F4F5}
 .m:last-child{border-bottom:0}
-.m-name{font-size:13.5px;line-height:1.45;min-width:0}
-.m-name small{display:block;color:var(--muted);font-size:11.5px;line-height:1.4}
-.m-val{font-family:var(--mono);font-size:14px;text-align:right;font-variant-numeric:tabular-nums;
-  overflow-wrap:anywhere}
-.m-val .u{font-size:10.5px;color:var(--muted);margin-left:3px}
-.m.hi .m-val{color:var(--hi);font-weight:600}
-.m.lo .m-val{color:var(--lo);font-weight:600}
-.track{position:relative;height:16px}
-.track .line{position:absolute;top:7.5px;left:0;right:0;height:1px;background:var(--rule)}
-.track .band{position:absolute;top:5px;height:6px;background:var(--band);border-radius:1px}
-.track .pin{position:absolute;top:2px;width:2px;height:12px;background:var(--ink)}
-.m.hi .pin,.m.lo .pin{background:var(--hi)}
-.m.lo .pin{background:var(--lo)}
-.track.none{opacity:.35}
-.m-ref{font-family:var(--mono);font-size:11px;color:var(--muted);text-align:right;
-  overflow-wrap:anywhere}
+.m-name{font-size:13px;line-height:1.42}
+.m-name small{display:block;color:var(--muted);font-size:11px}
+.m-val{font-family:var(--mono);font-size:13.5px;text-align:right;font-variant-numeric:tabular-nums}
+.m-val .u{font-size:10px;color:var(--muted);margin-left:3px}
+.m.hi .m-val{color:var(--act);font-weight:600}
+.m.lo .m-val{color:var(--settle);font-weight:600}
+.track{position:relative;height:15px}
+.track .line{position:absolute;top:7px;left:0;right:0;height:1px;background:var(--rule)}
+.track .bandx{position:absolute;top:4.5px;height:6px;background:var(--band);border-radius:1px}
+.track .pin{position:absolute;top:1.5px;width:2px;height:12px;background:var(--ink)}
+.m.hi .pin{background:var(--act)} .m.lo .pin{background:var(--settle)}
+.track.none{opacity:.3}
+.m-ref{font-family:var(--mono);font-size:10.5px;color:var(--muted);text-align:right}
 
-.reading{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--rule-2);
-  border-radius:4px;overflow:hidden;margin-bottom:22px}
-.reading>div{padding:18px 20px}
+.reading{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--rule-2);
+  border-radius:4px;overflow:hidden;margin-bottom:18px}
+.reading>div{padding:16px 18px}
 .reading .single{background:#F7F8F9;border-right:1px solid var(--rule-2)}
-.reading .joint{background:#FCFDFD}
-.reading h4{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--muted);margin:0 0 8px;font-weight:500}
-.reading p{margin:0;font-size:14px;line-height:1.72}
-.reading .joint p{color:var(--ink)}
+.reading h4{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);margin:0 0 7px;font-weight:500}
+.reading p{margin:0;font-size:13.6px;line-height:1.7}
 .reading .single p{color:var(--ink-2)}
 
-.verdict{display:grid;grid-template-columns:1fr 1fr;gap:0 26px;padding:20px 0 24px;
+.verdict{display:grid;grid-template-columns:1fr 1fr;gap:0 24px;padding:16px 0 0;
   border-top:1px solid var(--rule-2)}
-.verdict>div{padding:6px 0}
-.verdict h4{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
-  margin:0 0 7px;font-weight:500;color:var(--muted)}
-.verdict .yes h4{color:var(--calm)}
-.verdict .no h4{color:var(--act)}
-.verdict p{margin:0;font-size:13.8px;line-height:1.7}
-.verdict ul{margin:0;padding-left:17px;font-size:13.8px;line-height:1.7}
-.verdict li{margin-bottom:4px}
-.cmp{font-size:13px;line-height:1.65;padding:7px 0;border-bottom:1px dotted var(--rule-2)}
+.verdict>div{padding:5px 0}
+.verdict h4{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  margin:0 0 6px;font-weight:500;color:var(--muted)}
+.verdict .yes h4{color:var(--settle)} .verdict .no h4{color:var(--act)}
+.verdict p,.verdict ul{margin:0;font-size:13.4px;line-height:1.68}
+.verdict ul{padding-left:16px} .verdict li{margin-bottom:3px}
+.cmp{font-size:12.6px;line-height:1.6;padding:6px 0;border-bottom:1px dotted var(--rule-2)}
 .cmp:last-child{border-bottom:0}
-.cmp b{font-family:var(--mono);font-size:12px;font-weight:600}
-.cmp .cav{display:block;color:var(--act);font-size:11.5px}
+.cmp b{font-family:var(--mono);font-size:11.5px}
+.cmp .cav{display:block;color:var(--act);font-size:11px}
 
-.fix{background:var(--card);border:1px solid var(--rule);border-radius:5px;padding:24px 28px;margin:18px 0}
-.fix .q{font-family:var(--serif);font-size:19px;font-weight:600;margin:10px 0 6px}
-.fix .orig{background:#F7F8F9;border-left:2px solid var(--rule);padding:9px 14px;margin:0 0 14px;
-  font-size:13px;color:var(--ink-2)}
-.fix .orig b{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--muted);
-  display:block;text-transform:uppercase;margin-bottom:3px}
-.dl{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 16px}
-.dl span{font-family:var(--mono);font-size:11.5px;background:#F0F3F4;padding:3px 8px;border-radius:2px;
-  color:var(--ink-2)}
+/* ---- 折叠 ---- */
+details{background:var(--card);border:1px solid var(--rule);border-radius:5px;margin:12px 0}
+details[open]{border-color:var(--rule)}
+summary{padding:15px 22px;cursor:pointer;list-style:none;display:grid;
+  grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:baseline}
+summary::-webkit-details-marker{display:none}
+summary .st{font-size:15px;font-weight:600;line-height:1.5}
+summary .sd{font-size:13px;color:var(--ink-2);line-height:1.6;margin-top:3px;font-weight:400}
+summary .hint{font-family:var(--mono);font-size:10.5px;color:var(--muted);white-space:nowrap}
+details .inner{padding:2px 22px 20px;border-top:1px solid var(--rule-2)}
+details.settle{border-left:4px solid var(--settle)}
+details.confirm{border-left:4px solid #A98432}
+
+.dl{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 14px}
+.dl span{font-family:var(--mono);font-size:11px;background:#F0F3F4;padding:3px 8px;
+  border-radius:2px;color:var(--ink-2)}
 .dl span.flag{background:var(--act-bg);color:var(--act);font-weight:600}
-.fix-grid{display:grid;grid-template-columns:1.35fr 1fr;gap:26px}
-.fix-grid h5{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--muted);margin:0 0 7px;font-weight:500}
-.fix-grid p{margin:0;font-size:13.8px;line-height:1.7}
+.orig{background:#F7F8F9;border-left:2px solid var(--rule);padding:9px 13px;margin:0 0 12px;
+  font-size:12.8px;color:var(--ink-2)}
+.orig b{font-family:var(--mono);font-size:10.5px;letter-spacing:.07em;color:var(--muted);
+  display:block;text-transform:uppercase;margin-bottom:2px}
+.two{display:grid;grid-template-columns:1.3fr 1fr;gap:24px}
+.two h5{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);margin:0 0 6px;font-weight:500}
+.two p{margin:0;font-size:13.4px;line-height:1.7}
 
-table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--card);
+table{width:100%;border-collapse:collapse;font-size:13px;background:var(--card);
   border:1px solid var(--rule);border-radius:5px;overflow:hidden}
-th{text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--muted);font-weight:500;padding:11px 14px;border-bottom:1px solid var(--rule);background:#F7F8F9}
-td{padding:10px 14px;border-bottom:1px solid var(--rule-2);vertical-align:top;line-height:1.6}
+th{text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);font-weight:500;padding:10px 13px;border-bottom:1px solid var(--rule);background:#F7F8F9}
+td{padding:9px 13px;border-bottom:1px solid var(--rule-2);vertical-align:top;line-height:1.58}
 tr:last-child td{border-bottom:0}
 td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
-
-details.good{background:var(--card);border:1px solid var(--rule);border-radius:5px;margin:18px 0}
-details.good summary{padding:18px 24px;cursor:pointer;display:flex;align-items:center;gap:12px;
-  flex-wrap:wrap;list-style:none}
-details.good summary::-webkit-details-marker{display:none}
-.s-title{font-family:var(--serif);font-size:17px;font-weight:600}
-.s-hint{font-family:var(--mono);font-size:11px;color:var(--muted);margin-left:auto}
-details.good .inner{padding:0 24px 22px;border-top:1px solid var(--rule-2)}
-.note{font-size:13.3px;color:var(--ink-2);line-height:1.8;margin:14px 0 0}
+.note{font-size:13px;color:var(--ink-2);line-height:1.8;margin:12px 0 0}
 .note b{color:var(--ink)}
-
-.audit{background:var(--card);border:1px solid var(--rule);border-radius:5px;padding:22px 26px}
-.audit .bars{display:grid;gap:7px;margin:14px 0 0}
-.audit .row{display:grid;grid-template-columns:132px 1fr 42px;gap:12px;align-items:center;font-size:13px}
-.audit .bar{height:9px;background:var(--rule-2);border-radius:2px;overflow:hidden}
-.audit .bar i{display:block;height:100%;background:var(--ink-2)}
-.audit .n{font-family:var(--mono);font-size:12px;text-align:right;color:var(--muted)}
-.pass{font-family:var(--mono);font-size:12px;color:var(--calm);background:var(--calm-bg);
-  padding:7px 12px;border-radius:3px;display:inline-block;margin-top:16px}
-
-footer{margin-top:64px;padding-top:26px;border-top:1px solid var(--rule);
-  font-size:13px;color:var(--ink-2);line-height:1.8}
-footer b{color:var(--ink)}
-
+footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--rule);
+  font-size:12.8px;color:var(--ink-2);line-height:1.8}
 @media (max-width:760px){
-  .m{grid-template-columns:1fr 92px;gap:6px}
-  .track,.m-ref{display:none}
-  .reading,.verdict,.fix-grid{grid-template-columns:1fr}
+  .bandbar{grid-template-columns:1fr}
+  .rrow{grid-template-columns:18px 1fr;gap:10px}
+  .rrow .ours{grid-column:2}
+  .m{grid-template-columns:1fr 88px} .track,.m-ref{display:none}
+  .reading,.verdict,.two{grid-template-columns:1fr}
   .reading .single{border-right:0;border-bottom:1px solid var(--rule-2)}
 }
 @media print{
-  .topbar{display:none} body{background:#fff}
-  .print-id{display:block;margin-bottom:10px}
-  .hero{padding-top:0}
-  .wrap{padding-bottom:0}
-  .chain,.fix,.audit,table{break-inside:avoid;box-shadow:none}
+  body{background:#fff} details{break-inside:avoid} details:not([open]) .inner{display:none}
+  .chain{break-inside:avoid}
 }
 </style>
 </head>
-<body>
-
-<div class="topbar"><div class="topbar-in">
-  <span class="who">{{ subject_id }} · {{ sex }} · {{ age }} · 健检 {{ period }}</span>
-  <nav>
-    {% for ch in chapters %}<a href="#{{ ch.key }}">{{ ch.nav }}</a>{% endfor %}
-    {% if corrections %}<a href="#fix">需纠正</a>{% endif %}
-    <a href="#derived">派生</a><a href="#audit">覆盖率</a><a href="#edge">边界</a>
-  </nav>
-</div></div>
-
-<div class="wrap">
+<body><div class="wrap">
 
 <header class="hero">
-  <p class="eyebrow print-id">{{ subject_id }} · {{ sex }} · {{ age }} 岁 · 健检 {{ period }}</p>
-  <p class="eyebrow">体检报告二次判读 · 多联指标读法</p>
-  {% if lead %}
-  <h1 class="thesis"><em>{{ lead.title }}</em></h1>
-  <p style="font-size:16px;color:var(--ink)">{{ lead.lede }}</p>
-  <p><span class="tag {{ lead_tag }}">{{ tag_labels[lead.tag.value] }}</span>
-     这是本次排序最靠前的一条 —— <a href="#{{ lead.id }}" style="border-bottom:1px solid var(--rule)">直接查看该节</a>。
-     排序依据是"确定性 × 严重度 × 可行动性"，不是异常程度。</p>
+  <p class="idline">{{ subject_id }} · {{ sex }} · {{ age }} 岁 · 健检 {{ period }}</p>
+  {% if n_orig %}
+  <h1 class="thesis">原报告给了 {{ n_orig }} 条结论。<br>
+    按组合重读之后，真正需要你现在动手的是 <em>{{ bands[0].n }} 件</em>。</h1>
+  <p>下面第一张表把原报告的每一条都接住了——它说了什么、我们的处理是什么，一行一条。
+     这张表同时也是目录，点进去才是详情。</p>
+  {% else %}
+  <h1 class="thesis">本次 {{ n_obs }} 条观察、{{ n_abnormal }} 项异常。<br>
+    按组合重读之后，真正需要你现在动手的是 <em>{{ bands[0].n }} 件</em>。</h1>
+  <p>本次未取得原报告的结论清单，因此下表按本判读自身的结论组织；
+     一旦补上原报告结论，这里会改成逐条对账。</p>
   {% endif %}
-  <p>每一节都按同一个方式写：先摆出进入判断的全部数值，再对照"只看单项"和"放在一起看"能得到什么，
-     最后收在"可以确定 / 不能由此认定 / 下一步 / 下次比什么"四格里。</p>
-  <p>凡是原报告没给参考区间的数字——肝脏硬度、脂肪衰减、脾脏尺寸、结节直径——一样进正文，
-     只是改用"比较口径"而不是"高低"来记录。原报告没算的派生指标，这里算出来了。</p>
-  <div class="counts">
-    <div><b>{{ n_act }}</b><span>需要处理</span></div>
-    <div><b>{{ n_fix }}</b><span>需纠正的原建议</span></div>
-    <div><b>{{ n_baseline }}</b><span>项建立可比基线</span></div>
-    <div><b>{{ n_obs }}</b><span>条观察全部有归宿</span></div>
+  <p>颜色只有三种，含义固定：<b>要做</b>、<b>先弄清楚</b>、<b>可以放下</b>。
+     全文不再出现别的分类。</p>
+
+  <div class="bandbar">
+  {% for b in bands %}
+    <a class="bandcard" href="#s-{{ b.key }}" style="border-top-color:{{ b.color }};background:{{ b.bg }}">
+      <b style="color:{{ b.color }}">{{ b.n }}</b>
+      <span class="lbl" style="color:{{ b.color }}">{{ b.label }}</span>
+      <span class="d">{{ b.desc }}</span>
+    </a>
+  {% endfor %}
   </div>
+  <p class="chip-note">另有 <span class="chip confirm">◇ 与医生确认</span> 标记 {{ confirms|length }} 条——
+     它不是第四种颜色，是叠加在上面三种之上的一个提醒：这几条原建议按组合看有疑问，
+     执行前值得和医生确认一句。理由折叠在文末，不必先读。</p>
 </header>
 
-<section class="index">
-  <h2 class="sec">本次判读顺序</h2>
-  <ol>
-    {% set ns = namespace(i=0) %}
-    {% for ch in chapters %}{% for c in ch.chains %}{% set ns.i = ns.i + 1 %}
-    <li><a href="#{{ c.id }}">
-      <span class="n">{{ "%02d"|format(ns.i) }}</span>
-      <span class="tag {{ tag_class.get(c.tag.value,'neutral') }}">{{ tag_labels[c.tag.value] }}</span>
-      <span class="t">{{ c.title }}</span></a></li>
-    {% endfor %}{% endfor %}
-    {% if corrections %}{% set ns.i = ns.i + 1 %}
-    <li><a href="#fix"><span class="n">{{ "%02d"|format(ns.i) }}</span>
-      <span class="tag act">需纠正</span>
-      <span class="t">原报告 {{ n_fix }} 条建议按组合判读不成立</span></a></li>
-    {% endif %}
-  </ol>
-</section>
-
-{% for ch in chapters %}
-<div class="chapter-head" id="{{ ch.key }}">
-  <p class="eyebrow" style="margin:0">{{ "%02d"|format(loop.index) }}</p>
-  <h2>{{ ch.title }}</h2>
-  <p>{{ ch.blurb }}</p>
+{% if n_orig %}
+<h2 class="sec" id="recon">原报告 {{ n_orig }} 条，逐条对上</h2>
+<p class="sub">左边是原报告的原话，右边是本次判读的处理。没有一条被略过，也没有一条被重复讲两遍。</p>
+{% else %}
+<h2 class="sec" id="recon">本次结论一览</h2>
+<p class="sub">每条一行。点进去才是详情。</p>
+{% endif %}
+<div class="recon">
+{% for b in bands %}
+  {% if b.rows %}
+  <div class="rrow" style="border-bottom:0;padding-bottom:0">
+    <div class="gap" style="color:{{ b.color }}">{{ b.label }}</div>
+  </div>
+  {% for r in b.rows %}
+  <div class="rrow">
+    <div><div class="dot" style="background:{{ b.color }}"></div></div>
+    <div class="said">
+      {% if r.findings %}
+        {% for f in r.findings %}
+        <span class="src">{{ f.seq }} · {{ f.source }}</span>
+        {{ f.said }}
+        {% if f.advised %}<span class="adv">原建议：{{ f.advised }}</span>{% endif %}
+        {% if not loop.last %}<div style="height:8px"></div>{% endif %}
+        {% endfor %}
+      {% else %}
+        <span class="src">原报告未提及</span>
+        本次判读新增的一条
+      {% endif %}
+    </div>
+    <div class="ours">{{ r.headline }}
+      {% if r.needs_confirm %}<span class="chip confirm">◇ 与医生确认</span>{% endif %}
+      <br><a href="#{{ r.anchor }}">详见 →</a></div>
+  </div>
+  {% endfor %}
+  {% endif %}
+{% endfor %}
 </div>
-{% for c in ch.chains %}
-<section class="chain" id="{{ c.id }}">
-  <span class="tag {{ tag_class.get(c.tag.value,'neutral') }}">{{ tag_labels[c.tag.value] }}</span>
+
+{% for b in bands %}
+<div class="section-band" id="s-{{ b.key }}" style="border-top-color:{{ b.color }}">
+  <span class="cnt">{{ b.chains|length }} 条</span>
+  <h2 style="color:{{ b.color }}">{{ b.label }}</h2>
+  <p>{{ b.desc }}</p>
+</div>
+
+{% for g in b.chains %}
+{% set c = g.c %}
+{% if b.key == 'settle' %}
+<details class="settle" id="{{ c.id }}">
+  <summary>
+    <span><span class="st">{{ c.title }}</span>
+      <span class="sd">{{ c.verdict.certain }}</span></span>
+    <span class="hint">展开依据 · {{ g.rows|length }} 项数值</span>
+  </summary>
+  <div class="inner">
+{% else %}
+<section class="chain" id="{{ c.id }}" style="border-left-color:{{ b.color }}">
   <h3 class="title">{{ c.title }}</h3>
   {% if c.lede %}<p class="lede">{{ c.lede }}</p>{% endif %}
+{% endif %}
 
   <div class="inputs">
-    <p class="cap">进入判断的数值 · {{ c._rows|length }} 项</p>
-    {% for r in c._rows %}
+    <p class="cap">进入判断的数值 · {{ g.rows|length }} 项</p>
+    {% for r in g.rows %}
     <div class="m {{ r.state }}">
       <div class="m-name">{{ r.o.raw_name }}
         {% if r.note %}<small>{{ r.note }}</small>
-        {% elif r.o.formula %}<small>{{ r.o.formula }}</small>
-        {% elif r.o.text and r.o.value is not none %}<small>{{ r.o.text }}</small>{% endif %}
-      </div>
+        {% elif r.o.formula %}<small>{{ r.o.formula }}</small>{% endif %}</div>
       <div class="m-val">{{ r.o|disp }}{% if r.o.unit %}<span class="u">{{ r.o.unit }}</span>{% endif %}</div>
-      <div class="track {% if not r.bar %}none{% endif %}">
-        <div class="line"></div>
-        {% if r.bar %}
-        <div class="band" style="left:{{ r.bar.lo }}%;width:{{ r.bar.hi - r.bar.lo }}%"></div>
-        <div class="pin" style="left:{{ r.bar.val }}%"></div>
-        {% endif %}
-      </div>
+      <div class="track {% if not r.bar %}none{% endif %}"><div class="line"></div>
+        {% if r.bar %}<div class="bandx" style="left:{{ r.bar.lo }}%;width:{{ r.bar.hi - r.bar.lo }}%"></div>
+        <div class="pin" style="left:{{ r.bar.val }}%"></div>{% endif %}</div>
       <div class="m-ref">{{ r.ref }}</div>
     </div>
     {% endfor %}
@@ -276,194 +288,119 @@ footer b{color:var(--ink)}
     <div class="yes"><h4>可以确定</h4><p>{{ c.verdict.certain }}</p></div>
     <div class="no"><h4>不能由此认定</h4><p>{{ c.verdict.not_certain }}</p></div>
     {% if c.verdict.next_steps %}
-    <div><h4>下一步</h4><ul>{% for s in c.verdict.next_steps %}<li>{{ s }}</li>{% endfor %}</ul></div>
-    {% endif %}
+    <div><h4>下一步</h4><ul>{% for s in c.verdict.next_steps %}<li>{{ s }}</li>{% endfor %}</ul></div>{% endif %}
     {% if c.verdict.compare_next %}
-    <div><h4>下次比什么</h4>
-      {% for i in c.verdict.compare_next %}
+    <div><h4>下次比什么</h4>{% for i in c.verdict.compare_next %}
       <div class="cmp"><b>{{ i.baseline_display }}</b> — {{ i.what }}
-        {% if i.caveat %}<span class="cav">⚠ {{ i.caveat }}</span>{% endif %}</div>
-      {% endfor %}
-    </div>
-    {% endif %}
+        {% if i.caveat %}<span class="cav">⚠ {{ i.caveat }}</span>{% endif %}</div>{% endfor %}</div>{% endif %}
   </div>
   {% endif %}
-</section>
+
+{% if b.key == 'settle' %}</div></details>{% else %}</section>{% endif %}
 {% endfor %}
 {% endfor %}
 
-{% if corrections %}
-<div class="chapter-head" id="fix">
-  <p class="eyebrow" style="margin:0">{{ "%02d"|format(chapters|length + 1) }}</p>
-  <h2>需纠正</h2>
-  <p>它们的共同特点是：单项确实被标了箭头，但同一份报告里另有指标直接否定了这个箭头的含义。
-     这类建议最容易被照做，所以单独列出。每条纠正的反证都引自同一份报告。</p>
-</div>
-{% for f in corrections %}
-<section class="fix" id="{{ f.c.id }}">
-  <span class="tag act">需纠正</span>
-  <h3 class="q">{{ f.c.claim }}</h3>
-  <p class="orig"><b>原报告 · {{ f.c.original_source }}</b>{{ f.c.original_advice }}</p>
-  <div class="dl">
-    <span class="flag">{{ f.flagged.o.raw_name }} {{ f.flagged.o|disp }}{{ f.flagged.o.unit or '' }}
-      ｜ {{ f.flagged.ref }}</span>
-    {% for r in f.rows %}
-    <span>{{ r.o.raw_name }} {{ r.o|disp }}{{ r.o.unit or '' }}{% if r.ref != '无区间' %} ｜ {{ r.ref }}{% endif %}</span>
-    {% endfor %}
-  </div>
-  <div class="fix-grid">
-    <div><h5>为什么不成立</h5><p>{{ f.c.why_not }}</p></div>
-    <div><h5>怎么做</h5><p>{{ f.c.what_to_do }}</p></div>
-  </div>
-</section>
-{% endfor %}
-{% endif %}
-
-<section id="derived" style="scroll-margin-top:72px">
-  <h2 class="sec">派生 · 原报告没算、但这批数据够算的 {{ derived|length }} 个指标</h2>
-  <p style="color:var(--ink-2);margin:0 0 14px;max-width:70ch">这些不是新检查，全部由已有数值计算得出。
-     它们之所以重要，是因为几条主要判读依赖的正是这些数，而不是任何单项的箭头。</p>
-  <table>
-    <thead><tr><th style="width:26%">指标</th><th style="width:14%">结果</th>
-      <th style="width:28%">算法</th><th>它改变了什么判断</th></tr></thead>
-    <tbody>
-    {% for d in derived %}
-      <tr><td>{{ d.o.raw_name }}</td>
-        <td class="num">{{ d.o|disp }} {{ d.o.unit or '' }}</td>
-        <td class="num">{{ d.o.formula }}</td>
-        <td>{{ d.note or '—' }}</td></tr>
-    {% endfor %}
-    </tbody>
-  </table>
-  {% if consistency %}
-  <p style="color:var(--ink-2);margin:18px 0 8px"><b>一致性校验</b>——原报告给出的派生值，与用原始值重算的结果对了一遍：</p>
-  <table><thead><tr><th>指标</th><th>原报告</th><th>重算</th><th>相差</th><th>说明</th></tr></thead><tbody>
-  {% for i in consistency %}
-    <tr><td>{{ i.code }}</td><td class="num">{{ i.reported }}</td><td class="num">{{ i.recomputed }}</td>
-      <td class="num">{{ "%.1f%%"|format(i.rel_diff * 100) }}</td>
-      <td>不影响本次任何结论；记录下来是因为下次比较时要知道用的是哪一个口径</td></tr>
-  {% endfor %}
-  </tbody></table>
-  {% endif %}
-</section>
-
-{% if plan and plan.items %}
-<section id="baseline" style="scroll-margin-top:72px">
-  <h2 class="sec">纵向 · 下次比什么（{{ plan.items|length }} 项可比口径）</h2>
-  <p style="color:var(--ink-2);margin:0 0 14px;max-width:70ch">这一节记的是数字和设备，不是"未见明显变化"这类无法验证的话。
-     它会被存档，下次体检直接按同一把尺子对上去；比不了要说清为什么比不了，而不是硬比。</p>
-  <table>
-    <thead><tr><th style="width:22%">对象</th><th style="width:16%">本次记录</th>
-      <th style="width:20%">口径</th><th>下次必须比什么</th></tr></thead>
-    <tbody>
-    {% for i in plan.items %}
-      <tr>
-        <td>{{ i.key.code }}</td>
-        <td class="num">{{ i.baseline_display }}</td>
-        <td style="font-size:12px;color:var(--muted)">
-          {{ i.key.method or i.key.unit or '—' }}{% if i.key.device %}<br>{{ i.key.device }}{% endif %}
-          {% if i.key.device_sensitive %}<br><span style="color:var(--act)">换设备即不可比</span>{% endif %}
-        </td>
-        <td>{{ i.what }}{% if i.caveat %}<br><span style="color:var(--act);font-size:12.5px">⚠ {{ i.caveat }}</span>{% endif %}</td>
-      </tr>
-    {% endfor %}
-    </tbody>
-  </table>
-</section>
-{% endif %}
-
-{% if confirmed_by_source %}
-<details class="good">
+<h2 class="sec" id="confirm">这 {{ confirms|length }} 条，执行前和医生确认一句</h2>
+<p class="sub">它们的共同点是：原报告确实标了箭头，但同一份报告里另有指标指向不同方向。
+   我们不是接诊医生，所以这里给的不是"不用做"，而是"值得先问一句再做"。理由默认折叠。</p>
+{% for x in confirms %}
+<details class="confirm" id="{{ x.c.id }}">
   <summary>
-    <span class="tag calm">可放心</span>
-    <span class="s-title">已经确认没有问题的部分</span>
-    <span class="s-hint">点击展开 · 不需要行动</span>
+    <span><span class="st">{{ x.c.claim_soft }}</span>
+      <span class="sd">原建议：{{ x.recon.findings[0].advised if x.recon.findings else x.c.original_advice }}</span></span>
+    <span class="hint">展开理由</span>
   </summary>
   <div class="inner">
-    <p class="note">这一段存在的意义只有一个：确认它们被看过了，而不是被略过了。全部无需行动，不必逐项记忆。</p>
-    {% for src, items in confirmed_by_source.items() %}
-    <p class="note"><b>{{ src }}</b>（{{ items|length }} 项）　
-      {% for o in items %}{{ o.raw_name }} {{ o|disp }}{{ o.unit or '' }}{% if not loop.last %}　·　{% endif %}{% endfor %}
-    </p>
-    {% endfor %}
+    <div class="dl">
+      <span class="flag">{{ x.flag.o.raw_name }} {{ x.flag.o|disp }}{{ x.flag.o.unit or '' }} ｜ {{ x.flag.ref }}</span>
+      {% for r in x.rows %}<span>{{ r.o.raw_name }} {{ r.o|disp }}{{ r.o.unit or '' }}</span>{% endfor %}
+    </div>
+    <div class="two">
+      <div><h5>同一份报告里指向不同方向的证据</h5><p>{{ x.c.why_not }}</p></div>
+      <div><h5>建议怎么做</h5><p>{{ x.c.what_to_do }}</p>
+        <p style="margin-top:10px;color:var(--muted);font-size:12.5px">这是按报告内部数据的组合判读，不是诊断。最终以接诊医生的判断为准。</p></div>
+    </div>
   </div>
 </details>
-{% endif %}
+{% endfor %}
 
-<section id="audit" style="scroll-margin-top:72px">
-  <h2 class="sec">覆盖率审计</h2>
-  <p style="color:var(--ink-2);margin:0 0 14px;max-width:70ch">这一节不是给读者看结论的，是给这份判读本身做证明：
-     每一条观察都必须有一个归宿。异常项若没有任何归宿，这份报告不会被生成。</p>
-  <div class="audit">
-    <div class="bars">
+<h2 class="sec">还缺什么</h2>
+<p class="sub">写清楚不知道什么，和写清楚知道什么同样重要。</p>
+<table>
+  <thead><tr><th style="width:34%">尚未纳入 / 尚不知道</th><th>影响什么</th></tr></thead>
+  <tbody>
+  {% for m in missing_context %}
+    <tr><td>{{ m.label }} <span class="chip">背景空白</span></td>
+      <td>报告里没有这项，本判读不替你假设。影响：{% for t in m.titles %}「{{ t }}」{% endfor %}</td></tr>
+  {% endfor %}
+  {% for b in boundaries %}
+    <tr><td>{{ b.what }}{% if b.critical %} <span class="chip">最关键</span>{% endif %}</td>
+      <td>{{ b.impact }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<details style="margin-top:28px">
+  <summary><span><span class="st">原报告没算、但这批数据够算的 {{ derived|length }} 个指标</span>
+    <span class="sd">不是新检查，全部由已有数值算出。上面几条主要判读依赖的正是这些数。</span></span>
+    <span class="hint">展开</span></summary>
+  <div class="inner"><table style="border:0">
+    <thead><tr><th>指标</th><th>结果</th><th>算法</th><th>改变了什么判断</th></tr></thead>
+    <tbody>{% for d in derived %}
+      <tr><td>{{ d.o.raw_name }}</td><td class="num">{{ d.o|disp }} {{ d.o.unit or '' }}</td>
+        <td class="num">{{ d.o.formula }}</td><td>{{ d.note or '—' }}</td></tr>
+    {% endfor %}</tbody></table></div>
+</details>
+
+<details>
+  <summary><span><span class="st">已经确认没有问题的部分</span>
+    <span class="sd">{{ n_ok }} 项。这一段存在的意义只有一个：确认它们被看过了，而不是被略过了。</span></span>
+    <span class="hint">展开</span></summary>
+  <div class="inner">
+  {% for src, items in by_src.items() %}
+    <p class="note"><b>{{ src }}</b>（{{ items|length }}）　
+      {% for o in items %}{{ o.raw_name }} {{ o|disp }}{{ o.unit or '' }}{% if not loop.last %}　·　{% endif %}{% endfor %}</p>
+  {% endfor %}
+  </div>
+</details>
+
+<details>
+  <summary><span><span class="st">数据来源与覆盖率</span>
+    <span class="sd">{{ sources|length }} 份报告合并；{{ n_obs }} 条观察每一条都有归宿，异常项若无归宿则本报告不会生成。</span></span>
+    <span class="hint">展开</span></summary>
+  <div class="inner">
+    <table style="border:0;margin-bottom:14px">
+      <thead><tr><th style="width:32%">来源</th><th style="width:24%">日期</th><th>合并核对</th></tr></thead>
+      <tbody>{% for s in sources %}
+        <tr><td>{{ s.label }}</td>
+          <td class="num">{{ s.date_from }}{% if s.date_to and s.date_to != s.date_from %} 至 {{ s.date_to }}{% endif %}</td>
+          <td>{{ s.merge_note or '—' }}</td></tr>
+      {% endfor %}</tbody>
+    </table>
     {% set total = coverage.records|length %}
-    {% for label, n in cov_hist %}
-      <div class="row"><span>{{ label }}</span>
-        <span class="bar"><i style="width:{{ (n / total * 100)|round(1) }}%"></i></span>
-        <span class="n">{{ n }}</span></div>
-    {% endfor %}
-    </div>
-    {% if coverage.unreadable_pages %}
-    <p class="note"><b>纯图像页</b>（{{ coverage.unreadable_pages|length }} 页）本判读不解读原始诊断图像，
-      只使用报告中已经写明的文字描述和结论。</p>
-    {% endif %}
+    <table style="border:0">
+      <thead><tr><th>归宿</th><th style="width:16%">条数</th></tr></thead>
+      <tbody>{% for k, v in coverage.histogram().items()|sort(attribute='1', reverse=true) %}
+        <tr><td>{{ k }}</td><td class="num">{{ v }}</td></tr>
+      {% endfor %}</tbody>
+    </table>
     {% if unjudged %}
     <p class="note"><b>暂未判定高低</b>　{{ unjudged|join('、') }}——原报告给了参考区间，
       但写法含条件从句，本系统没有把握读准，因此保留原值不判高低，也不据此安排任何干预。</p>
     {% endif %}
-    <span class="pass">✓ 构建通过：{{ total }} 条观察全部有归宿，分章不变式成立</span>
+    {% if consistency %}
+    <p class="note"><b>一致性校验</b>　{% for i in consistency %}{{ i.code }}：原报告 {{ i.reported }}，
+      用原始值重算 {{ i.recomputed }}，相差 {{ "%.1f%%"|format(i.rel_diff * 100) }}。{% endfor %}
+      不影响本次任何结论；记录下来是因为下次比较时要知道用的是哪一个口径。</p>
+    {% endif %}
   </div>
-</section>
-
-<section id="edge" style="scroll-margin-top:72px">
-  <h2 class="sec">边界 · 这份判读会在哪里失效</h2>
-  <p style="color:var(--ink-2);margin:0 0 14px;max-width:70ch">写清楚不知道什么，和写清楚知道什么同样重要。</p>
-  <table>
-    <thead><tr><th style="width:36%">尚未纳入 / 尚不知道</th><th>影响什么</th></tr></thead>
-    <tbody>
-    {% for m in missing_context %}
-      <tr><td>{{ m.label }}<span class="tag neutral" style="margin-left:8px">背景空白</span></td>
-        <td>{{ m.why }}。影响 {{ m.affects|length }} 条判读：
-          {% for t in m.affects %}「{{ t }}」{% endfor %}</td></tr>
-    {% endfor %}
-    {% for b in boundaries %}
-      <tr><td>{{ b.what }}{% if b.critical %}<span class="tag act" style="margin-left:8px">最关键</span>{% endif %}</td>
-        <td>{{ b.impact }}</td></tr>
-    {% endfor %}
-      <tr><td>无痛电子胃肠镜（报告自取）</td><td>胃与肠道的结论应以镜下所见为准，本判读只用了血清学筛查</td></tr>
-      <tr><td>18 种肿瘤超早期风险评估（报告自取）</td><td>与已完成的肿瘤标志物组合读，不应单独解读任一方</td></tr>
-      <tr><td>经颅多普勒 TCD（详见附件，未纳入）</td><td>它提供颅内血流的功能信息，而 MRA 只给了形态。拿到后应与 MRA 一起看</td></tr>
-      <tr><td>无创动脉硬化检测（详见附件，未纳入）</td><td>可为血管那一节补充外周动脉硬度的独立证据</td></tr>
-    </tbody>
-  </table>
-</section>
-
-<section>
-  <h2 class="sec">数据来源 · {{ sources|length }} 份报告合并</h2>
-  <table>
-    <thead><tr><th style="width:30%">来源</th><th style="width:22%">日期</th><th>合并核对</th></tr></thead>
-    <tbody>
-    {% for s in sources %}
-      <tr><td>{{ s.label }}</td>
-        <td class="num">{{ s.date_from }}{% if s.date_to and s.date_to != s.date_from %} 至 {{ s.date_to }}{% endif %}</td>
-        <td>{{ s.merge_note or '—' }}</td></tr>
-    {% endfor %}
-    </tbody>
-  </table>
-</section>
+</details>
 
 <footer>
-  <p><b>这份文件是什么：</b>对 {{ period }} 体检报告及附件的二次整理，方法是把彼此相关的指标放在一起判读，
-     而不是逐项解释箭头。所有数值均引自原报告并保留出处，派生指标标注了算法，
-     每一条结论都可回溯到上方具体数值。</p>
+  <p><b>这份文件是什么：</b>对本次体检报告及 {{ sources|length - 1 }} 份附件的二次整理，方法是把彼此相关的指标放在一起判读，
+    而不是逐项解释箭头。共 {{ n_obs }} 条观察、{{ n_abnormal }} 项异常，每一条都有归宿。</p>
   <p><b>这份文件不是什么：</b>不是诊断，不构成用药建议，也不替代经治医生的判断。
-     其中标为"需专科确认"和"需纠正"的条目，请带原报告与医生当面核对。</p>
-  <p style="margin-top:14px;font-family:var(--mono);font-size:11px;letter-spacing:.06em">
-     判读生成于 {{ generated }}　·　{{ n_obs }} 条观察 / {{ n_abnormal }} 项异常 /
-     {{ chapters|map(attribute='chains')|map('length')|sum }} 条判读链条 + {{ n_fix }} 条纠正
-     　·　每条结论均可回溯至上方具体数值</p>
+    标为「现在要做」和「与医生确认」的条目，请带原报告与医生当面核对。</p>
 </footer>
 
-</div>
-</body>
-</html>
+</div></body></html>
