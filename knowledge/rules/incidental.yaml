@@ -1,0 +1,58 @@
+rules:
+  # 模式 13：附带发现
+  # 颅脑 MRI 扫的是脑。鼻窦落在扫描野边缘，是顺带看到的。
+  # 顺带看到的东西不能按"专门做这项检查"的标准去解读——
+  # 序列不是为它设计的，阴性预测值也不一样。
+  - id: ent.sinus_incidental_on_brain_mri
+    archetype: incidental_on_other_study
+    title: 鼻窦所见是颅脑 MRI 的附带发现，不是一次鼻窦检查的结论
+    headline: 这是扫脑时顺带看到的，主目标（脑血管）本次是通畅的
+    lede: >-
+      两侧鼻窦炎与右侧上颌窦囊肿写在颅脑 MRI 报告的"附见"里。
+      这次检查的目标是脑实质与脑血管，鼻窦只是落在了扫描范围内。
+    tag: downgrade
+    chapter: downgrade
+    modifiability: unknown
+    priority: 25
+    params:
+      finding: SINUS_FINDING
+      study_primary: BRAIN_MRI_PLAIN
+      primary_expect: normal_text
+    extra_evidence: [WM_HYPERINTENSITY]
+    narration:
+      single_read: >-
+        原报告把它列进"定期复检"，建议定期复查，有反复鼻塞流涕头痛头胀时到耳鼻喉科。
+      joint_read: >-
+        这一条与前面几条的性质不同：它不是本次检查要回答的问题。
+        颅脑 MRI 的主目标是脑实质与脑血管，本次主目标结论是通畅、未见狭窄扩张。
+        鼻窦位于扫描野边缘，MRI 序列不是为鼻窦设计的，
+        所以"两侧鼻窦炎"这个字面结论既不能当作确诊，也不能当作排除。
+        真正决定它要不要处理的是症状，而不是影像上的这行字：
+        有没有持续鼻塞、流涕、嗅觉减退、面部胀痛。
+      must_convey:
+        - 这是附带发现，本次检查不是为它做的
+        - 判断它要不要处理靠症状，不靠这行影像描述
+        - 颅脑 MRI 的主目标结论本次是通畅的
+      must_not_claim:
+        - 不得把附带发现当作鼻窦疾病的确诊
+        - 不得把它当作已排除——本次没有做鼻窦专项检查
+        - 不得据此建议任何药物
+    verdict:
+      certain: >-
+        没有症状就不需要为这行字做任何事。
+        有症状时，需要的是耳鼻喉科的鼻内镜或鼻窦 CT，而不是复查颅脑 MRI。
+      not_certain: >-
+        颅脑 MRI 判断鼻窦的准确性与鼻窦专项检查不同，本次既不能确诊也不能排除。
+        本报告里没有任何症状记录，这一项的意义完全取决于那些症状。
+      next_steps:
+        - 自己回想近半年有没有持续鼻塞、流涕、嗅觉减退、面部胀痛
+        - 没有这些症状就不必安排检查；有的话去耳鼻喉科，带上本次 MRI 报告
+      compare_next:
+        - code: SINUS_FINDING
+          what: 不需要为它单独复查影像；下次做颅脑 MRI 时看这行是否仍在
+          caveat: 不同设备、不同序列的鼻窦显示差别很大，不可比
+    tests:
+      - {name: 病例2真实数据, fixture: case2_2024-08-03, expect: triggered}
+      - {name: 主目标异常时不成立, fixture: case2_2024-08-03, expect: not_triggered,
+         overrides: {BRAIN_MRI_PLAIN: 阳性}}
+      - {name: 病例1没做颅脑MRI, fixture: zhang_real_2026-03-30, expect: indeterminate}

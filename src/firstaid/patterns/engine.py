@@ -158,7 +158,9 @@ class PatternEngine:
             o = next((e.observation for e in hit.evidence if e.observation.code == c.code),
                      None)
             if o is None:
-                raise ValueError(f"compare_next 引用了不在 evidence 里的 {c.code}")
+                # 本次没做这项检查 —— 跳过，不是规则写错。
+                # 规则要能跨病人复用，不能因为某人少做一项就整条报废。
+                continue
             compare.append(ComparisonItem(
                 key=ComparabilityKey.of(o, self.ontology.device_sensitive(o.code)),
                 what=render_template(c.what, vals, detail),
@@ -166,6 +168,10 @@ class PatternEngine:
                 caveat=c.caveat, rationale=c.rationale, from_rule=rule.id,
             ))
 
+        if vs.compare_next and not compare:
+            raise ValueError(
+                f"{rule.id}: compare_next 列出的指标本次一个都没有，"
+                "这条判读无法给出可比基线")
         verdict = Verdict(
             certain=render_template(vs.certain, vals, detail),
             not_certain=render_template(vs.not_certain, vals, detail),

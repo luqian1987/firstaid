@@ -73,7 +73,7 @@ def analyze(timeline: Timeline, ontology=None, units=None, rules=None,
     a.errors += rules.validate_all()
 
     # L2 派生
-    _, issues = DeriveEngine(derived).run(enc)
+    _, issues = DeriveEngine(derived, timeline.subject.sex).run(enc)
     a.consistency = issues
     a.derived_notes = {d.code: d.changes_what for d in derived.defs if d.changes_what}
 
@@ -123,11 +123,24 @@ def analyze(timeline: Timeline, ontology=None, units=None, rules=None,
     # L5 覆盖率
     a.coverage = build_coverage(enc, res, ontology)
 
-    # 纵向计划
-    items: list[ComparisonItem] = []
+    # 纵向计划。同一个指标被两条判读同时点名是常态（前列腺径线既进结构性存档、
+    # 又进膀胱那条），合并成一行并把两种看法都保留 —— 丢掉任何一句都是丢信息，
+    # 而列两遍会让人以为系统出错了。
+    merged: dict[str, ComparisonItem] = {}
     for c in a.chains:
-        if c.verdict:
-            items += list(c.verdict.compare_next)
+        for it in (c.verdict.compare_next if c.verdict else ()):
+            prev = merged.get(it.key.code)
+            if prev is None:
+                merged[it.key.code] = it
+                continue
+            whats = [prev.what] + ([it.what] if it.what not in prev.what else [])
+            caveats = [x for x in (prev.caveat, it.caveat) if x]
+            merged[it.key.code] = prev.model_copy(update={
+                "what": "；".join(whats),
+                "caveat": "；".join(dict.fromkeys(caveats)) or None,
+                "rationale": prev.rationale or it.rationale,
+            })
+    items = list(merged.values())
     a.plan = ComparisonPlan(
         subject_id=timeline.subject.id, encounter_id=enc.id,
         created_for=enc.anchor_date, items=tuple(items),

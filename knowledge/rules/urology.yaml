@@ -1,0 +1,79 @@
+rules:
+  # 模式 14：判据不全的发现
+  # 膀胱里的可移动强回声，超声上叫"泥沙样沉积"。它可能是结晶、可能是感染碎屑、
+  # 也可能是探头角度造成的伪像——三者在超声上长得一样。
+  # 分开它们要靠尿常规；判断前列腺增大是否真的造成排空不全要靠残余尿。
+  # 本次这两项一项都没做，所以这里不给结论，只说清楚缺的是什么。
+  - id: urology.bladder_sediment_unsettled
+    archetype: unsettled_finding
+    title: 膀胱泥沙样沉积：本次缺少能给它定性的两项检查
+    headline: 这一项本次判不了——定性它要靠尿常规和残余尿，两项都没做
+    lede: >-
+      超声报的是"可移动的颗粒样强回声"。结晶、感染碎屑、伪像在超声上是同一个样子，
+      分开它们不靠再做一次超声。同一份报告里还有左肾结石与前列腺增大，
+      三者可能属于同一条排尿与成石的链，也可能互不相干——这同样取决于那两项。
+    tag: retest_first
+    chapter: watch
+    modifiability: clinical
+    priority: 55
+    params:
+      finding: BLADDER_SEDIMENT
+      finding_expect: abnormal
+      settled_by:
+        - {code: URINE_ROUTINE, what: 有没有白细胞、亚硝酸盐、结晶、潜血,
+           how: 任何一次门诊或下次体检加一项，费用极低}
+        - {code: POST_VOID_RESIDUAL, what: 排尿后膀胱里还剩多少,
+           how: 泌尿系超声加做一个排尿后测量，同一次检查里就能完成}
+        - {code: URINE_CULTURE, what: 若尿常规提示感染，再用它定病原,
+           how: 由医生按尿常规结果决定，不必主动做}
+      co_findings: [PROSTATE_SIZE, RENAL_STONE, CREATININE, UREA, UA]
+    narration:
+      single_read: >-
+        原报告把它与前列腺增大合成一条，建议禁酒、避免久坐少动、不憋尿、定期复查B超。
+        这些建议本身没有坏处，但它们对应的是"排空不全"这个假设，
+        而这个假设本次没有任何数据支持或否定。
+      joint_read: >-
+        能给这一项定性的检查本次一项都没做（{$absent}）。
+        在拿到它们之前，"泥沙样沉积"这四个字既不指向感染，也不指向结石前期，
+        更不能说没事。同一份报告里的三个相关事实是：
+        前列腺 {PROSTATE_SIZE} mm 略突向膀胱、左肾结石 {RENAL_STONE} mm、
+        而肾功能（肌酐 {CREATININE}、尿素 {UREA}、尿酸 {UA}）完全正常。
+        肾功能正常说明目前没有梗阻造成的后果，但它不能替代残余尿——
+        排空不全在造成肾功能变化之前会先造成症状与感染。
+        所以这一条的正确动作不是"多喝水定期复查"，是补两项很便宜的检查，
+        让它从"判不了"变成"要么可以放下、要么知道该处理什么"。
+      must_convey:
+        - 这一项本次无法定性，缺的是尿常规与残余尿
+        - 超声上结晶、感染碎屑、伪像是同一个样子，再做一次超声不解决问题
+        - 肾功能正常说明目前无梗阻后果，但不能替代残余尿
+        - 这两项都很便宜，可以在一次门诊或下次体检里完成
+      must_not_claim:
+        - 不得推断这是感染、结石前期或伪像中的任何一种
+        - 不得由前列腺径线推断存在排尿梗阻
+        - 不得说"没事"，也不得说"有事"
+        - 不得建议任何药物
+    verdict:
+      certain: >-
+        在补上尿常规与残余尿之前，这一项没有可靠结论。
+        这两项的意义不在于它们大概率正常，而在于它们能把这一条从待定变成确定。
+      not_certain: >-
+        本次报告里没有任何排尿症状的记录（尿频、夜尿、排尿时间、尿流变细），
+        而症状本身是判断前列腺是否需要处理的主要依据之一。
+        这一项本次同样空白，不是检查缺失，是问诊没有记录。
+      next_steps:
+        - 下次体检或任何一次门诊加做尿常规
+        - 做泌尿系超声时要求加测排尿后残余尿，同一次检查内即可完成
+        - 自己记一周的夜尿次数与是否有排尿费力，这个不需要任何检查
+      compare_next:
+        - code: BLADDER_SEDIMENT
+          what: 沉积是否仍在。但它单独复查的价值有限，要与尿常规同次
+          caveat: 超声表现受充盈程度与体位影响，单次差异不说明变化
+        - code: PROSTATE_SIZE
+          what: 径线 + 残余尿 + 症状，三者一起看，单看径线不构成判断
+        - code: RENAL_STONE
+          what: 结石大小与位置；与膀胱沉积是否为同一成石倾向的两个部位
+    tests:
+      - {name: 病例2真实数据, fixture: case2_2024-08-03, expect: triggered}
+      - {name: 沉积阴性时不成立, fixture: case2_2024-08-03, expect: not_triggered,
+         overrides: {BLADDER_SEDIMENT: 阴性}}
+      - {name: 病例1没有这一项, fixture: zhang_real_2026-03-30, expect: indeterminate}

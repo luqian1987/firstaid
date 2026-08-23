@@ -1,0 +1,62 @@
+rules:
+  # 模式 2：校正值 vs 未校正值
+  # 百分比是个比值，分母是全部白细胞。中性粒细胞占到区间上沿时，
+  # 淋巴细胞百分比必然被压下来——这时候低的是那个比值，不是淋巴细胞本身。
+  # 绝对值才是"有多少个"。原报告读的是百分比，读出了"细胞免疫功能下降"。
+  - id: hematology.lymph_pct_vs_absolute
+    archetype: corrected_vs_raw
+    title: 淋巴细胞百分比低，而绝对值与白细胞总数都在区间内
+    headline: 低的是百分比不是细胞数，淋巴细胞绝对值正常，这一条可以放下
+    lede: >-
+      淋巴细胞百分比 18.5% 低于区间，但淋巴细胞绝对值 1.18 与白细胞总数 6.36 都在区间内。
+      百分比的分母是全部白细胞，中性粒细胞占比一高，淋巴细胞占比就被挤低——
+      被挤低的是那个比值，不是细胞数量。
+    tag: downgrade
+    chapter: downgrade
+    modifiability: not_modifiable
+    priority: 30
+    params:
+      raw: [LYMPH_PCT]
+      corrected: [LYMPH_ABS]
+      confounders: [WBC, NEUT_PCT, NEUT_ABS, MONO_PCT, EO_PCT, BASO_PCT]
+      corrected_expect: in_range
+    narration:
+      single_read: >-
+        原报告按百分比这一项给了结论："说明细胞免疫功能下降，主要见于感染性疾病
+        尤其病毒感染"，并建议注意休息、多饮水、必要时查找病因。
+      joint_read: >-
+        同一张血常规上，淋巴细胞绝对值 {LYMPH_ABS}（区间 1.1–3.2）在区间内，
+        白细胞总数 {WBC} 也在区间内，而中性粒细胞百分比 {NEUT_PCT} 处在区间上沿。
+        五种白细胞的百分比加起来永远是 100%：一种占高了，其余的必然被压低。
+        所以这里下降的是淋巴细胞在总数里的份额，不是淋巴细胞的数量——
+        数量由绝对值给出，而绝对值正常。判断细胞免疫要看绝对值，不看百分比。
+      must_convey:
+        - 百分比与绝对值是两个量，被标低的是百分比
+        - 淋巴细胞绝对值与白细胞总数都在区间内
+        - 中性粒细胞百分比处在区间上沿，是把淋巴细胞百分比压低的直接原因
+      must_not_claim:
+        - 不得据此断言免疫功能正常或异常——本次没有做任何免疫功能检查
+        - 不得反过来说原报告错了；只说明按绝对值读会得到不同结论
+    verdict:
+      certain: >-
+        单看这张血常规，没有需要处理的血液学问题。
+        下次看这一项时，先看淋巴细胞绝对值，再看百分比。
+      not_certain: >-
+        血常规是单次快照，任何一次感染前后都会波动。
+        本次也没有做淋巴细胞亚群或免疫球蛋白，所以不能对免疫状态下任何结论——
+        既不能说下降，也不能说正常。
+      next_steps:
+        - 下次拿到血常规时直接找"淋巴细胞绝对值"这一行，百分比只作参考
+        - 如果近期有反复感染、持续发热或体重下降，那是就诊的理由，而不是这个百分比
+      compare_next:
+        - code: LYMPH_ABS
+          what: 绝对值，看它是否稳定在 1.1 以上
+          rationale: 只有绝对值持续走低才是需要查找病因的信号
+        - code: WBC
+          what: 与绝对值一起看，两者同向下降与单独下降意义不同
+    tests:
+      - {name: 病例2真实数据, fixture: case2_2024-08-03, expect: triggered}
+      - {name: 绝对值也低时不成立, fixture: case2_2024-08-03, expect: not_triggered,
+         overrides: {LYMPH_ABS: 0.7}}
+      # 病例 1 的血常规只报了淋巴细胞绝对值，没报百分比 —— 数据缺口，判不了。
+      - {name: 病例1没报百分比，判不了, fixture: zhang_real_2026-03-30, expect: indeterminate}

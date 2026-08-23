@@ -74,6 +74,16 @@ def check_state(o: Observation | None, expect: str, threshold: float | None = No
         if o.judged:
             return o.in_range
         return o.advisory_in_range if o.has_advisory else None
+    # 报告给了区间就用报告的；没给才退到本系统切点。退化路径是显式声明的，
+    # 不是静默回退——证据里 advisory_source 会写明这一条用的是谁的切点。
+    if e == "high_or_advisory_high":
+        if o.judged:
+            return o.is_high
+        return o.advisory_high if o.has_advisory else None
+    if e == "low_or_advisory_low":
+        if o.judged:
+            return o.is_low
+        return o.advisory_low if o.has_advisory else None
     if e == "normal_text":
         return o.negative if (o.qualitative is not None or o.text) else None
     raise ValueError(f"未知的期望状态: {expect}")
@@ -643,11 +653,153 @@ class BorderlineConcordant(ArchetypeImpl):
             detail=detail)
 
 
+# --------------------------------------------------------------------------
+# 12. 多因素同向偏离 + 已有形态学落点
+#     与第 8 类的区别：第 8 类是"常规全正常，风险看不见"；这一类是
+#     "多个指标同时偏离，而且病变已经看得见了"。后者不需要再论证风险存在，
+#     需要论证的是这些因素里哪些能动、哪些不能。
+# --------------------------------------------------------------------------
+class ConvergingFactor(BaseModel):
+    code: str
+    expect: str = "high"
+    threshold: float | None = None
+
+
+class RiskConvergenceParams(BaseModel):
+    factors: list[ConvergingFactor]
+    min_deviating: int = 3
+    lesion: list[str]                       # 该过程的直接形态学证据
+    lesion_mode: str = "any"                # any / all
+    context: list[str] = Field(default_factory=list)
+
+
+class RiskConvergence(ArchetypeImpl):
+    archetype = Archetype.RISK_CONVERGENCE
+    params_model = RiskConvergenceParams
+
+    def evaluate(self, rule_id, ctx, p: RiskConvergenceParams) -> PatternHit:
+        refs, missing, deviating = [], [], []
+        for f in p.factors:
+            o = ctx.obs(f.code)
+            if o is None:
+                missing.append(f.code)
+                continue
+            st = check_state(o, f.expect, f.threshold)
+            if st is None:
+                missing.append(f.code)
+                continue
+            refs.append(EvidenceRef(observation=o,
+                                    role="factor" if st else "factor_clear"))
+            if st:
+                deviating.append(f.code)
+        if missing:
+            return self._hit(rule_id, TriState.INDETERMINATE, missing=missing,
+                             evidence=refs)
+        lesion_refs, lesion_missing = self._gather(ctx, p.lesion, "lesion")
+        if p.lesion_mode == "all" and lesion_missing:
+            return self._hit(rule_id, TriState.INDETERMINATE, missing=lesion_missing)
+        has_lesion = bool(lesion_refs) if p.lesion_mode == "any" else not lesion_missing
+        ctx_refs, _ = self._gather(ctx, p.context, "context")
+        ok = len(deviating) >= p.min_deviating and has_lesion
+        all_refs = refs + lesion_refs + ctx_refs
+        return self._hit(
+            rule_id, TriState.TRIGGERED if ok else TriState.NOT_TRIGGERED,
+            evidence=all_refs, consumed=[r.observation.code for r in all_refs],
+            detail={"n_deviating": float(len(deviating)),
+                    "n_factors": float(len(p.factors)),
+                    "deviating": "、".join(deviating)})
+
+
+# --------------------------------------------------------------------------
+# 13. 附带发现：为别的目的做的检查上顺带看到的东西
+#     体检里非常常见（颅脑 MRI 上的鼻窦、腹部 CT 上的肝血管瘤）。
+#     它的要害是：这项检查不是为它做的，因此阴性预测值与主目标不同，
+#     不该按主目标的标准去解读，也不该占用主要关注。
+# --------------------------------------------------------------------------
+class IncidentalParams(BaseModel):
+    finding: str
+    study_primary: str                      # 该检查的主目标结论
+    primary_expect: str = "normal_text"
+
+
+class IncidentalOnOtherStudy(ArchetypeImpl):
+    archetype = Archetype.INCIDENTAL_ON_OTHER_STUDY
+    params_model = IncidentalParams
+
+    def evaluate(self, rule_id, ctx, p: IncidentalParams) -> PatternHit:
+        f, pri = ctx.obs(p.finding), ctx.obs(p.study_primary)
+        if f is None or pri is None:
+            return self._hit(rule_id, TriState.INDETERMINATE,
+                             missing=[c for c, o in ((p.finding, f),
+                                                     (p.study_primary, pri))
+                                      if o is None])
+        if not f.abnormal:
+            return self._hit(rule_id, TriState.NOT_TRIGGERED)
+        st = check_state(pri, p.primary_expect)
+        if st is None:
+            return self._hit(rule_id, TriState.INDETERMINATE, missing=[p.study_primary])
+        refs = [EvidenceRef(observation=f, role="abnormal"),
+                EvidenceRef(observation=pri, role="primary")]
+        return self._hit(
+            rule_id, TriState.TRIGGERED if st else TriState.NOT_TRIGGERED,
+            evidence=refs, consumed=[r.observation.code for r in refs])
+
+
+# --------------------------------------------------------------------------
+# 14. 判据不全的发现：东西看见了，但能给它定性的检查本次一项都没做
+#     体检里极常见（超声上的非特异所见 + 没做对应的化验或功能测量）。
+#     这一类是覆盖率审计逼出来的：这种发现既不能说"没事"，也没有依据说"有事"，
+#     以前它只能落进 UNRESOLVED 让构建变红，逼人去编一个结论。
+#     现在它有一个合法归宿，而归宿的内容不是结论，是"要它有意义还缺哪两项"。
+#
+#     它只在那些检查全都缺席时成立：只要有一项做了，就该由读那一项的规则来判，
+#     不许用这条把已有证据绕过去。
+# --------------------------------------------------------------------------
+class SettlingTest(BaseModel):
+    code: str
+    what: str                               # 这项检查能定什么
+    how: str | None = None                  # 怎么补（门诊/自测/下次体检加项）
+
+
+class UnsettledFindingParams(BaseModel):
+    finding: str
+    finding_expect: str = "abnormal"
+    settled_by: list[SettlingTest]
+    co_findings: list[str] = Field(default_factory=list)   # 同一条链上的其他发现
+
+
+class UnsettledFinding(ArchetypeImpl):
+    archetype = Archetype.UNSETTLED_FINDING
+    params_model = UnsettledFindingParams
+
+    def evaluate(self, rule_id, ctx, p: UnsettledFindingParams) -> PatternHit:
+        fo = ctx.obs(p.finding)
+        if fo is None:
+            return self._hit(rule_id, TriState.INDETERMINATE, missing=[p.finding])
+        st = check_state(fo, p.finding_expect)
+        if st is None:
+            return self._hit(rule_id, TriState.INDETERMINATE, missing=[p.finding])
+        if not st:
+            return self._hit(rule_id, TriState.NOT_TRIGGERED)
+        present = [t for t in p.settled_by if ctx.has(t.code)]
+        if present:
+            # 有判据却走这条 = 用"缺检查"掩盖已有证据。不允许。
+            return self._hit(rule_id, TriState.NOT_TRIGGERED)
+        co_refs, _ = self._gather(ctx, p.co_findings, "co_finding")
+        refs = [EvidenceRef(observation=fo, role="finding")] + co_refs
+        return self._hit(
+            rule_id, TriState.TRIGGERED, evidence=refs,
+            consumed=[r.observation.code for r in refs],
+            detail={"n_absent": float(len(p.settled_by)),
+                    "absent": "、".join(t.what for t in p.settled_by)})
+
+
 REGISTRY: dict[Archetype, ArchetypeImpl] = {
     impl.archetype: impl for impl in (
         UpstreamContradicted(), CorrectedVsRaw(), PairedDivergence(),
         PatternDissociation(), LayeredExclusion(), IsolatedAbnormal(),
         AcutePhaseCoherence(), NormalPanelHiddenRisk(), UnrangedStructural(),
         RangeKindCaveat(), BorderlineConcordant(),
+        RiskConvergence(), IncidentalOnOtherStudy(), UnsettledFinding(),
     )
 }

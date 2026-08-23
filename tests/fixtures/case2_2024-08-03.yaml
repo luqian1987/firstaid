@@ -1,0 +1,199 @@
+# 回归夹具 · 病例 2 —— 64 岁男，2024-08-03，张家港澳洋医院
+#
+# 这一例与病例 1 的 profile 差别很大，正是回归集要的：
+#   · 脂蛋白(a) 同样偏高，但这次颈动脉已有斑块（病例 1 颈动脉干净）
+#   · 空腹血糖偏高、HDL 偏低、腰臀比高 —— 代谢驱动在场（病例 1 三项都排除）
+#   · BMI 21.8 正常而腰臀比 0.92 偏高 —— BMI 与中心性肥胖脱节
+#   · 甲状腺术后残余腺体有结节，而本次未查甲功
+#   · 淋巴细胞百分比低而绝对值正常
+# 已去标识：不含姓名、身份证、电话、单位。
+
+subject:
+  id: subj-c2
+  sex: male
+  age_at_report: 64
+
+encounter:
+  id: enc-c2-2024-08-03
+  date_from: 2024-08-03
+  context: {}
+  sources:
+    - {id: main, label: 综合体检主报告（澳洋医院）, kind: main_report,
+       date_from: 2024-08-03, date_to: 2024-08-03, page_count: 22,
+       merge_note: 单份报告，无附件}
+
+original_findings:
+  - {seq: 1, group: 就医, source: 颈动脉B超/椎动脉, page: 3,
+     said: "右侧颈动脉小斑块形成、双侧颈动脉内膜毛糙增厚；右侧椎动脉走行迂曲",
+     advised: "低脂饮食，积极控制危险因素（戒烟、控制血压体重血糖），必要时在医生指导下服用降脂药或稳定斑块治疗；神经内科门诊诊治，定期复查",
+     codes: [CAROTID_PLAQUE, CAROTID_IMT]}
+  - {seq: 2, group: 就医, source: 生化全套, page: 3,
+     said: "脂蛋白(a)高",
+     advised: "脂蛋白(a)与遗传、基因密切相关，指标高说明发生心血管疾病可能性增加；心内科门诊诊治，定期复查",
+     codes: [LPA]}
+  - {seq: 3, group: 进一步检查, source: 甲状腺B超, page: 3,
+     said: "残余甲状腺右叶结节（拟 C-TIRADS 3 类）",
+     advised: "完善甲状腺功能、TPO-Ab、TG-Ab、TR-Ab、降钙素等检查，定期复查甲状腺超声，必要时细针穿刺；检后外科门诊",
+     codes: [THYROID_NODULE, THYROID_STATUS]}
+  - {seq: 4, group: 进一步检查, source: B超肝胆脾胰双肾, page: 3,
+     said: "所见主胰管稍增宽（随诊，必要时建议进一步检查）",
+     advised: "普外科门诊随诊，定期复查，必要时进一步检查",
+     codes: [PANCREATIC_DUCT]}
+  - {seq: 5, group: 定期复检, source: B超肝胆脾胰双肾, page: 3,
+     said: "左肾囊肿、左肾结石",
+     advised: "定期复查肾脏B超动态观察；多饮水多运动，如有疼痛腰酸不适到泌尿外科门诊",
+     codes: [RENAL_CYST, RENAL_STONE]}
+  - {seq: 6, group: 定期复检, source: 腰臀围测量, page: 3,
+     said: "腰臀比高",
+     advised: "低脂肪、低糖、低盐饮食，控制主食量，加强运动消耗多余脂肪，坚持有氧运动",
+     codes: [WHR, WAIST]}
+  - {seq: 7, group: 定期复检, source: 血常规五分类, page: 4,
+     said: "淋巴细胞百分比低",
+     advised: "说明细胞免疫功能下降，主要见于感染性疾病尤其病毒感染；注意休息多饮水，定期复查，若持续降低建议查找病因，内科门诊诊治",
+     codes: [LYMPH_PCT]}
+  - {seq: 8, group: 定期复检, source: B超（输尿管膀胱前列腺）, page: 4,
+     said: "所见膀胱泥沙样沉积；前列腺增大",
+     advised: "禁酒，避免久坐少动，不憋尿，定期复查B超；若出现尿频、夜尿增多、排尿时间延长等到检后外科门诊",
+     codes: [BLADDER_SEDIMENT, PROSTATE_SIZE]}
+  - {seq: 9, group: 定期复检, source: 颅脑MRI平扫+MRA+DWI（3.0T）, page: 4,
+     said: "脑白质高信号（Fazekas 1 级）",
+     advised: "积极治疗基础疾病，低盐低脂饮食，戒烟，保证睡眠；神经内科门诊复查随诊",
+     codes: [WM_HYPERINTENSITY]}
+  - {seq: 10, group: 定期复检, source: 颅脑MRI平扫+MRA+DWI（3.0T）, page: 4,
+     said: "附见：两侧鼻窦炎，右侧上颌窦囊肿",
+     advised: "定期复查，若有反复鼻塞流涕、头痛头胀等症状到耳鼻喉科门诊",
+     codes: [SINUS_FINDING]}
+  - {seq: 11, group: 定期复检, source: 胸部CT平扫, page: 4,
+     said: "左肺下叶、右肺中叶磨玻璃微结节，年度复查",
+     advised: "每年定期复查胸部CT，检后门诊随诊",
+     codes: [LUNG_GGN]}
+  - {seq: 12, group: 定期复检, source: 生化全套, page: 4,
+     said: "空腹血糖高",
+     advised: "定期监测空腹血糖，完善餐后2小时血糖等；如持续升高到内分泌科门诊进一步检查",
+     codes: [GLU_FASTING]}
+  - {seq: 13, group: 定期复检, source: 小而密低密度脂蛋白胆固醇 + 生化全套, page: 4,
+     said: "小而密低密度脂蛋白胆固醇高；高密度脂蛋白低",
+     advised: "戒烟戒酒，少食动物脂肪、油炸类食品；控制体重；进行体育锻炼，定期复查，检后内科门诊随诊",
+     codes: [SDLDL_C, HDL_C]}
+
+observations:
+  # ---- 一般检查（第7页）----
+  - {code: SBP, raw_name: 收缩压, value: 115, unit: mmHg, ref: "[90.0-139.0]", source: main, page: 7}
+  - {code: DBP, raw_name: 舒张压, value: 73, unit: mmHg, ref: "[60.0-89.0]", source: main, page: 7}
+  - {code: PULSE, raw_name: 脉搏, value: 69, unit: 次/分, ref: "[60.0-100.0]", source: main, page: 7}
+  - {code: HEIGHT, raw_name: 身高, value: 169, unit: cm, source: main, page: 7}
+  - {code: WEIGHT, raw_name: 体重, value: 62.2, unit: kg, source: main, page: 7}
+  - {code: BMI, raw_name: 体重指数, value: 21.8, unit: kg/m2, ref: "[18.5-23.9]", source: main, page: 7}
+  - {code: WAIST, raw_name: 腰围, value: 81, unit: cm, source: main, page: 7}
+  - {code: HIP, raw_name: 臀围, value: 88, unit: cm, source: main, page: 7}
+  # 这一行原报告自己就印了区间，不是本系统派生出来的 —— 有区间就用报告的
+  - {code: WHR, raw_name: 腰臀比, value: 0.92, ref: "[0.85-0.9]", source: main, page: 7, flag: "↑"}
+
+  # ---- 血清学（第8页）----
+  - {code: FERRITIN,    raw_name: 铁蛋白, value: 271, ref: "24--425", unit: ng/mL, source: main, page: 8}
+  - {code: ADIPONECTIN, raw_name: 脂联素, value: 7.53, ref: "4.49--10.5", unit: ug/mL, source: main, page: 8}
+  - {code: CEA,  raw_name: "癌胚抗原[CEA]", value: 1.04, ref: "0--5.093", unit: ng/mL, source: main, page: 8}
+  - {code: AFP,  raw_name: "甲胎蛋白[AFP]", value: 2.17, ref: "0--7.32", unit: ng/mL, source: main, page: 8}
+  - {code: SDLDL_C, raw_name: 小而密低密度脂蛋白胆固醇, value: 1.26, ref: "0.25--1.17", unit: mmol/L, source: main, page: 8, flag: "↑"}
+  - {code: VEGF, raw_name: 血管内皮生长因子, value: 111.03, ref: "0--142.2", unit: pg/mL, source: main, page: 8}
+
+  # ---- 血常规（第8-9页）----
+  - {code: WBC,       raw_name: "白细胞计数[WBC]", value: 6.36, ref: "3.5--9.5", unit: 10^9/L, source: main, page: 8}
+  - {code: NEUT_ABS,  raw_name: "中性粒细胞绝对值  [NE#]", value: 4.59, ref: "1.8--6.3", unit: 10^9/L, source: main, page: 8}
+  - {code: LYMPH_ABS, raw_name: "淋巴细胞绝对值[LY#]", value: 1.18, ref: "1.1--3.2", unit: 10^9/L, source: main, page: 8}
+  - {code: MONO_ABS,  raw_name: "单核细胞绝对值[MO#]", value: 0.34, ref: "0.1--0.6", unit: 10^9/L, source: main, page: 8}
+  - {code: EO_ABS,    raw_name: "嗜酸粒细胞绝对值[EO#]", value: 0.21, ref: "0.02--0.52", unit: 10^9/L, source: main, page: 8}
+  - {code: BASO_ABS,  raw_name: "嗜碱粒细胞绝对值[BA#]", value: 0.04, ref: "0--0.06", unit: 10^9/L, source: main, page: 8}
+  - {code: NEUT_PCT,  raw_name: "中性粒细胞百分比[NE%]", value: 72.2, ref: "40--75", unit: "%", source: main, page: 8}
+  - {code: LYMPH_PCT, raw_name: "淋巴细胞百分比[LY%]", value: 18.5, ref: "20--50", unit: "%", source: main, page: 8, flag: "↓"}
+  - {code: MONO_PCT,  raw_name: "单核细胞百分比[MO%]", value: 5.3, ref: "3--10", unit: "%", source: main, page: 8}
+  - {code: EO_PCT,    raw_name: "嗜酸粒细胞百分比[EO%]", value: 3.3, ref: "0.4--8", unit: "%", source: main, page: 8}
+  - {code: BASO_PCT,  raw_name: "嗜碱粒细胞百分比[BA%]", value: 0.7, ref: "0--1.0", unit: "%", source: main, page: 8}
+  - {code: RBC,   raw_name: "红细胞计数[RBC]", value: 4.67, ref: "4.3--5.8", unit: 10^12/L, source: main, page: 8}
+  - {code: HGB,   raw_name: "血红蛋白 [HGB]", value: 139, ref: "130--175", unit: g/L, source: main, page: 9}
+  - {code: HCT,   raw_name: "红细胞压积 [HCT]", value: 42.4, ref: "40--50", unit: "%", source: main, page: 9}
+  - {code: MCV,   raw_name: "平均红细胞体积[MCV]", value: 90.8, ref: "82--100", unit: fl, source: main, page: 9}
+  - {code: MCH,   raw_name: "平均血红蛋白量[MCH]", value: 29.8, ref: "27--34", unit: pg, source: main, page: 9}
+  - {code: MCHC,  raw_name: "平均血红蛋白浓度[MCHC]", value: 329, ref: "316--354", unit: g/L, source: main, page: 9}
+  - {code: RDW,   raw_name: "红细胞分布宽度[RDW]", value: 14.0, ref: "11--14.6", unit: "%", source: main, page: 9}
+  - {code: PLT,   raw_name: "血小板计数[PLT]", value: 232, ref: "125--350", unit: 10^9/L, source: main, page: 9}
+  - {code: PCT_PLT, raw_name: "血小板压积[PCT]", value: 0.20, ref: "0.12--0.35", unit: "%", source: main, page: 9}
+  - {code: MPV,   raw_name: "平均血小板体积[MPV]", value: 8.7, ref: "7.4--12.5", unit: fl, source: main, page: 9}
+  - {code: PDW,   raw_name: "血小板分布宽度[PDW]", value: 16.1, ref: "9--18.1", source: main, page: 9}
+
+  # ---- 生化全套（第9-10页）----
+  - {code: AST,  raw_name: 谷草转氨酶(AST), value: 19, ref: "15--40", unit: U/L, source: main, page: 9}
+  - {code: ALT,  raw_name: 谷丙转氨酶(ALT), value: 17, ref: "9--50", unit: U/L, source: main, page: 9}
+  - {code: ALP,  raw_name: 碱性磷酸酶(ALP), value: 98, ref: "45--125", unit: U/L, source: main, page: 9}
+  - {code: GGT,  raw_name: 谷氨酰转肽酶(GGT), value: 53, ref: "10--60", unit: U/L, source: main, page: 9}
+  - {code: TBIL, raw_name: 总胆红素(TBIL), value: 12.2, ref: "5.1--28", unit: umol/L, source: main, page: 9}
+  - {code: DBIL, raw_name: 直接胆红素(DBIL), value: 3.6, ref: "0--10", unit: umol/L, source: main, page: 9}
+  - {code: IBIL, raw_name: 间接胆红素(IBIL), value: 8.6, ref: "0--20", unit: umol/L, source: main, page: 9}
+  - {code: TP,   raw_name: 总蛋白(TP), value: 70.3, ref: "65--85", unit: g/L, source: main, page: 9}
+  - {code: ALB,  raw_name: 白蛋白(ALB), value: 40.8, ref: "40--55", unit: g/L, source: main, page: 9}
+  - {code: GLOB, raw_name: 球蛋白(GLOB), value: 29.5, ref: "20--40", unit: g/L, source: main, page: 9}
+  - {code: AG_RATIO, raw_name: 白球比例(A/G), value: 1.4, ref: "1.2--2.4", source: main, page: 9}
+  - {code: PREALBUMIN, raw_name: 前白蛋白(PA), value: 235, ref: "200--400", unit: mg/L, source: main, page: 9}
+  - {code: UREA, raw_name: 尿素(UREA), value: 4.74, ref: "3.6--9.5", unit: mmol/L, source: main, page: 9}
+  - {code: CREATININE, raw_name: 肌酐(CREA), value: 74, ref: "57--111", unit: umol/L, source: main, page: 9}
+  - {code: UA,   raw_name: 尿酸(UA), value: 273, ref: "208--408", unit: umol/L, source: main, page: 9}
+  - {code: LDH,  raw_name: 乳酸脱氢酶(LDH), value: 135, ref: "109--245", unit: U/L, source: main, page: 9}
+  - {code: CKMB, raw_name: 肌酸激酶同工酶(CK-MB), value: 15, ref: "7--25", unit: U/L, source: main, page: 10}
+  - {code: CK,   raw_name: 肌酸激酶(CK), value: 55.9, ref: "38--174", unit: U/L, source: main, page: 10}
+  - {code: TBA,  raw_name: 总胆汁酸(TBA), value: 2.0, ref: "0--10", unit: umol/L, source: main, page: 10}
+  - {code: LPA,  raw_name: 脂蛋白(a), value: 532.3, ref: "0--300", unit: mg/L, source: main, page: 10, flag: "↑"}
+  - {code: APOA1, raw_name: 载脂蛋白AI(APOAI), value: 1.20, ref: "1--1.6", unit: g/L, source: main, page: 10}
+  - {code: APOB, raw_name: 载脂蛋白B(APOB), value: 1.26, ref: "0.6--1.3", unit: g/L, source: main, page: 10}
+  - {code: TG,   raw_name: 甘油三脂(TG), value: 1.16, ref: "0--1.7", unit: mmol/L, source: main, page: 10}
+  - {code: TC,   raw_name: 总胆固醇(CHOL), value: 4.83, ref: "0--5.2", unit: mmol/L, source: main, page: 10}
+  - {code: HDL_C, raw_name: 高密度脂蛋白(HDL-C), value: 0.97, ref: ">1.04", unit: mmol/L, source: main, page: 10, flag: "↓"}
+  - {code: LDL_C, raw_name: 低密度脂蛋白(LDL-C), value: 2.98, ref: "0--3.12", unit: mmol/L, source: main, page: 10}
+  - {code: GLU_FASTING, raw_name: 葡萄糖(GLU), value: 6.24, ref: "3.9--6.1", unit: mmol/L, source: main, page: 10, flag: "↑"}
+
+  # ---- 影像（第11-21页）----
+  - {code: PROSTATE_SIZE, raw_name: 前列腺径线, value: 48, unit: mm, kind: imaging,
+     source: main, page: 11, method: 泌尿系彩超, axis: 长径,
+     text: "大小约 48*38*39mm，略突向膀胱，轮廓清晰，内部回声均匀"}
+  - {code: BLADDER_SEDIMENT, raw_name: 膀胱泥沙样沉积, value: 阳性, ref: 阴性,
+     kind: qualitative, source: main, page: 11, method: 泌尿系彩超,
+     text: 所见膀胱内见颗粒样强回声，可移动}
+  - {code: PANCREATIC_DUCT, raw_name: 主胰管内径, value: 2.4, unit: mm, kind: imaging,
+     source: main, page: 11, method: 腹部彩超, axis: 内径,
+     text: 受胃肠道气体影响，所见胰腺大小正常、形态规则、内部回声均匀}
+  - {code: RENAL_CYST, raw_name: 左肾囊肿, value: 17, unit: mm, kind: imaging,
+     source: main, page: 11, method: 腹部彩超, axis: 长径, text: "左肾内见大小约 17*16mm 无回声"}
+  - {code: RENAL_STONE, raw_name: 左肾结石, value: 5, unit: mm, kind: imaging,
+     source: main, page: 11, method: 腹部彩超, axis: 长径, text: "左肾盏内见较大约 5*4mm 强回声"}
+  - {code: LIVER_ECHO, raw_name: 肝脏超声回声, kind: imaging, source: main, page: 11,
+     method: 腹部彩超, text: "大小正常，包膜光整，内部回声均匀，血管走行清晰（未见明显异常）"}
+  - {code: PORTAL_VEIN, raw_name: 门静脉主干内径, value: 正常, kind: qualitative,
+     source: main, page: 11, method: 腹部彩超}
+  - {code: EF, raw_name: 左室射血分数, value: 61, unit: "%", kind: imaging,
+     source: main, page: 13, method: 心脏彩超}
+  - {code: THYROID_STATUS, raw_name: 甲状腺术后状态, value: 阳性,
+     kind: qualitative, source: main, page: 15, method: 甲状腺彩超,
+     text: 自诉甲状腺左叶术后，残余甲状腺大小正常、形态规则、包膜完整}
+  - {code: THYROID_NODULE, raw_name: 残余甲状腺右叶结节, value: 6.9, unit: mm,
+     kind: imaging, source: main, page: 15, method: 甲状腺彩超, axis: 长径,
+     text: "右叶内见 6.9*3.8mm 低回声、5.2*4.0mm 囊实回声；拟 C-TIRADS 3 类（恶性可能小于 2%）"}
+  - {code: CAROTID_PLAQUE, raw_name: 右侧颈动脉斑块, value: 3.7, unit: mm, kind: imaging,
+     source: main, page: 17, method: 颈动脉彩超, axis: 长径,
+     text: "右侧颈动脉球部后壁见大小约 3.7*1.2mm 中高回声，CDFI 局部血流充盈缺损"}
+  - {code: CAROTID_IMT, raw_name: 双侧颈动脉内膜, value: 阳性, ref: 阴性,
+     kind: qualitative, source: main, page: 17, method: 颈动脉彩超,
+     text: 内膜毛糙、增厚}
+  - {code: VERTEBRAL_US, raw_name: 双侧椎动脉彩超, kind: imaging, source: main, page: 17,
+     text: "右侧椎动脉走行迂曲；左侧椎动脉未见明显异常"}
+  - {code: ECG, raw_name: 心电图, value: 正常, kind: qualitative, source: main, page: 19,
+     text: "窦性心律，正常心电图"}
+  - {code: LUNG_GGN, raw_name: 磨玻璃微结节, value: 2, unit: 处, kind: imaging,
+     source: main, page: 20, device: 胸部CT平扫,
+     text: "左肺下叶（薄层 IM152）、右肺中叶（薄层 IM179）见磨玻璃微结节，原报告未给尺寸"}
+  - {code: WM_HYPERINTENSITY, raw_name: 脑白质高信号, value: 1, kind: imaging,
+     source: main, page: 21, device: 3.0T, method: 颅脑MRI平扫+MRA+DWI,
+     text: "两侧脑室旁铅笔状 FLAIR 高信号，左侧额顶叶深部多发点状；DWI 未见弥散受限。Fazekas 1 级"}
+  - {code: BRAIN_MRI_PLAIN, raw_name: 颅脑MRA, value: 正常, kind: qualitative,
+     source: main, page: 21, device: 3.0T,
+     text: "TOF-MRA 示椎基底动脉结构完整；颈内动脉、双侧大脑前中后动脉主干及主要分支未见明显扩张、狭窄"}
+  - {code: SINUS_FINDING, raw_name: 鼻窦所见, value: 阳性, ref: 阴性, kind: qualitative,
+     source: main, page: 21, text: "附见：两侧鼻窦炎，右侧上颌窦囊肿"}

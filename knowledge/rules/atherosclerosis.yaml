@@ -1,0 +1,95 @@
+rules:
+  # 模式 12：多因素同向偏离 + 已有形态学落点
+  # 与「常规血脂正常但风险主线在 Lp(a)」那条的区别：那条要论证的是
+  # "看不见的风险存在"；这条不用论证风险存在——斑块已经看得见了。
+  - id: athero.convergence_with_plaque
+    archetype: risk_convergence
+    title: 多个致动脉粥样硬化因素同时偏离，而斑块已经形成
+    headline: 风险不用再论证——斑块已经看得见；要分清的是哪些因素能动
+    lede: >-
+      脂蛋白(a)、小而密低密度脂蛋白、高密度脂蛋白、空腹血糖、腰臀比同时偏离，
+      而颈动脉已经出现斑块。这不是"要不要担心"的问题，是"先动哪一个"的问题。
+    tag: needs_specialist
+    chapter: watch
+    modifiability: unknown
+    priority: 92
+    params:
+      factors:
+        - {code: LPA, expect: high}
+        - {code: SDLDL_C, expect: high}
+        - {code: HDL_C, expect: low}
+        - {code: GLU_FASTING, expect: high}
+        # 本例原报告印了腰臀比区间；换一家医院不印时退到 WHO 切点（男 0.90）
+        - {code: WHR, expect: high_or_advisory_high}
+      min_deviating: 3
+      lesion: [CAROTID_PLAQUE]
+      lesion_mode: any
+      # 脑白质高信号与颈动脉斑块是同一个小血管/粥样硬化过程的两个部位。
+      # 它进 context 而不是 lesion：Fazekas 1 级在 64 岁属常见，
+      # 不足以单独作为"落点"，但足以说明不必为它单独跑一趟神经内科。
+      context: [CAROTID_IMT, LDL_C, TC, TG, APOB, APOA1, BMI, SBP, DBP,
+                ADIPONECTIN, BRAIN_MRI_PLAIN, VERTEBRAL_US, WM_HYPERINTENSITY]
+    needs_context: [smoking, family_early_cvd, medications]
+    narration:
+      single_read: >-
+        原报告把它们拆成三条分别给建议：颈动脉斑块去神经内科、脂蛋白(a) 去心内科、
+        小而密低密度脂蛋白与高密度脂蛋白去检后内科。三条建议、三个科室，
+        而且每条都写"低脂饮食、控制体重、戒烟"——看起来像三个问题，做起来是同一件事。
+      joint_read: >-
+        {$n_deviating} 个指向同一个过程的指标同时偏离：{$deviating}。
+        而这个过程的直接证据已经在了——右侧颈动脉球部 {CAROTID_PLAQUE} mm 斑块，
+        双侧内膜毛糙增厚。所以这几条不是并列的三个问题，是一件事的五个侧面加一个落点。
+        关键的分野在于哪些能动：脂蛋白(a) {LPA} mg/L 由基因决定，饮食运动不改变它；
+        而空腹血糖 {GLU_FASTING}、高密度脂蛋白 {HDL_C}、腰臀比 {WHR} 都是可以动的。
+        值得注意的是体重指数 {BMI} 完全正常——中心性脂肪被正常的 BMI 掩盖了，
+        这个人不会觉得自己需要减重。
+        颅脑 MRI 上的脑白质高信号（Fazekas 1 级、DWI 未见弥散受限、MRA 主干通畅）
+        属于同一个过程在另一个部位的表现，这一级在 64 岁很常见，本次没有急性证据。
+        原报告为颈动脉、脂蛋白(a)、脑白质、血脂血糖分别给了神经内科、心内科、
+        神经内科、检后内科四个去处——四次门诊，一件事。
+      must_convey:
+        - 这几条原报告分开给建议的条目，指向的是同一个过程
+        - 斑块已形成，风险不需要再论证
+        - 脂蛋白(a) 不可改变，其余几项可改变——这是分工的依据
+        - BMI 正常掩盖了中心性脂肪
+        - 脑白质高信号与颈动脉斑块是同一过程的两个部位，不必单独再跑一趟
+      must_not_claim:
+        - 不得预测事件发生的时间或概率
+        - 不得由斑块大小推断狭窄程度或血流影响
+        - 不得建议任何具体药物
+        - 不得由 Fazekas 1 级推断认知功能或卒中风险
+    verdict:
+      certain: >-
+        这几条应该合成一次门诊来谈，而不是分三个科室各去一趟。
+        可以动的部分集中在腰围、血糖和高密度脂蛋白；不能动的部分（脂蛋白(a)）
+        的意义在于它会影响医生对其余目标值的设定。
+      not_certain: >-
+        不能由斑块 {CAROTID_PLAQUE} mm 这个尺寸推断管腔狭窄程度或血流影响——
+        本次报告只写了斑块存在，没有狭窄率。也不能把这些指标换算成个人的发病概率。
+        吸烟史与家族史两项背景本次空白，而它们会显著改变风险分层。
+      next_steps:
+        - 把颈动脉超声、血脂全套、空腹血糖的结果一起带去一次门诊，不要分三次
+        - 补齐吸烟史与家族早发心脑血管病史——这两项不需要做任何检查
+        - 空腹血糖 6.24 需要一次糖化血红蛋白来判断它是单点波动还是持续状态
+        - 腰围是这几项里反馈最快的一个，每月固定条件测一次
+      compare_next:
+        - code: CAROTID_PLAQUE
+          what: 比斑块本身的大小与数量，以及是否出现狭窄率描述
+          caveat: 必须同一台设备、同一切面
+        - code: WAIST
+          what: 腰围，不是体重——他的体重指数本来就正常，没有下降空间可显示
+          rationale: 只有本来就偏离的指标才有可观测的回落空间
+        - code: GLU_FASTING
+          what: 与糖化血红蛋白一起看，单看空腹血糖分不出波动与持续
+        - code: HDL_C
+          what: 高密度脂蛋白对运动的反应比对饮食更明显
+        - code: LPA
+          what: 不需要年年测；它的作用是影响其余指标的目标值设定
+    tests:
+      - {name: 病例2真实数据, fixture: case2_2024-08-03, expect: triggered}
+      - {name: 无斑块时不成立, fixture: case2_2024-08-03, expect: not_triggered,
+         overrides: {CAROTID_PLAQUE: null}}
+      # 病例 1 的五个因素本系统都判得了（腰臀比走 WHO 切点），但颈动脉干净——
+      # 所以是明确的"不成立"，而不是"判不了"。这两者不能混。
+      - {name: 病例1因素判得了但没有斑块，明确不成立, fixture: zhang_real_2026-03-30,
+         expect: not_triggered}

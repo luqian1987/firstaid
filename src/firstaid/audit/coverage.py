@@ -38,8 +38,19 @@ def build_coverage(enc: Encounter, result: EngineResult,
             rep.claim(e.observation.code, Disposition.CORRECTED, by=corr.id)
 
     # 2) 输入不全的规则，把它缺的那些登记为边界（而不是当作正常）
+    #    但要分清两种"判定不了"：
+    #      · 本次没做这项检查 —— 数据缺口，合法，登记为边界；
+    #      · 做了、有值，而本系统对它没有任何判据 —— 知识库缺口，构建失败。
+    #    不分开的话，缺一个切点就让整条规则静默失效，构建还是绿的。
     for hit in result.indeterminate:
         for code in hit.missing_codes:
+            o = enc.observations.get(code)
+            if (o is not None and o.value is not None
+                    and not o.judged and not o.has_advisory):
+                rep.no_criterion.append((code, o.raw_name, hit.rule_id))
+                rep.claim(code, Disposition.INDETERMINATE, by=hit.rule_id,
+                          note="本系统对它没有任何判据")
+                continue
             rep.claim(code, Disposition.INDETERMINATE, by=hit.rule_id,
                       note="规则想用它但判定不了")
 

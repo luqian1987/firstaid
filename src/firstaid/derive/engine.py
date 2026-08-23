@@ -14,7 +14,7 @@ import yaml
 
 from ..model import (
     ConsistencyIssue, DerivedDef, DerivedRegistry, Encounter, Observation,
-    ObservationKind, Provenance, RangeKind, RefRange,
+    ObservationKind, Provenance, RangeKind, RangeStatus, RefRange, Sex,
 )
 from ..normalize.refrange import judge
 from ..patterns.context import RuleContext
@@ -33,8 +33,9 @@ def load_derived(path: str | Path) -> DerivedRegistry:
 
 
 class DeriveEngine:
-    def __init__(self, registry: DerivedRegistry):
+    def __init__(self, registry: DerivedRegistry, sex: Sex | None = None):
         self.registry = registry
+        self.sex = sex
 
     def run(self, enc: Encounter) -> tuple[list[Observation], list[ConsistencyIssue]]:
         produced: list[Observation] = []
@@ -86,6 +87,15 @@ class DeriveEngine:
         ref = None
         if d.ref_low is not None or d.ref_high is not None:
             ref = RefRange(low=d.ref_low, high=d.ref_high, kind=d.ref_kind, raw=d.ref_raw)
+        advisory = adv_status = adv_source = None
+        if ref is None and d.advisory is not None:
+            cut = d.advisory.resolve(self.sex)
+            if cut is not None:
+                advisory = RefRange(low=cut.low, high=cut.high,
+                                    kind=RangeKind.DISEASE_CUTOFF,
+                                    source_note=cut.note)
+                adv_status = judge(val, None, advisory)
+                adv_source = cut.source
         display = None
         if d.formula_display:
             try:
@@ -97,6 +107,9 @@ class DeriveEngine:
             code=d.code, raw_name=d.name, kind=ObservationKind.DERIVED,
             value=round(val, 6), unit=d.unit, ref=ref,
             status=judge(val, None, ref),
+            advisory_ref=advisory,
+            advisory_status=adv_status or RangeStatus.UNKNOWN,
+            advisory_source=adv_source,
             observed_at=enc.anchor_date,
             formula=display or d.expr, inputs=tuple(d.inputs),
             provenance=Provenance(

@@ -55,7 +55,7 @@ def build(fixture: str, overrides: dict, ont, units, derived):
     finally:
         tmp.unlink(missing_ok=True)
     enc = tl.latest()
-    DeriveEngine(derived).run(enc)
+    DeriveEngine(derived, tl.subject.sex).run(enc)
     return enc
 
 

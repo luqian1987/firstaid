@@ -100,6 +100,15 @@ derived:
     inputs: [WAIST, HIP]
     formula_display: "{WAIST} ÷ {HIP}"
     system: anthropometry
+    changes_what: 中心性脂肪的分布，BMI 正常时它常常是唯一暴露异常的一项
+    # 派生值不会自带区间，所以本系统必须自己给判据，否则任何规则一用它就静默失效。
+    # 切点分性别是这一项的本质，不是特例。
+    advisory:
+      note: WHO 中心性肥胖切点，男 >0.90、女 >0.85
+      source: "WHO. Waist Circumference and Waist-Hip Ratio: Report of a WHO Expert Consultation, 2008"
+      by_sex:
+        male:   {high: 0.90}
+        female: {high: 0.85}
 
   - code: BMI_CALC
     name: 体重指数(重算)

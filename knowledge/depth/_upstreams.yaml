@@ -4,9 +4,12 @@
 upstreams:
   - id: adipose
     label: 中心性脂肪
-    sub: "腰高比 {WHTR} · BMI {BMI}"
-    codes: [WHTR, BMI, WAIST]
-    present_when: "WHTR.is_high or BMI.is_high"
+    sub: "腰高比 {WHTR} · 腰臀比 {WHR} · BMI {BMI}"
+    codes: [WHTR, WHR, BMI, WAIST]
+    # 三条各自都可能单独在场：BMI 正常而腰臀比高是常见组合，
+    # 只看 WHTR 与 BMI 会把这种人整个漏掉（病例 2 正是如此）。
+    # WHR 有的报告自己印区间，有的不印——两套判据都认。
+    present_when: "WHTR.is_high or BMI.is_high or WHR.is_high or WHR.advisory_high"
     modifiable: true
     note: 可由本人改变
 

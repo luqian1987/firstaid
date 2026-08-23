@@ -1,0 +1,136 @@
+pathways:
+  - id: athero.carotid
+    label: 动脉粥样硬化
+    upstream: adipose
+    chain: athero.convergence_with_plaque
+    gate_kind: specialist
+    stages:
+      - name: 致粥样硬化因素同时在场
+        judged_by: [LPA, SDLDL_C, HDL_C, GLU_FASTING, WHR]
+        crossed_when: >-
+          count_true(LPA.is_high, SDLDL_C.is_high, HDL_C.is_low,
+                     GLU_FASTING.is_high, WHR.is_high, WHR.advisory_high) >= 3
+        detail: >-
+          脂蛋白(a) {LPA}、小而密低密度脂蛋白 {SDLDL_C}、高密度脂蛋白 {HDL_C}、
+          空腹血糖 {GLU_FASTING}、腰臀比 {WHR} —— 五项里多项同向偏离
+      - name: 内膜毛糙增厚
+        judged_by: [CAROTID_IMT]
+        crossed_when: "CAROTID_IMT.abnormal"
+        edge: 双侧
+        detail: 双侧颈动脉内膜毛糙、增厚。这一关是形态学上最早能看见的一步
+      - name: 斑块形成
+        judged_by: [CAROTID_PLAQUE]
+        crossed_when: "CAROTID_PLAQUE.present"
+        edge: 已落印
+        emphasis: true
+        detail: "右侧颈动脉球部后壁 {CAROTID_PLAQUE} mm 中高回声，局部血流充盈缺损"
+    tail: >-
+      图到斑块为止。再往后的每一关——狭窄到什么程度、血流受不受影响——
+      本次报告都没有对应数据：超声只写了斑块存在，没有写狭窄率。
+      没有指标能判定的关，这里不画，也不猜。
+    next_gate: >-
+      下一关要看的是斑块的大小与数量变化，以及是否出现狭窄率描述。
+      这需要同一台设备、同一切面的复查，以及一次把血脂、血糖、颈动脉一起看的门诊。
+
+  # 膀胱沉积那条不进图，理由写在 _scope.yaml。
+
+depth:
+  athero.convergence_with_plaque:
+    mechanisms:
+      - level: 颗粒层面
+        cites: [SDLDL_C, LDL_C, LPA, APOB]
+        rules_out: 解释了为什么 LDL-C 与总胆固醇都在区间内却仍然在进展
+        pivot: >-
+          进入血管壁的不是"胆固醇"这个分子，是装着胆固醇的颗粒。
+          常规血脂报的 LDL-C {LDL_C} 是这些颗粒里一共装了多少胆固醇，
+          不是有多少个颗粒。同样的胆固醇量，装在更多更小的颗粒里，
+          穿过内皮的机会就更多——小而密低密度脂蛋白 {SDLDL_C} 量的正是这一部分，
+          而它是本次超标的那一项。载脂蛋白B {APOB} 每个致病颗粒携带一个，
+          本次 {APOB} 已到区间上沿，与这个读法一致。
+      - level: 清运侧
+        cites: [HDL_C, APOA1, TG]
+        rules_out: 说明这不是"运进来太多"单方面的问题
+        pivot: >-
+          血管壁里的胆固醇由高密度脂蛋白往回运。高密度脂蛋白 {HDL_C} 低于下限，
+          载脂蛋白AⅠ {APOA1} 在区间下段——运进来的一侧偏高，往回运的一侧偏低，
+          两个方向同时不利。这也是为什么单看任何一项都不算严重，合起来却已经落印。
+      - level: 遗传成分
+        cites: [LPA]
+        rules_out: 把"能靠自己改"的部分与"改不动"的部分分开
+        pivot: >-
+          脂蛋白(a) {LPA} 是一个 LDL 样颗粒外挂一条载脂蛋白(a)。
+          它的浓度九成以上由基因位点决定，一生基本恒定，不随饮食运动体重变化。
+          所以在这几项里，它是唯一一项无论怎么做都不会回落的——
+          它的用处不是当成努力目标，是让医生知道其余几项的目标值该定得更严。
+      - level: 糖代谢与脂肪分布
+        cites: [GLU_FASTING, WHR, BMI, WHTR, ADIPONECTIN]
+        rules_out: 解释了体重指数正常为什么不等于代谢正常
+        pivot: >-
+          体重指数 {BMI} 完全正常，腰臀比 {WHR} 却超过界值——脂肪的总量不多，
+          但分布在腹腔内。内脏脂肪与皮下脂肪的代谢行为不同：前者直接向门静脉
+          释放游离脂肪酸，推高肝脏的糖输出与小而密颗粒的生成。
+          空腹血糖 {GLU_FASTING} 偏高与小而密低密度脂蛋白偏高在这里不是两件事。
+          这也是本例最容易被漏掉的地方：这个人站在体重秤上不会觉得自己需要减重。
+    modifiers:
+      present:
+        - {name: 颈动脉斑块已形成, codes: [CAROTID_PLAQUE], note: 本次唯一的直接形态学证据}
+        - {name: 内膜毛糙增厚, codes: [CAROTID_IMT], note: 双侧}
+        - {name: 脂蛋白(a) 升高, codes: [LPA], note: 遗传决定，不可改变}
+        - {name: 小而密低密度脂蛋白升高, codes: [SDLDL_C]}
+        - {name: 高密度脂蛋白偏低, codes: [HDL_C]}
+        - {name: 空腹血糖偏高, codes: [GLU_FASTING], note: 单点，未做糖化血红蛋白}
+        - {name: 中心性脂肪分布, codes: [WHR, WAIST], note: 体重指数正常，被掩盖}
+        - {name: 脑白质高信号 Fazekas 1 级, codes: [WM_HYPERINTENSITY],
+           note: 同一过程的另一个部位；这一级在此年龄常见，DWI 未见弥散受限}
+      absent:
+        - {name: 高血压, codes: [SBP, DBP], note: 115/73}
+        - {name: 常规血脂异常, codes: [LDL_C, TC, TG], note: 三项全在区间内}
+        - {name: 颅内动脉狭窄, codes: [BRAIN_MRI_PLAIN], note: MRA 主干及主要分支未见狭窄}
+        - {name: 肝功能异常, codes: [ALT, AST, GGT]}
+        - {name: 肾功能异常, codes: [CREATININE, UREA, UA]}
+      unknown:
+        - {name: 吸烟史, why: 与斑块同时在场时风险分层完全不同，本次报告空白}
+        - {name: 家族早发心脑血管病史, why: 男性 55 岁前 / 女性 65 岁前发病。与脂蛋白(a) 直接相关}
+        - {name: 糖化血红蛋白, why: 空腹血糖是单点，分不出一次波动与持续偏高}
+        - {name: 血压的日常水平, why: 体检当天一次测量，不能代表平时}
+    interventions:
+      - kind: measurement
+        action: 补齐吸烟史与家族早发心脑血管病史
+        rationale: 这两项直接改变风险分层，而且不需要做任何检查。
+        verify_by: CAROTID_PLAQUE
+        horizon: 立即
+      - kind: measurement
+        action: 加一次糖化血红蛋白
+        rationale: >-
+          空腹血糖 6.24 是单点。糖化血红蛋白反映的是近两三个月的平均水平，
+          能分开"那天没睡好"与"已经持续偏高"这两种完全不同的处境。
+        verify_by: GLU_FASTING
+        horizon: 下次抽血时一起做
+      - kind: lifestyle
+        action: 固定条件量腰围，每月一次（晨起空腹、同一位置、同一把软尺）
+        rationale: >-
+          这几项里腰围是反馈最快、也最能自己看见的一项。
+          注意量的是腰围不是体重——体重指数本来就正常，秤上看不出变化。
+        verify_by: WAIST
+        horizon: 每月
+      - kind: lifestyle
+        action: 增加有氧运动的时长，而不是强度
+        rationale: >-
+          高密度脂蛋白对规律有氧的反应比对饮食调整更明显，
+          而它是本次可改变的几项里最直接的一项。
+        verify_by: HDL_C
+        horizon: 下次体检
+      - kind: clinical
+        action: 把颈动脉超声、血脂全套、空腹血糖放在同一次门诊谈
+        paths:
+          - 由医生依脂蛋白(a) 水平重新设定低密度脂蛋白的目标值——这是脂蛋白(a) 影响决策的主要方式
+          - 确认颈动脉斑块的随访间隔，以及下次是否需要报告狭窄率
+          - 依糖化血红蛋白结果决定糖代谢这一支要不要单独跟进
+        ask_doctor:
+          - 我的脂蛋白(a) 532 mg/L，同时已经有颈动脉斑块，低密度脂蛋白的目标值应该定在多少
+          - 颈动脉斑块多久复查一次，下次能不能一并给出狭窄率
+          - 体重指数正常但腰臀比超标，代谢方面还需要查什么
+        note: >-
+          以上只是让你知道门诊会面对哪些选择，不是建议。
+          原报告为这几条分别写了神经内科、心内科、检后内科三个去处，
+          但它们指向同一个过程，合成一次谈效率更高——具体怎么处理由医生决定。

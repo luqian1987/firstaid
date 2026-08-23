@@ -13,7 +13,8 @@ rules:
     priority: 20
     params:
       codes: [CAP, LSM, SPLEEN_LENGTH, SPLEEN_THICK, LUNG_NODULE,
-              PROSTATE_SIZE, GB_POLYP, MRA_MCA_M1]
+              PROSTATE_SIZE, GB_POLYP, MRA_MCA_M1,
+              THYROID_NODULE, PANCREATIC_DUCT, RENAL_CYST, RENAL_STONE, LUNG_GGN]
       require_no_range: true
     narration:
       single_read: >-
@@ -50,6 +51,17 @@ rules:
           what: 直径。常用处理界值是 10 mm，本次距该界值的距离才是有意义的信息
         - code: PROSTATE_SIZE
           what: 径线 + PSA + 有无排尿症状，三者一起看
+        - code: THYROID_NODULE
+          what: 结节最大径与 C-TIRADS 分类，两者一起记
+          caveat: 必须同一台设备、同一切面；换设备的径线不可比
+        - code: PANCREATIC_DUCT
+          what: 内径本身。它对比的是自己的历史值，不是别人的界值
+          caveat: 受胃肠道气体影响，测量条件要一致
+        - code: RENAL_CYST
+          what: 囊肿最大径。常用处理界值 50 mm，本次距该界值的距离才是信息
+        - code: LUNG_GGN
+          what: 每个结节的直径与层面编号分别记，不要只记"有几个"
+          caveat: 换 CT 设备或层厚即不可比
     tests:
       - {name: 张韦韦本次, fixture: zhang_2026-03-30, expect: triggered}
       - name: 结构性发现全部缺失时不可评估

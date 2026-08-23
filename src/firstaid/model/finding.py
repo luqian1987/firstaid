@@ -16,7 +16,7 @@ from .observation import Observation
 
 
 class Archetype(str, Enum):
-    """九类可复用的推理模式。与具体指标解耦——换一组指标，逻辑不变。"""
+    """可复用的推理模式。与具体指标解耦——换一组指标，逻辑不变。"""
     UPSTREAM_CONTRADICTED = "upstream_contradicted"      # 上游异常 / 下游全阴
     CORRECTED_VS_RAW = "corrected_vs_raw"                # 校正值正常解释未校正值异常
     PAIRED_DIVERGENCE = "paired_divergence"              # 配对同向背离 → 系统性偏差
@@ -28,6 +28,9 @@ class Archetype(str, Enum):
     UNRANGED_STRUCTURAL = "unranged_structural"          # 无区间结构性发现 → 转比较口径
     RANGE_KIND_CAVEAT = "range_kind_caveat"              # 区间口径不当：拿实验室自有百分位当疾病界值
     BORDERLINE_CONCORDANT = "borderline_concordant"      # 多个相关指标同处区间同一端 → 建趋势基线
+    RISK_CONVERGENCE = "risk_convergence"                # 多因素同向偏离 + 已有形态学落点
+    INCIDENTAL_ON_OTHER_STUDY = "incidental_on_other_study"  # 为别的目的做的检查上的附带发现
+    UNSETTLED_FINDING = "unsettled_finding"              # 发现在场，但定性它所需的检查本次都没做
 
 
 class Modifiability(str, Enum):

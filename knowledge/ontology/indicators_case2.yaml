@@ -1,0 +1,74 @@
+# 由第二个真实病例（64 岁男，2024-08-03，同院）扩充。
+indicators:
+  # ---------------- 血常规补充 ----------------
+  - {code: LYMPH_PCT, name: 淋巴细胞百分比, aliases: ["淋巴细胞百分比[LY%]", "LY%"],
+     canonical_unit: "%", system: hematology, modifiability: clinical,
+     note: 相对值。它由绝对值与白细胞总数共同决定，任一变化都会推动它}
+  - {code: NEUT_PCT, name: 中性粒细胞百分比, aliases: ["中性粒细胞百分比[NE%]", "NE%"],
+     canonical_unit: "%", system: hematology, modifiability: clinical}
+  - {code: MONO_PCT, name: 单核细胞百分比, aliases: ["单核细胞百分比[MO%]"],
+     canonical_unit: "%", system: hematology, modifiability: clinical}
+  - {code: EO_ABS, name: 嗜酸粒细胞绝对值, aliases: ["嗜酸粒细胞绝对值[EO#]"],
+     canonical_unit: 10^9/L, system: hematology, modifiability: clinical}
+  - {code: EO_PCT, name: 嗜酸粒细胞百分比, aliases: ["嗜酸粒细胞百分比[EO%]"],
+     canonical_unit: "%", system: hematology, modifiability: clinical}
+  - {code: BASO_ABS, name: 嗜碱粒细胞绝对值, aliases: ["嗜碱粒细胞绝对值[BA#]"],
+     canonical_unit: 10^9/L, system: hematology, modifiability: clinical}
+  - {code: BASO_PCT, name: 嗜碱粒细胞百分比, aliases: ["嗜碱粒细胞百分比[BA%]"],
+     canonical_unit: "%", system: hematology, modifiability: clinical}
+  - {code: PCT_PLT, name: 血小板压积, aliases: ["血小板压积[PCT]"],
+     canonical_unit: "%", system: hematology, modifiability: clinical}
+  - {code: MPV, name: 平均血小板体积, aliases: ["平均血小板体积[MPV]"],
+     canonical_unit: fL, system: hematology, modifiability: clinical}
+  - {code: PDW, name: 血小板分布宽度, aliases: ["血小板分布宽度[PDW]"],
+     system: hematology, modifiability: clinical}
+  # ---------------- 其他血清学 ----------------
+  - {code: FERRITIN, name: 铁蛋白, canonical_unit: ng/mL, system: nutrition,
+     modifiability: clinical}
+  - {code: ADIPONECTIN, name: 脂联素, canonical_unit: ug/mL, system: glucose,
+     modifiability: self_modifiable,
+     note: 脂肪组织分泌，与胰岛素敏感性正相关；中心性肥胖时通常下降}
+  # ---------------- 影像与结构性发现 ----------------
+  - {code: THYROID_NODULE, name: 甲状腺结节, kind: imaging, canonical_unit: mm,
+     system: imaging, modifiability: not_modifiable, device_sensitive: true,
+     note: C-TIRADS 分类是超声形态学风险分层，不是病理诊断}
+  - {code: THYROID_STATUS, name: 甲状腺术后状态, kind: qualitative, system: imaging,
+     modifiability: not_modifiable}
+  - {code: PANCREATIC_DUCT, name: 主胰管内径, kind: imaging, canonical_unit: mm,
+     system: imaging, modifiability: not_modifiable,
+     advisory_high: 3.0, advisory_note: 常用界值约 3 mm，超过提示需要随诊,
+     advisory_source: 知识库补充（原报告未给区间）}
+  - {code: RENAL_CYST, name: 肾囊肿, kind: imaging, canonical_unit: mm, system: imaging,
+     modifiability: not_modifiable,
+     advisory_high: 50, advisory_note: 常用处理界值 50 mm,
+     advisory_source: 知识库补充（原报告未给区间）}
+  - {code: RENAL_STONE, name: 肾结石, kind: imaging, canonical_unit: mm, system: imaging,
+     modifiability: clinical}
+  - {code: BLADDER_SEDIMENT, name: 膀胱泥沙样沉积, kind: qualitative, system: imaging,
+     modifiability: clinical}
+  - {code: CAROTID_PLAQUE, name: 颈动脉斑块, kind: imaging, canonical_unit: mm,
+     system: imaging, modifiability: clinical,
+     note: 已形成的斑块是动脉粥样硬化的直接形态学证据}
+  - {code: CAROTID_IMT, name: 颈动脉内膜, kind: qualitative, system: imaging,
+     modifiability: clinical}
+  - {code: WM_HYPERINTENSITY, name: 脑白质高信号, kind: imaging, system: imaging,
+     modifiability: clinical,
+     note: Fazekas 分级 0–3。1 级在中老年人群中常见，需结合年龄解读}
+  - {code: LUNG_GGN, name: 磨玻璃微结节, kind: imaging, canonical_unit: mm,
+     system: imaging, modifiability: not_modifiable, device_sensitive: true}
+  - {code: SINUS_FINDING, name: 鼻窦所见, kind: imaging, system: imaging,
+     modifiability: clinical}
+
+  # ---------------- 能给膀胱沉积定性、但本次没做的几项 ----------------
+  # 这几条本次都不在数据里。它们进本体不是为了判读本次，
+  # 是为了让"这一项判不了、缺的正是它们"这句话有可校验的对象。
+  - {code: URINE_ROUTINE, name: 尿常规, kind: qualitative, system: renal,
+     aliases: ["尿液分析", "尿常规检查"], modifiability: clinical,
+     note: 白细胞、亚硝酸盐、结晶、潜血——判断膀胱内沉积是感染、结晶还是伪像的第一层依据}
+  - {code: POST_VOID_RESIDUAL, name: 残余尿量, kind: imaging, canonical_unit: mL,
+     system: renal, aliases: ["排尿后残余尿", "残余尿"], modifiability: clinical,
+     advisory_high: 50, advisory_note: 常用界值约 50 mL，超过提示排空不全,
+     advisory_source: 知识库补充（原报告未给区间）,
+     note: 前列腺增大是否真的造成排空障碍，靠它而不是靠径线}
+  - {code: URINE_CULTURE, name: 尿培养, kind: qualitative, system: renal,
+     modifiability: clinical}

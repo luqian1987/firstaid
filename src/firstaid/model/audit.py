@@ -70,6 +70,9 @@ class CoverageReport(Mutable):
     consistency: list[ConsistencyIssue] = Field(default_factory=list)
     unreadable_pages: list[str] = Field(default_factory=list)
     unjudged_codes: list[str] = Field(default_factory=list)   # 有值但无法判定高低
+    # 规则要用某项、这项也测了、却因为本系统没有任何判据而判不了。
+    # 这是知识库缺口，不是数据缺口，必须构建失败——否则规则会静默失效。
+    no_criterion: list[tuple[str, str, str]] = Field(default_factory=list)
 
     def add(self, rec: DispositionRecord) -> None:
         self.records.append(rec)
@@ -86,7 +89,8 @@ class CoverageReport(Mutable):
         return [k for k, v in c.items() if v > 1]
 
     def ok(self) -> bool:
-        return not self.unresolved_abnormal() and not self.duplicated()
+        return (not self.unresolved_abnormal() and not self.duplicated()
+                and not self.no_criterion)
 
     def failures(self) -> list[str]:
         out: list[str] = []
@@ -94,6 +98,12 @@ class CoverageReport(Mutable):
             out.append(f"异常项 {r.code}（{r.raw_name}）没有任何归宿")
         for code in self.duplicated():
             out.append(f"观察 {code} 被重复认领")
+        for code, name, rule_id in self.no_criterion:
+            out.append(
+                f"规则 {rule_id} 要用 {code}（{name}），这项本次测了、有值，"
+                f"但本系统对它没有任何判据：原报告没给区间，知识库也没给切点。"
+                f"这是知识库缺口不是数据缺口——补切点（带出处），"
+                f"或把规则改成用 advisory_* 之外的判法。")
         return out
 
     @classmethod

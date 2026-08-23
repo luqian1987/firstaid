@@ -13,7 +13,7 @@ from .depth import (
     Modifier, Modifiers, PathwayStage, PathwayTrack, StageState, Topology, Upstream,
 )
 from .subject import Encounter, Subject, Timeline
-from .derived import DerivedDef, DerivedRegistry
+from .derived import AdvisoryCutoff, DerivedDef, DerivedRegistry
 from .comparison import (
     Comparability, ComparabilityKey, ComparisonItem, ComparisonPlan, ComparisonResult,
 )

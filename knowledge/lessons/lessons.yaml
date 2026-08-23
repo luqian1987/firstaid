@@ -154,3 +154,93 @@ lessons:
       - tests/test_pipeline.py::test_lpa_never_lands_in_actionable_chapter
       - tests/test_pipeline.py::test_chapter_invariant_is_enforced
     note: 这条不是我们犯的，是从参考实现学到的。别人的错同样要进台账
+
+  # ---- 以下五条来自第二份真实报告（病例 2，64 岁男）。
+  #      回归集的价值在这里第一次兑现：五个错全是"换一个人才会犯"的错。----
+
+  - id: L015
+    phase: design
+    symptom: >-
+      规则在第二个病人身上直接崩溃：compare_next 里列的 CAP，
+      那个人没做 FibroScan，取不到就抛异常，整条判读连同整份报告一起失败
+    root_cause: >-
+      规则是对着第一个病人写的，隐含假设"我引用的指标一定在"。
+      少做一项检查在体检里是常态，不是异常输入
+    layer: invariant
+    fix: >-
+      本次没做的项从 compare_next 里跳过；但如果列出的指标一个都不在，
+      这条判读给不出可比基线，那才是真错，仍然报错
+    guarded_by:
+      - tests/test_audit.py::test_compare_next_survives_a_missing_indicator
+      - tests/test_corpus.py::test_real_case_builds
+    note: >-
+      泛化的关键在于分清两件事——少一项是数据缺口，一项不剩是规则写错。
+      不分清就只能在"到处崩"和"到处静默"之间二选一
+
+  - id: L016
+    phase: design
+    symptom: >-
+      新写的动脉粥样硬化规则没有命中，而构建全绿、没有任何报错。
+      查下去才发现它引用的腰臀比是派生值、派生值不带参考区间、
+      知识库也没给切点，于是那一项永远判不了，整条规则静默退化成"输入不全"
+    root_cause: >-
+      审计层把所有"判不了"当成同一件事。
+      本次没做这项检查（数据缺口）与本系统对它没有任何判据（知识库缺口）
+      是两种完全不同的处境，前者合法，后者是我们的 bug
+    layer: invariant
+    fix: >-
+      覆盖率审计区分两者：指标有值、却既无报告区间也无带出处的切点时，
+      登记为 no_criterion 并让构建失败，错误信息直接指向该补什么
+    guarded_by:
+      - tests/test_audit.py::test_measured_but_unjudgeable_input_fails_the_build
+      - tests/test_audit.py::test_advisory_cutoff_counts_as_a_criterion
+      - tests/test_audit.py::test_test_not_done_is_a_data_gap_not_a_build_failure
+    note: >-
+      这是本次最有价值的一条：静默失效比崩溃危险得多。
+      同一个断言以后会挡住每一个"规则引用了判不了的指标"的实例
+
+  - id: L017
+    phase: design
+    symptom: >-
+      病例 2 体重指数 21.8 完全正常、腰臀比 0.92 超标，
+      而拓扑图的"中心性脂肪"上游判定为不在场，整个代谢驱动被漏掉
+    root_cause: 上游的在场条件只看腰高比与 BMI 两项，写的时候心里想的是第一个病人
+    layer: knowledge
+    fix: 腰臀比并入该上游的判定条件，报告自带区间与 WHO 切点两套判据都认
+    guarded_by:
+      - tests/test_corpus.py::test_real_case_builds
+    note: >-
+      这一条只能落 knowledge —— "哪些指标构成中心性脂肪"是医学内容，
+      不是可以由断言推出来的东西。但它暴露的通病可以泛化：
+      任何"多选一"的判定条件都可能是照着单个病例写窄的
+
+  - id: L018
+    phase: design
+    symptom: >-
+      膀胱泥沙样沉积是异常项，必须有归宿，但能给它定性的三项检查
+      （尿常规、残余尿、尿培养）本次一项都没做。
+      系统里没有任何合法归宿容得下它，只剩两条路：编一个结论，或让构建一直红着
+    root_cause: >-
+      缺一类推理模式。"发现在场但判据全缺"在体检里极常见（影像上的非特异所见），
+      而它既不能降级也不能给结论
+    layer: archetype
+    fix: >-
+      新增第 14 类模式 unsettled_finding：归宿的内容不是结论，
+      是"要它有意义还缺哪几项、每一项能定什么、怎么补"。
+      只在那些检查全都缺席时成立——有一项做了就该由读那一项的规则来判，
+      不许用它绕过已有证据
+    guarded_by:
+      - tests/test_corpus.py::test_real_case_builds
+      - tests/test_rules.py::test_rule_fixtures
+
+  - id: L019
+    phase: design
+    symptom: 甲状腺术后状态被算成异常项，进了覆盖率审计的待认领队列
+    root_cause: 夹具给它写了"参考值：阴性"。术后状态是一个事实，不是一项有正常值的检查
+    layer: knowledge
+    fix: 去掉该项的期望值；定性期望值只写给真正有正常/异常之分的项目
+    guarded_by:
+      - tests/test_corpus.py::test_real_case_builds
+    note: >-
+      转录阶段的错，但它能被审计层抓到——异常项无归宿会让构建失败，
+      于是"转录时多写了一个期望值"不会静默留在数据里
