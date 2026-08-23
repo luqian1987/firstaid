@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+
+# 受检人数据永不进版本库
+data/
+out/
+*.pdf
+tests/fixtures/.tmp_*.yaml
+.pytest_cache/

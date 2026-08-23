@@ -1,0 +1,126 @@
+rules:
+  # ======================================================================
+  # 模式 8：常规组套全正常，但组合提示风险
+  # ======================================================================
+  - id: lipid.lpa_intracranial_lead
+    archetype: normal_panel_hidden_risk
+    title: 常规血脂全部正常，而风险主线不在常规血脂里
+    lede: >-
+      脂蛋白(a) 是一种由基因决定、终生基本不变的脂蛋白颗粒，常规血脂四项完全测不到它。
+      这次它超出上限，同时影像上已经出现了一个具体落点。
+    tag: needs_specialist
+    chapter: watch
+    # 关键：Lp(a) 不可由本人改变，所以这条链绝不允许进「也能主动改善」章。
+    modifiability: not_modifiable
+    priority: 95
+    params:
+      panel: [LDL_C, TC, TG, SDLDL_C]
+      hidden: LPA
+      hidden_direction: high
+      anchors: [MRA_MCA_M1]
+      anchor_mode: any
+      negative_anchors: [CAROTID_US]
+    extra_evidence: [SBP, HBA1C]
+    needs_context: [smoking, family_early_cvd]
+    narration:
+      single_read: >-
+        血脂四项全部在参考区间内，LDL-C 只有 {LDL_C} 明显低于上限；血压、血糖正常，
+        颈动脉干净。结论会是"血脂很好，血管风险低"，颅内那句狭窄被当成孤立的影像描述随访了事。
+      joint_read: >-
+        常规血脂正常和 Lp(a) 升高不是同一个问题的两种说法——常规血脂测的是颗粒里装了多少胆固醇，
+        Lp(a) 是一类完全独立、且不随饮食运动改变的致动脉粥样硬化颗粒。关键在于：
+        颈动脉这类最常见的部位是干净的，而颅内 M1 段已经出现狭窄。这种"外周干净、颅内先出现"的分布，
+        加上唯一显著超标的是一个遗传性指标，使 Lp(a) 成为目前最合理的主线解释，
+        而不是一个可以顺带随访的附注。
+      must_convey:
+        - "Lp(a) {LPA} mg/L 达上限 {$hidden_ratio_to_upper} 倍"
+        - 常规血脂四项测不到 Lp(a)
+        - 外周颈动脉干净而颅内已出现落点，这个分布本身是判读依据
+      must_not_claim:
+        - 不得把数值换算成个人几年内的发病概率
+        - 不得称已经发生过脑缺血事件
+        - 不得为 Lp(a) 开出饮食或运动方案
+    verdict:
+      certain: >-
+        本次最值得占用专科时间的是这一组，优先级高于报告里所有生活方式条目。
+        Lp(a) 升高无法靠饮食、运动、减重改变，这一点和其他所有条目性质不同。
+      not_certain: >-
+        不能认定已经发生过脑缺血事件，也不能把 {LPA} 这个数字换算成个人几年内的发病概率。
+        狭窄程度只写了描述，没有量化百分比。
+      next_steps:
+        - 带原始影像（不是报告单）去神经内科或心内科，确认 M1 段狭窄的程度与随访间隔
+        - "问诊时主动说明 Lp(a) {LPA} mg/L —— 它会影响医生对 LDL-C 目标值的设定"
+        - Lp(a) 由基因决定，建议父母、兄弟姐妹、子女各查一次，一生一次即可
+        - 补齐吸烟史与家族早发心脑血管病史两项背景
+      compare_next:
+        - code: MRA_MCA_M1
+          what: 同一台设备、同一序列，只比 M1 段本身，不比"报告结论有没有变"
+          caveat: 换设备或换序列即不可比
+        - code: LPA
+          what: Lp(a) 不需要年年测；若复测尽量要 nmol/L 口径以便与国际标准对照
+          rationale: 遗传决定，终生稳定，重复测量的信息增量很低
+        - code: LDL_C
+          what: 这才是可以被干预的部分，要盯住它的变化
+    tests:
+      - {name: 张韦韦本次, fixture: zhang_2026-03-30, expect: triggered}
+      - {name: Lp(a)正常时不应命中, fixture: zhang_2026-03-30, expect: not_triggered,
+         overrides: {LPA: 120}}
+      - {name: 缺影像落点时仍命中隐匿风险, fixture: zhang_2026-03-30, expect: triggered}
+
+  # ======================================================================
+  # 模式 3：配对同向背离 → 系统性偏差
+  # ======================================================================
+  - id: lipid.apo_paired_divergence
+    archetype: paired_divergence
+    title: 两个载脂蛋白同时偏离各自的胆固醇，方向还一致
+    lede: >-
+      ApoB 与非高密度脂蛋白胆固醇、ApoA1 与 HDL-C，各自是同一批颗粒的两种计量方式，
+      正常情况下高度同步。这次两组都朝同一个方向散开了。
+    tag: retest_first
+    chapter: watch
+    modifiability: unknown
+    priority: 70
+    params:
+      pairs:
+        - {particle: APOB_MGDL,  cargo: NONHDL_C_MGDL, ratio_min: 0.95, ratio_max: 1.80,
+           label: nonHDL_over_ApoB}
+        - {particle: APOA1_MGDL, cargo: HDL_C_MGDL,    ratio_min: 0.30, ratio_max: 0.50,
+           label: HDL_over_ApoA1}
+      min_violations: 2
+      require_same_direction: true
+    extra_evidence: [LPA, APOB, APOA1]
+    narration:
+      single_read: >-
+        "载脂蛋白B 高、载脂蛋白AⅠ 高"——两条都会被列进需要复检的条目，
+        看起来是两个独立的血脂异常叠加在一起，风险层级再上一档。
+      joint_read: >-
+        ApoB {APOB_MGDL} mg/dL 对应的非 HDL 胆固醇只有 {NONHDL_C_MGDL} mg/dL；
+        ApoA1 {APOA1_MGDL} mg/dL 对应的 HDL-C 只有 {HDL_C_MGDL} mg/dL。
+        两组配对同时朝"载脂蛋白偏高、胆固醇偏低"的同一方向散开，这种同向的系统性偏离，
+        更符合该批次载脂蛋白检测的方法学或定标问题，而不是两种彼此独立的脂蛋白异常恰好同时发生。
+        Lp(a) 会贡献一部分 ApoB，但按其质量估算只能解释其中一小部分，不足以补上这个缺口。
+      must_convey:
+        - "两组配对的比值分别为 {$nonHDL_over_ApoB} 和 {$HDL_over_ApoA1}，同向偏离"
+        - 同向系统性偏离更像检测侧问题，而不是两个独立异常
+      must_not_claim:
+        - 不得断定检测出了错——纸面数据无法区分方法学、定标、样本状态还是个体特殊脂蛋白组成
+        - 不得据此推翻 Lp(a) 那条判读，两者独立成立
+    verdict:
+      certain: >-
+        在复测之前，不应该把 ApoB 单独当作一个风险层级来处理，
+        也不必因为"两项都高"而加重担心。这一条不影响 Lp(a) 那一节。
+      not_certain: >-
+        不能断定检测出了错。多联判读只能说明这组数字彼此不自洽，
+        具体是方法学、定标、样本状态还是个体特殊的脂蛋白组成，纸面数据无法区分。
+      next_steps:
+        - 另择一次空腹采血复测：血脂全套 + ApoB + ApoA1 + Lp(a)，尽量换一家实验室
+        - 复测时记录是否空腹、前一晚饮食与饮酒，两次口径要一致
+        - 如果复测后 ApoB 回到区间内，说明本次是检测侧问题；如果仍高，才需要按颗粒数量偏高来管理
+      compare_next:
+        - code: APOB_MGDL
+          what: 比 ApoB 与非 HDL 胆固醇是否重新对上，而不是只比 ApoB 一个数
+          caveat: 换实验室时务必同时记录方法学，否则两次不可比
+    tests:
+      - {name: 张韦韦本次, fixture: zhang_2026-03-30, expect: triggered}
+      - {name: 缺ApoA1时不可评估, fixture: zhang_2026-03-30, expect: indeterminate,
+         overrides: {APOA1: null}}

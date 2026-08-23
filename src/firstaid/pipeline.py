@@ -1,0 +1,105 @@
+"""端到端流水线：L0 → L6。
+
+每一层的产出都是可检查的对象，不是字符串。构建失败的条件写死在这里：
+覆盖率不通过、分章不变式违反、规则组装报错——任何一条都不出报告。
+"""
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from pathlib import Path
+
+from .assemble.rank import check_chapters, group_by_chapter, rank
+from .audit.coverage import build_coverage
+from .derive.engine import DeriveEngine
+from .loader import load_fixture, load_knowledge
+from .model import (
+    BoundaryItem, Chain, ComparisonItem, ComparisonPlan, ConsistencyIssue, Correction,
+    CoverageReport, Encounter, MissingContextItem, Ontology, Timeline,
+)
+from .patterns.context import RuleContext
+from .patterns.engine import EngineResult, PatternEngine
+
+
+@dataclass
+class Analysis:
+    timeline: Timeline
+    encounter: Encounter
+    chains: list[Chain] = field(default_factory=list)
+    corrections: list[Correction] = field(default_factory=list)
+    boundaries: list[BoundaryItem] = field(default_factory=list)
+    missing_context: list[MissingContextItem] = field(default_factory=list)
+    consistency: list[ConsistencyIssue] = field(default_factory=list)
+    coverage: CoverageReport | None = None
+    plan: ComparisonPlan | None = None
+    engine: EngineResult | None = None
+    errors: list[str] = field(default_factory=list)
+
+    def ok(self) -> bool:
+        return not self.errors and (self.coverage is None or self.coverage.ok())
+
+    def blocking(self) -> list[str]:
+        out = list(self.errors)
+        if self.coverage:
+            out += self.coverage.failures()
+        return out
+
+
+def analyze(timeline: Timeline, ontology=None, units=None, rules=None,
+            derived=None) -> Analysis:
+    if ontology is None:
+        ontology, units, rules, derived = load_knowledge()
+    enc = timeline.latest()
+    assert enc is not None, "timeline 里没有体检记录"
+    a = Analysis(timeline=timeline, encounter=enc)
+
+    # 规则库自检先行：规则写不完整，不允许开始分析
+    a.errors += rules.validate_all()
+
+    # L2 派生
+    _, issues = DeriveEngine(derived).run(enc)
+    a.consistency = issues
+
+    # L3/L4 模式 → 链条
+    engine = PatternEngine(rules, ontology)
+    res = engine.run(RuleContext(enc))
+    a.engine = res
+    a.errors += res.errors
+    a.chains = rank(res.chains)
+    a.corrections = res.corrections
+    a.boundaries = list(res.boundaries)
+    a.missing_context = list(res.missing_context)
+
+    # 纵向：单点时显式声明
+    if timeline.is_single_point():
+        a.boundaries.append(BoundaryItem(
+            what="没有既往体检数据",
+            impact="本次全部结论都只是单点，趋势要等下一次",
+            critical=False,
+        ))
+
+    # 分章不变式
+    a.errors += check_chapters(a.chains)
+
+    # L5 覆盖率
+    a.coverage = build_coverage(enc, res, ontology)
+
+    # 纵向计划
+    items: list[ComparisonItem] = []
+    for c in a.chains:
+        if c.verdict:
+            items += list(c.verdict.compare_next)
+    a.plan = ComparisonPlan(
+        subject_id=timeline.subject.id, encounter_id=enc.id,
+        created_for=enc.anchor_date, items=tuple(items),
+    )
+    return a
+
+
+def analyze_fixture(path: str | Path) -> Analysis:
+    ontology, units, rules, derived = load_knowledge()
+    timeline, _ = load_fixture(path, ontology, units)
+    return analyze(timeline, ontology, units, rules, derived)
+
+
+def chapters(a: Analysis):
+    return group_by_chapter(a.chains)

@@ -1,0 +1,68 @@
+rules:
+  # 模式 4：形态脱节
+  - id: liver.ggt_transaminase_dissociation
+    archetype: pattern_dissociation
+    title: 脂肪已经不少，纤维化还没开始，而首要变量可能是酒
+    lede: >-
+      胰岛素敏感性与糖代谢都正常，所以"代谢型脂肪肝"的典型驱动证据其实不足；
+      反倒是 GGT 与转氨酶明显不成比例，这个组合指向另一个方向。
+    tag: self_action
+    chapter: act_now
+    modifiability: self_modifiable
+    priority: 85
+    params:
+      lead: GGT
+      lead_min_ratio_to_upper: 1.2
+      companions: [ALT, AST]
+      companions_expect: in_range
+      ratio_checks:
+        - {numerator: AST, denominator: ALT, below: 1.0, label: AST_over_ALT}
+    extra_evidence: [CAP, LSM, HOMA_IR, HBA1C, TG_HDL_RATIO, BMI, BMI_CALC,
+                     WHTR, WHR, FIB4, WAIST, WEIGHT, HEIGHT, GLU_FASTING, INSULIN]
+    needs_context: [alcohol_intake, medications]
+    narration:
+      single_read: >-
+        "脂肪肝 + 转氨酶类指标高 + 超重"，于是给出通用建议：低脂低糖饮食、控制主食、
+        加强运动、必要时保肝降脂。这套建议对任何一个脂肪肝的人都成立，也因此对这个人没有特别的指向。
+      joint_read: >-
+        两件事同时成立，方向相反。好消息：硬度 {LSM} kPa 说明目前只有脂肪、还没有明显纤维化，
+        这是可逆窗口；HOMA-IR {HOMA_IR}、HbA1c {HBA1C}、TG/HDL-C 仅 {TG_HDL_RATIO}，
+        说明胰岛素抵抗这个最常见的驱动因素在他身上证据不足。需要追问的：
+        ALT 与 AST 基本正常、AST/ALT 只有 {$AST_over_ALT}，而 GGT 单独升到上限
+        {$lead_ratio_to_upper} 倍——这种"GGT 与转氨酶脱节"的形态，酒精暴露是首先要问的变量，
+        其次是在服药物与保健品、以及胆道因素。
+      must_convey:
+        - "GGT 达上限 {$lead_ratio_to_upper} 倍而转氨酶在区间内，这是脱节形态"
+        - 胰岛素抵抗证据不足，削弱了代谢型脂肪肝这个默认解释
+        - 纤维化尚未发生，当前处在可逆窗口
+      must_not_claim:
+        - 不得仅凭 GGT 一项认定酒精性肝病
+        - 不得因 HOMA-IR 正常就认为代谢因素完全不参与
+        - 在拿到饮酒量之前，不得把任何饮食建议说成针对本人的
+    verdict:
+      certain: >-
+        现在干预的性价比最高，因为脂肪可逆而纤维化尚未发生。
+        真正需要先量化的是每周饮酒量——在这个数字拿到之前，其余饮食建议都只是通用模板。
+      not_certain: >-
+        不能仅凭 GGT 一项认定酒精性肝病。GGT 也会被药物、保健品、胆道问题抬高，
+        而这三项背景本次都是空白。也不能因为 HOMA-IR {HOMA_IR} 正常就认为代谢因素完全不参与——
+        BMI {BMI}、腰高比 {WHTR} 仍然是真实的中心性脂肪信号。
+      next_steps:
+        - 用 4 周记录实际饮酒：种类、每周次数、每次毫升。不估算，只记录
+        - 同期列出在服的所有药物与保健品，包括不认为是"药"的那些
+        - 对 CAP 影响最确定的杠杆是体重下降 5%–7%，比换某种食物更有效
+      compare_next:
+        - code: GGT
+          what: 盯 GGT，不是 ALT——ALT 本来就在区间内，它没有下降空间可显示
+          rationale: 只有本来就偏离的指标才有可观测的回落空间
+        - code: CAP
+          what: CAP 与 LSM 必须用同一台设备复查
+          caveat: 换设备的数值不可比
+        - code: WAIST
+          what: 体重与腰围每月固定条件测一次，作为两次体检之间唯一的中间反馈
+    tests:
+      - {name: 张韦韦本次, fixture: zhang_2026-03-30, expect: triggered}
+      - {name: 转氨酶也高时形态不成立, fixture: zhang_2026-03-30, expect: not_triggered,
+         overrides: {ALT: 120}}
+      - {name: 缺AST时不可评估, fixture: zhang_2026-03-30, expect: indeterminate,
+         overrides: {AST: null}}

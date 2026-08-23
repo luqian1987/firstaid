@@ -1,0 +1,54 @@
+rules:
+  # 模式 7：急性期蛋白一致性
+  - id: coag.fib_low_is_low_inflammation
+    archetype: acute_phase_coherence
+    title: 纤维蛋白原偏低是"低炎症背景"的一部分，不是出血倾向
+    lede: >-
+      原报告把它列进了需要血液科随诊的条目。
+      但同一份报告里有三组数据互相佐证，指向一个良性的解释。
+    tag: reassure
+    chapter: downgrade
+    modifiability: clinical
+    priority: 25
+    params:
+      members:
+        - {code: FIB, expect: low}
+        - {code: ESR, expect: low_end, threshold: 0.2}
+        - {code: HSCRP, expect: low_end, threshold: 0.2}
+      functional_normal: [PT, APTT, TT, DDIMER, FDP, AT3, PLT, MAR_ADP]
+    extra_evidence: [INR, HCT_RHEO]
+    narration:
+      single_read: >-
+        "纤维蛋白原低" → 凝血因子不足 → 出血风险 → 建议血液科随诊。
+        这条推理链在只看一个数时是自然的。
+      joint_read: >-
+        两个方向的佐证同时存在。功能侧：PT {PT}、APTT {APTT}、TT {TT}、D-二聚体 {DDIMER}、
+        FDP {FDP}、抗凝血酶Ⅲ {AT3}、血小板 {PLT} 与聚集率 {MAR_ADP} 全部正常，
+        尤其 TT 正常基本不支持异常纤维蛋白原血症——纤维蛋白原真有质或量的问题时，
+        TT 通常最先延长。背景侧：纤维蛋白原本身是急性期蛋白，它偏低、血沉 {ESR} mm/h、
+        CRP {HSCRP}，这三者互为佐证，共同描述的是一个炎症水平很低的状态。
+      must_convey:
+        - TT 正常基本不支持异常纤维蛋白原血症
+        - 纤维蛋白原是急性期蛋白，与低血沉、低 CRP 互为佐证
+      must_not_claim:
+        - 不得排除长期持续偏低需要再评估
+        - 不得据此声称任何手术或有创操作的安全性
+    verdict:
+      certain: >-
+        当前没有临床出血风险的含义，不需要专门就诊。
+        这一条与血流变那一条其实共享同一批数据，可以一起理解。
+      not_certain: >-
+        不能排除长期持续偏低的情况需要再评估。单次结果也受采血与检测条件影响。
+      next_steps:
+        - 随下次常规体检复查凝血即可
+        - 如需手术或有创操作，把这次结果一并出示给经治医生
+      compare_next:
+        - code: FIB
+          what: 看纤维蛋白原是持续在这个水平还是继续下降
+          rationale: 单次偏低意义有限，趋势才有
+    tests:
+      - {name: 张韦韦本次, fixture: zhang_2026-03-30, expect: triggered}
+      - {name: TT延长则不成立, fixture: zhang_2026-03-30, expect: not_triggered,
+         overrides: {TT: 28.0}}
+      - {name: 有炎症背景则不成立, fixture: zhang_2026-03-30, expect: not_triggered,
+         overrides: {HSCRP: 8.0}}

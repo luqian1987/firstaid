@@ -1,0 +1,86 @@
+# 这两条规则是覆盖率审计逼出来的：
+# 前白蛋白与辅酶Q10 反复落进 UNRESOLVED，说明知识库缺规则，不是数据特殊。
+rules:
+  # 模式 6：孤立异常缺乏佐证
+  - id: nutrition.prealbumin_isolated_high
+    archetype: isolated_abnormal
+    title: 前白蛋白略高，在其余蛋白与肝功能正常的背景下无独立意义
+    lede: 前白蛋白半衰期短、波动大，单独轻度升高不构成需要处理的问题。
+    tag: reassure
+    chapter: downgrade
+    modifiability: clinical
+    priority: 10
+    params:
+      abnormal: PREALBUMIN
+      direction: high
+      corroborators: [ALB, ALT, AST]
+      corroborator_expect: in_range
+    narration:
+      single_read: >-
+        报告上打了向上的箭头，于是它和其他异常并列出现在需要关注的清单里，
+        看起来是又一个待处理的问题。
+      joint_read: >-
+        前白蛋白 {PREALBUMIN} mg/L 略高于上限，而白蛋白 {ALB}、ALT {ALT}、AST {AST}
+        均在区间内。在蛋白合成与肝功能其余项都正常的背景下，
+        单独一项前白蛋白轻度升高没有独立解释力。
+      must_convey: ["与其并行的蛋白与肝功能指标均正常"]
+      must_not_claim: ["不得据此判断营养状态优良", "不得排除个体波动"]
+    verdict:
+      certain: 本次不构成需要处理的问题，也不需要为它单独复查。
+      not_certain: 不能据此判断营养状态；单次轻度偏离的解释力有限。
+      next_steps: ["随下次常规体检一起看即可"]
+      compare_next:
+        - code: PREALBUMIN
+          what: 与白蛋白一起看，而不是单看前白蛋白一个数
+    tests:
+      - {name: 张韦韦本次, fixture: zhang_2026-03-30, expect: triggered}
+      - {name: 白蛋白也异常则不成立, fixture: zhang_2026-03-30, expect: not_triggered,
+         overrides: {ALB: 32.0}}
+
+  # 模式 10：区间口径不当
+  - id: nutrition.coq10_lab_percentile
+    archetype: range_kind_caveat
+    title: 辅酶Q10 的"不足"用的是实验室自有区间，不是疾病界值
+    lede: >-
+      同样一个向下的箭头，背后的区间口径不同，含义完全不同。
+      这一条的区间是该实验室按健康人分位数定的，不是任何疾病的诊断界值。
+    tag: reassure
+    chapter: downgrade
+    modifiability: self_modifiable
+    priority: 8
+    params:
+      code: COQ10
+      caveat_kinds: [lab_percentile]
+    narration:
+      single_read: >-
+        "辅酶Q10 不足" 读起来像一个明确的缺乏状态，
+        自然会引向"要不要补"的问题，而补充剂正是最容易被照做的建议。
+      joint_read: >-
+        这个"不足"用的区间口径是 {$source_note}。
+        百分位区间的意思是"低于多数健康人"，不等于"低到会出问题"——
+        它没有对应任何疾病界值。在没有服用他汀、没有心衰的前提下，
+        这个数值不构成需要处理的问题。
+      must_convey:
+        - 这条区间是实验室自有百分位区间，不是疾病界值
+        - 低于百分位区间不等于存在缺乏状态
+      must_not_claim:
+        - 不得据此推荐或否定补充剂
+        - 不得声称该数值与任何临床结局相关
+    verdict:
+      certain: >-
+        以本次口径，这一条不构成需要处理的问题，
+        也不应与用疾病界值判定的异常项并列排序。
+      not_certain: >-
+        不能由此认定辅酶Q10 水平对本人没有意义。
+        若正在服用他汀或有心功能问题，需要由医生结合临床判断，而不是看这个箭头。
+      next_steps:
+        - 若在服他汀或有心脏方面的既往问题，把这个数值一并交给经治医生判断
+        - 不因为这个箭头自行开始服用补充剂
+      compare_next:
+        - code: COQ10
+          what: 复查时先确认区间口径是否仍是同一实验室的百分位区间
+          caveat: 换实验室后区间口径可能完全不同，数值不可直接比
+    tests:
+      - {name: 张韦韦本次, fixture: zhang_2026-03-30, expect: triggered}
+      - {name: 疾病界值口径时不适用, fixture: zhang_2026-03-30, expect: not_triggered,
+         overrides: {COQ10__ref_kind: disease_cutoff}}

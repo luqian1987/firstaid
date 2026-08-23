@@ -1,0 +1,484 @@
+# 指标本体。数据来源泛化，所以别名表必须能长期扩充。
+#
+# modifiability 是强制属性，不是备注：
+#   组装层据此拒绝把 not_modifiable 的主线放进「值得重视，也能主动改善」章。
+#   Lp(a) 被配上一整套饮食运动方案，是分类错误，不是文案问题。
+indicators:
+  # ---------------- 血脂与脂蛋白 ----------------
+  - code: LPA
+    name: 脂蛋白(a)
+    short: Lp(a)
+    aliases: ["脂蛋白a", "LP(a)", "Lpa", "脂蛋白（a）"]
+    canonical_unit: mg/L
+    system: lipid
+    modifiability: not_modifiable
+    modifiability_note: 由基因决定，终生基本不变；饮食、运动、减重不改变它
+    note: 常规血脂四项测不到它；每个颗粒携带一个 ApoB
+
+  - code: LDL_C
+    name: 低密度脂蛋白胆固醇
+    short: LDL-C
+    aliases: ["低密度脂蛋白", "LDLC", "LDL胆固醇"]
+    canonical_unit: mmol/L
+    system: lipid
+    modifiability: self_modifiable
+
+  - code: TC
+    name: 总胆固醇
+    aliases: ["胆固醇", "TCHO", "CHOL"]
+    canonical_unit: mmol/L
+    system: lipid
+    modifiability: self_modifiable
+
+  - code: TG
+    name: 甘油三酯
+    aliases: ["三酰甘油", "TRIG"]
+    canonical_unit: mmol/L
+    system: lipid
+    modifiability: self_modifiable
+
+  - code: HDL_C
+    name: 高密度脂蛋白胆固醇
+    short: HDL-C
+    aliases: ["高密度脂蛋白", "HDLC"]
+    canonical_unit: mmol/L
+    system: lipid
+    modifiability: self_modifiable
+
+  - code: SDLDL_C
+    name: 小而密低密度脂蛋白胆固醇
+    short: sdLDL-C
+    canonical_unit: mmol/L
+    system: lipid
+    modifiability: self_modifiable
+
+  - code: APOB
+    name: 载脂蛋白B
+    short: ApoB
+    aliases: ["载脂蛋白B(APOB)", "APO-B", "APOB100"]
+    canonical_unit: g/L
+    system: lipid
+    modifiability: self_modifiable
+
+  - code: APOA1
+    name: 载脂蛋白AⅠ
+    short: ApoA1
+    aliases: ["载脂蛋白A1", "APO-A1", "APOA-Ⅰ", "载脂蛋白A Ⅰ"]
+    canonical_unit: g/L
+    system: lipid
+    modifiability: self_modifiable
+
+  # ---------------- 肝脏 ----------------
+  - code: GGT
+    name: γ-谷氨酰转肽酶
+    aliases: ["γ-谷氨酰转移酶", "谷氨酰转肽酶", "GGT", "γ-GT"]
+    canonical_unit: U/L
+    system: liver
+    modifiability: self_modifiable
+  - code: ALT
+    name: 谷丙转氨酶
+    aliases: ["丙氨酸氨基转移酶", "ALT", "GPT"]
+    canonical_unit: U/L
+    system: liver
+    modifiability: self_modifiable
+  - code: AST
+    name: 谷草转氨酶
+    aliases: ["天门冬氨酸氨基转移酶", "AST", "GOT"]
+    canonical_unit: U/L
+    system: liver
+    modifiability: self_modifiable
+  - code: ALB
+    name: 白蛋白
+    aliases: ["ALB", "血清白蛋白"]
+    canonical_unit: g/L
+    system: liver
+    modifiability: clinical
+  - code: CAP
+    name: 肝脏脂肪衰减
+    short: CAP
+    aliases: ["受控衰减参数", "脂肪衰减"]
+    canonical_unit: dB/m
+    kind: imaging
+    system: liver
+    modifiability: self_modifiable
+    device_sensitive: true
+    advisory_high: 248
+    advisory_note: 常用切点之一：约 248 dB/m 以上提示脂肪变；各家切点不一致
+    advisory_source: 知识库补充（原报告未给区间）
+    note: 原报告常不给参考区间；换设备数值不可比
+  - code: LSM
+    name: 肝脏硬度
+    short: LSM
+    aliases: ["肝脏硬度值", "弹性值"]
+    canonical_unit: kPa
+    kind: imaging
+    system: liver
+    modifiability: clinical
+    device_sensitive: true
+    advisory_high: 7.0
+    advisory_note: 常用切点 7.0 kPa 以下无明显纤维化
+    advisory_source: 知识库补充（原报告未给区间）
+
+  # ---------------- 糖代谢与体格 ----------------
+  - code: GLU_FASTING
+    name: 空腹血糖
+    aliases: ["葡萄糖", "GLU", "空腹葡萄糖"]
+    canonical_unit: mmol/L
+    system: glucose
+    modifiability: self_modifiable
+  - code: HBA1C
+    name: 糖化血红蛋白
+    aliases: ["HbA1c", "糖化血红蛋白A1c"]
+    canonical_unit: "%"
+    system: glucose
+    modifiability: self_modifiable
+  - code: INSULIN
+    name: 胰岛素
+    aliases: ["空腹胰岛素", "INS"]
+    canonical_unit: μU/mL
+    system: glucose
+    modifiability: self_modifiable
+  - code: C_PEPTIDE
+    name: C肽
+    canonical_unit: ng/mL
+    system: glucose
+    modifiability: self_modifiable
+  - code: AGE
+    name: 年龄
+    canonical_unit: 岁
+    system: demographics
+    modifiability: not_modifiable
+    note: 由受检人生日或原报告年龄注入，供 FIB-4 等派生公式使用
+
+  - code: HEIGHT
+    name: 身高
+    canonical_unit: cm
+    system: anthropometry
+    modifiability: not_modifiable
+  - code: WEIGHT
+    name: 体重
+    canonical_unit: kg
+    system: anthropometry
+    modifiability: self_modifiable
+  - code: BMI
+    name: 体重指数
+    aliases: ["BMI", "体质指数"]
+    canonical_unit: kg/m2
+    system: anthropometry
+    modifiability: self_modifiable
+  - code: WAIST
+    name: 腰围
+    canonical_unit: cm
+    system: anthropometry
+    modifiability: self_modifiable
+  - code: HIP
+    name: 臀围
+    canonical_unit: cm
+    system: anthropometry
+    modifiability: self_modifiable
+  - code: SBP
+    name: 收缩压
+    canonical_unit: mmHg
+    system: cardiovascular
+    modifiability: self_modifiable
+  - code: DBP
+    name: 舒张压
+    canonical_unit: mmHg
+    system: cardiovascular
+    modifiability: self_modifiable
+
+  # ---------------- 血液与凝血 ----------------
+  - code: PLT
+    name: 血小板计数
+    aliases: ["血小板", "PLT"]
+    canonical_unit: 10^9/L
+    system: hematology
+    modifiability: clinical
+  - code: WBC
+    name: 白细胞计数
+    aliases: ["白细胞", "WBC"]
+    canonical_unit: 10^9/L
+    system: hematology
+    modifiability: clinical
+  - code: HGB
+    name: 血红蛋白
+    aliases: ["血红蛋白", "HGB", "Hb"]
+    canonical_unit: g/L
+    system: hematology
+    modifiability: clinical
+  - code: HCT
+    name: 红细胞压积
+    aliases: ["红细胞比容", "HCT", "压积"]
+    canonical_unit: "%"
+    system: hematology
+    modifiability: self_modifiable
+  - code: MCV
+    name: 平均红细胞体积
+    aliases: ["MCV"]
+    canonical_unit: fL
+    system: hematology
+    modifiability: clinical
+  - code: FIB
+    name: 纤维蛋白原
+    aliases: ["FIB", "Fbg", "纤维蛋白原(FIB)"]
+    canonical_unit: g/L
+    system: coagulation
+    modifiability: clinical
+  - code: PT
+    name: 凝血酶原时间
+    aliases: ["PT"]
+    canonical_unit: s
+    system: coagulation
+    modifiability: clinical
+  - code: INR
+    name: 国际标准化比值
+    aliases: ["INR"]
+    system: coagulation
+    modifiability: clinical
+  - code: APTT
+    name: 活化部分凝血活酶时间
+    aliases: ["APTT"]
+    canonical_unit: s
+    system: coagulation
+    modifiability: clinical
+  - code: TT
+    name: 凝血酶时间
+    aliases: ["TT"]
+    canonical_unit: s
+    system: coagulation
+    modifiability: clinical
+    note: 纤维蛋白原有质或量的问题时通常最先延长
+  - code: DDIMER
+    name: D-二聚体
+    aliases: ["DDI", "D二聚体"]
+    canonical_unit: mg/L
+    system: coagulation
+    modifiability: clinical
+  - code: FDP
+    name: 纤维蛋白降解产物
+    canonical_unit: mg/L
+    system: coagulation
+    modifiability: clinical
+  - code: AT3
+    name: 抗凝血酶Ⅲ
+    aliases: ["抗凝血酶III", "AT-III"]
+    canonical_unit: "%"
+    system: coagulation
+    modifiability: clinical
+  - code: MAR_ADP
+    name: 血小板最大聚集率
+    aliases: ["MAR", "血小板聚集率"]
+    canonical_unit: "%"
+    system: coagulation
+    modifiability: clinical
+
+  # ---------------- 炎症 ----------------
+  - code: ESR
+    name: 血沉
+    aliases: ["红细胞沉降率", "ESR"]
+    canonical_unit: mm/h
+    system: inflammation
+    modifiability: clinical
+  - code: HSCRP
+    name: 超敏C反应蛋白
+    aliases: ["hsCRP", "超敏CRP", "C反应蛋白"]
+    canonical_unit: mg/L
+    system: inflammation
+    modifiability: clinical
+
+  # ---------------- 维生素与营养 ----------------
+  - code: PA_B6
+    name: 吡哆酸
+    short: PA
+    aliases: ["维生素B6(吡哆酸)", "4-吡哆酸"]
+    canonical_unit: ng/mL
+    system: nutrition
+    modifiability: self_modifiable
+    note: 只是代谢产物，不是维生素B6的状态指标
+  - code: PLP
+    name: 磷酸吡哆醛
+    short: PLP
+    aliases: ["5-磷酸吡哆醛", "维生素B6(PLP)"]
+    canonical_unit: ng/mL
+    system: nutrition
+    modifiability: self_modifiable
+    note: 维生素B6的活性形式和公认状态指标
+  - code: FOLATE_SERUM
+    name: 血清叶酸
+    aliases: ["叶酸", "维生素B9", "FOL"]
+    canonical_unit: ng/mL
+    system: nutrition
+    modifiability: self_modifiable
+  - code: HCY
+    name: 同型半胱氨酸
+    aliases: ["Hcy", "同型半胱氨酸(HCY)"]
+    canonical_unit: μmol/L
+    system: nutrition
+    modifiability: self_modifiable
+  - code: MMA
+    name: 甲基丙二酸
+    aliases: ["MMA"]
+    canonical_unit: ng/mL
+    system: nutrition
+    modifiability: self_modifiable
+  - code: PREALBUMIN
+    name: 前白蛋白
+    aliases: ["PA", "前白蛋白(PA)"]
+    canonical_unit: mg/L
+    system: nutrition
+    modifiability: clinical
+  - code: COQ10
+    name: 辅酶Q10
+    aliases: ["CoQ10"]
+    canonical_unit: ng/mL
+    system: nutrition
+    modifiability: self_modifiable
+    default_range_kind: lab_percentile
+    note: 该实验室区间按340例健康人5%-95%分位定，不是疾病界值
+
+  # ---------------- 尿液 ----------------
+  - code: U_BACT
+    name: 细菌
+    aliases: ["细菌(BACT)", "尿细菌", "BACT"]
+    canonical_unit: 个/μl
+    system: urine
+    modifiability: clinical
+  - code: U_WBC
+    name: 尿白细胞
+    aliases: ["白细胞(尿)", "尿WBC"]
+    canonical_unit: 个/μl
+    system: urine
+    modifiability: clinical
+  - code: U_LE
+    name: 白细胞酯酶
+    aliases: ["LEU", "白细胞酯酶(LE)"]
+    kind: qualitative
+    system: urine
+    modifiability: clinical
+  - code: U_NIT
+    name: 亚硝酸盐
+    aliases: ["NIT", "亚硝酸盐(NIT)"]
+    kind: qualitative
+    system: urine
+    modifiability: clinical
+  - code: U_EPI
+    name: 上皮细胞
+    aliases: ["尿上皮细胞", "EC"]
+    canonical_unit: 个/μl
+    system: urine
+    modifiability: clinical
+  - code: U_WBC_CLUMP
+    name: 白细胞团
+    canonical_unit: 个/μl
+    system: urine
+    modifiability: clinical
+
+  # ---------------- 血流变 ----------------
+  - code: WBV_LOW
+    name: 全血粘度低切
+    aliases: ["低切[1]", "低切", "全血粘度(低切)"]
+    canonical_unit: mPa·s
+    system: hemorheology
+    modifiability: self_modifiable
+  - code: WBV_MID
+    name: 全血粘度中切
+    aliases: ["中切[5]", "中切"]
+    canonical_unit: mPa·s
+    system: hemorheology
+    modifiability: self_modifiable
+  - code: WBV_HIGH
+    name: 全血粘度高切
+    aliases: ["高切[200]", "高切"]
+    canonical_unit: mPa·s
+    system: hemorheology
+    modifiability: self_modifiable
+  - code: WBRV_LOW
+    name: 全血还原粘度(低切)
+    aliases: ["全血还原粘度低切", "还原粘度(低切)"]
+    canonical_unit: mPa·s
+    system: hemorheology
+    modifiability: self_modifiable
+    note: 扣除压积影响之后的粘度——它正常，则未校正值的升高由压积解释
+  - code: PLASMA_VISC
+    name: 血浆粘度
+    canonical_unit: mPa·s
+    system: hemorheology
+    modifiability: self_modifiable
+  - code: RBC_AGGR
+    name: 红细胞聚集指数
+    system: hemorheology
+    modifiability: clinical
+  - code: RBC_DEFORM
+    name: 红细胞变形指数
+    system: hemorheology
+    modifiability: clinical
+  - code: HCT_RHEO
+    name: 压积
+    aliases: ["血流变压积"]
+    system: hemorheology
+    modifiability: self_modifiable
+
+  # ---------------- 影像与结构性发现 ----------------
+  - code: SPLEEN_LENGTH
+    name: 脾脏长径
+    kind: imaging
+    canonical_unit: mm
+    system: imaging
+    modifiability: not_modifiable
+    device_sensitive: false
+    advisory_high: 120
+    advisory_note: 长径通常以 120 mm 为界
+    advisory_source: 知识库补充（原报告未给区间）
+  - code: SPLEEN_THICK
+    name: 脾脏厚径
+    kind: imaging
+    canonical_unit: mm
+    system: imaging
+    modifiability: not_modifiable
+    advisory_high: 40
+    advisory_note: 厚径通常以 40 mm 为界
+    advisory_source: 知识库补充（原报告未给区间）
+  - code: PORTAL_VEIN
+    name: 门静脉主干内径
+    kind: imaging
+    system: imaging
+    modifiability: clinical
+  - code: MRA_MCA_M1
+    name: 大脑中动脉M1段
+    kind: imaging
+    system: imaging
+    modifiability: not_modifiable
+    device_sensitive: true
+  - code: CAROTID_US
+    name: 颈动脉/椎动脉超声
+    kind: imaging
+    system: imaging
+    modifiability: not_modifiable
+  - code: LUNG_NODULE
+    name: 右肺下叶实性微结节
+    kind: imaging
+    canonical_unit: mm
+    system: imaging
+    modifiability: not_modifiable
+    device_sensitive: true
+  - code: PROSTATE_SIZE
+    name: 前列腺径线
+    kind: imaging
+    canonical_unit: mm
+    system: imaging
+    modifiability: not_modifiable
+  - code: GB_POLYP
+    name: 胆囊息肉
+    kind: imaging
+    canonical_unit: mm
+    system: imaging
+    modifiability: not_modifiable
+    advisory_high: 10
+    advisory_note: 10 mm 是通常的处理界值
+    advisory_source: 知识库补充（原报告未给区间）
+  - code: PSA
+    name: 前列腺特异性抗原
+    aliases: ["总PSA", "tPSA"]
+    canonical_unit: ng/mL
+    system: tumor_marker
+    modifiability: clinical

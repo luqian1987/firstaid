@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "firstaid"
+version = "0.1.0"
+description = "体检报告二次判读系统：把彼此相关的指标放在一起判读，而不是逐项解释箭头"
+requires-python = ">=3.11"
+dependencies = ["pydantic>=2.5", "pyyaml>=6.0", "jinja2>=3.1"]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.4"]
+
+[project.scripts]
+firstaid = "firstaid.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src", "tests"]
+testpaths = ["tests"]

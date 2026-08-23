@@ -1,0 +1,19 @@
+# 单位换算。仅用于把各家医院不同口径的输入归一到 canonical 单位。
+# 派生指标里的换算因子写在公式里（更可审计），不走这张表。
+generic:
+  - {from: "g/L",    to: "mg/dL",  factor: 100,    reversible: true}
+  - {from: "mg/L",   to: "mg/dL",  factor: 0.1,    reversible: true}
+  - {from: "μg/L",   to: "ng/mL",  factor: 1,      reversible: true}
+  - {from: "ug/L",   to: "ng/mL",  factor: 1,      reversible: true}
+  - {from: "10^9/L", to: "/μL",    factor: 1000,   reversible: true}
+  - {from: "fl",     to: "fL",     factor: 1,      reversible: true}
+  - {from: "g/dL",   to: "g/L",    factor: 10,     reversible: true}
+
+# 需要分子量的换算按指标单列
+by_indicator:
+  TC:      {"mg/dL->mmol/L": 0.02586, "mmol/L->mg/dL": 38.67}
+  LDL_C:   {"mg/dL->mmol/L": 0.02586, "mmol/L->mg/dL": 38.67}
+  HDL_C:   {"mg/dL->mmol/L": 0.02586, "mmol/L->mg/dL": 38.67}
+  TG:      {"mg/dL->mmol/L": 0.01129, "mmol/L->mg/dL": 88.57}
+  GLU_FASTING: {"mg/dL->mmol/L": 0.0555, "mmol/L->mg/dL": 18.02}
+  LPA:     {"mg/dL->mg/L": 10, "mg/L->mg/dL": 0.1}

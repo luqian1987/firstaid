@@ -1,0 +1,129 @@
+# 判读夹具：单次体检的全部输入。
+# 数值转录自参考报告，用于回归测试——规则改动若让任何一条判读翻转，测试立刻失败。
+subject:
+  id: subj-demo-001
+  sex: male
+  age_at_report: 42
+
+encounter:
+  id: enc-2026-03-30
+  date_from: 2026-03-30
+  date_to: 2026-04-08
+  # 四项本人背景全部空白。系统不替他假设，规则会把相关动作降级为条件式。
+  context: {}
+  sources:
+    - {id: main, label: 综合体检主报告, kind: main_report,
+       date_from: 2026-03-30, date_to: 2026-04-07,
+       merge_note: 已核对为同一体检周期,
+       unreadable_pages: [22, 23, 25, 26, 27, 29, 31]}
+    - {id: supp, label: 补充检验报告, kind: supplement,
+       date_from: 2026-04-02, date_to: 2026-04-07,
+       merge_note: 已核对为同一体检周期}
+    - {id: onco, label: 肿瘤相关专项筛查报告, kind: screening,
+       date_from: 2026-04-08, date_to: 2026-04-08,
+       merge_note: 作为独立筛查结论纳入，不拆成普通异常}
+
+observations:
+  # ---- 血脂与脂蛋白 ----
+  - {code: LPA,     raw_name: 脂蛋白(a),              value: 456.7, unit: mg/L,   ref: "0-300",     source: supp, flag: "↑"}
+  - {code: LDL_C,   raw_name: 低密度脂蛋白胆固醇,      value: 1.99,  unit: mmol/L, ref: "0-3.12",    source: main}
+  - {code: TC,      raw_name: 总胆固醇,               value: 3.84,  unit: mmol/L, ref: "0-5.2",     source: main}
+  - {code: TG,      raw_name: 甘油三酯,               value: 1.56,  unit: mmol/L, ref: "0-1.7",     source: main}
+  - {code: HDL_C,   raw_name: 高密度脂蛋白胆固醇,      value: 1.52,  unit: mmol/L, ref: ">1.04",     source: main}
+  - {code: SDLDL_C, raw_name: 小而密低密度脂蛋白胆固醇, value: 0.78, unit: mmol/L, ref: "0.25-1.17", source: supp}
+  - {code: APOB,    raw_name: 载脂蛋白B,              value: 1.39,  unit: g/L,    ref: "0.6-1.3",   source: main, flag: "↑"}
+  - {code: APOA1,   raw_name: 载脂蛋白AⅠ,             value: 2.04,  unit: g/L,    ref: "1.0-1.6",   source: main, flag: "↑"}
+
+  # ---- 肝脏 ----
+  - {code: GGT, raw_name: γ-谷氨酰转肽酶, value: 92,   unit: U/L, ref: "10-60", source: main, flag: "↑"}
+  - {code: ALT, raw_name: 谷丙转氨酶,     value: 47,   unit: U/L, ref: "9-50",  source: main}
+  - {code: AST, raw_name: 谷草转氨酶,     value: 36,   unit: U/L, ref: "15-40", source: main}
+  - {code: ALB, raw_name: 白蛋白,        value: 48.6, unit: g/L, ref: "40-55", source: main}
+  # 原报告未给参考区间 —— 走 advisory 通道，不冒充报告区间
+  - {code: CAP, raw_name: 肝脏脂肪衰减, value: 272, unit: dB/m, source: supp,
+     kind: imaging, device: FibroScan-A, method: 无创肝纤维化和脂肪变量化检测}
+  - {code: LSM, raw_name: 肝脏硬度,     value: 6.1, unit: kPa,  source: supp,
+     kind: imaging, device: FibroScan-A, method: 无创肝纤维化和脂肪变量化检测}
+
+  # ---- 糖代谢与体格 ----
+  - {code: GLU_FASTING, raw_name: 空腹血糖,     value: 4.90, unit: mmol/L, ref: "3.9-6.1", source: main}
+  - {code: INSULIN,     raw_name: 胰岛素,       value: 6.14, unit: μU/mL,  ref: "2.6-24.9", source: main}
+  - {code: HBA1C,       raw_name: 糖化血红蛋白, value: 5.5,  unit: "%",    ref: "4-6",     source: main}
+  - {code: C_PEPTIDE,   raw_name: C肽,          value: 1.30, unit: ng/mL,  ref: "0.8-4.2", source: main}
+  - {code: HEIGHT, raw_name: 身高,     value: 164,  unit: cm,    source: main}
+  - {code: WEIGHT, raw_name: 体重,     value: 71.2, unit: kg,    source: main}
+  - {code: BMI,    raw_name: 体重指数, value: 26.9, unit: kg/m2, ref: "18.5-23.9", source: main, flag: "↑"}
+  - {code: WAIST,  raw_name: 腰围,     value: 88,   unit: cm,    source: main}
+  - {code: HIP,    raw_name: 臀围,     value: 98,   unit: cm,    source: main}
+  - {code: SBP,    raw_name: 收缩压,   value: 108,  unit: mmHg,  ref: "90-139", source: main}
+  - {code: DBP,    raw_name: 舒张压,   value: 69,   unit: mmHg,  ref: "60-89",  source: main}
+
+  # ---- 血液 ----
+  - {code: PLT, raw_name: 血小板计数,   value: 162,  unit: 10^9/L, ref: "125-350", source: main}
+  - {code: WBC, raw_name: 白细胞计数,   value: 4.31, unit: 10^9/L, ref: "3.5-9.5", source: main}
+  - {code: HGB, raw_name: 血红蛋白,     value: 162,  unit: g/L,    ref: "130-175", source: main}
+  - {code: HCT, raw_name: 红细胞压积,   value: 47.9, unit: "%",    ref: "40-50",   source: main}
+  - {code: MCV, raw_name: 平均红细胞体积, value: 93.3, unit: fL,   ref: "82-100",  source: main}
+
+  # ---- 凝血 ----
+  - {code: FIB,     raw_name: 纤维蛋白原,       value: 1.72, unit: g/L,  ref: "2.0-4.0",   source: main, flag: "↓"}
+  - {code: TT,      raw_name: 凝血酶时间,       value: 18.6, unit: s,    ref: "14.0-21.0", source: main}
+  - {code: PT,      raw_name: 凝血酶原时间,     value: 11.4, unit: s,    ref: "9.0-13.0",  source: main}
+  - {code: INR,     raw_name: 国际标准化比值,   value: 0.98,             ref: "0.8-1.2",   source: main}
+  - {code: APTT,    raw_name: 活化部分凝血活酶时间, value: 26.5, unit: s, ref: "23.3-32.5", source: main}
+  - {code: DDIMER,  raw_name: D-二聚体,         value: 0.08, unit: mg/L, ref: "0.01-0.55", source: main}
+  - {code: FDP,     raw_name: 纤维蛋白降解产物, value: 2.5,  unit: mg/L, ref: "0-5",       source: main}
+  - {code: AT3,     raw_name: 抗凝血酶Ⅲ,        value: 99.6, unit: "%",  ref: "80-120",    source: main}
+  - {code: MAR_ADP, raw_name: 血小板最大聚集率, value: 72,   unit: "%",  ref: "52-84",     source: main}
+
+  # ---- 炎症 ----
+  - {code: ESR,   raw_name: 血沉,            value: 1,     unit: mm/h, ref: "0-15", source: main}
+  - {code: HSCRP, raw_name: 超敏C反应蛋白,   value: "<0.5", unit: mg/L, ref: "0-10", source: main}
+
+  # ---- 维生素与营养 ----
+  - {code: PA_B6,        raw_name: 吡哆酸,           value: 2.08,    unit: ng/mL,  ref: "3.00-30.00", source: supp, flag: "↓"}
+  - {code: PLP,          raw_name: 磷酸吡哆醛,       value: 21.70,   unit: ng/mL,  ref: "5-50",       source: supp}
+  - {code: FOLATE_SERUM, raw_name: 血清叶酸,         value: "<0.20", unit: ng/mL,  ref: "0.40-20.00", source: supp, flag: "↓"}
+  - {code: HCY,          raw_name: 同型半胱氨酸,     value: 10.91,   unit: μmol/L, ref: "0-15",       source: main}
+  - {code: MMA,          raw_name: 甲基丙二酸,       value: 1.79,    unit: ng/mL,  ref: "≤47.2",      source: supp}
+  - {code: PREALBUMIN,   raw_name: 前白蛋白,         value: 407,     unit: mg/L,   ref: "200-400",    source: main, flag: "↑"}
+  - {code: COQ10,        raw_name: 辅酶Q10,          value: 767.64,  unit: ng/mL,  ref: "800-1600",   source: supp, flag: "↓",
+     ref_kind: lab_percentile, ref_note: 该实验室按340例健康人5%-95%分位定的自有区间，不是疾病界值}
+
+  # ---- 尿液 ----
+  - {code: U_BACT,       raw_name: 细菌,         value: 15, unit: 个/μl, ref: "0-7",  source: main, flag: "↑"}
+  - {code: U_WBC,        raw_name: 尿白细胞,     value: 1,  unit: 个/μl, ref: "0-28", source: main}
+  - {code: U_LE,         raw_name: 白细胞酯酶,   value: 阴性, kind: qualitative,      source: main}
+  - {code: U_NIT,        raw_name: 亚硝酸盐,     value: 阴性, kind: qualitative,      source: main}
+  - {code: U_EPI,        raw_name: 上皮细胞,     value: 0,  unit: 个/μl, ref: "0-28", source: main}
+  - {code: U_WBC_CLUMP,  raw_name: 白细胞团,     value: 0,  unit: 个/μl, ref: "0-1",  source: main}
+
+  # ---- 血流变 ----
+  - {code: WBV_LOW,     raw_name: "低切[1]",           value: 27.40, unit: mPa·s, ref: "17.63-24.47", source: main, flag: "↑"}
+  - {code: WBV_MID,     raw_name: "中切[5]",           value: 11.70, unit: mPa·s, ref: "8.31-11.16",  source: main, flag: "↑"}
+  - {code: WBV_HIGH,    raw_name: "高切[200]",         value: 4.77,  unit: mPa·s, ref: "3.53-5.05",   source: main}
+  - {code: WBRV_LOW,    raw_name: 全血还原粘度(低切),   value: 53.94, unit: mPa·s, ref: "31.94-58.02", source: main}
+  - {code: PLASMA_VISC, raw_name: 血浆粘度,            value: 1.51,  unit: mPa·s, ref: "1.26-1.66",   source: main}
+  - {code: RBC_AGGR,    raw_name: 红细胞聚集指数,      value: 5.75,               ref: "3.49-6.93",   source: main}
+  - {code: RBC_DEFORM,  raw_name: 红细胞变形指数,      value: 0.77,               ref: "0.52-1.07",   source: main}
+  - {code: HCT_RHEO,    raw_name: 压积,                value: 0.48,               ref: "0.4-0.5",     source: main}
+
+  # ---- 影像与结构性发现（原报告未给参考区间）----
+  - {code: SPLEEN_LENGTH, raw_name: 脾脏长径, value: 116, unit: mm, kind: imaging,
+     source: main, method: 腹部彩超, axis: 长径}
+  - {code: SPLEEN_THICK,  raw_name: 脾脏厚径, value: 46,  unit: mm, kind: imaging,
+     source: main, method: 腹部彩超, axis: 厚径}
+  - {code: PORTAL_VEIN,   raw_name: 门静脉主干内径, value: 正常, kind: qualitative,
+     source: main, method: 腹部彩超}
+  - {code: MRA_MCA_M1, raw_name: 大脑中动脉M1段, kind: imaging,
+     text: 左侧大脑中动脉 M1 段局限性轻度狭窄, source: supp,
+     device: 3.0T, method: 颅脑 TOF-MRA, observed_at: 2026-04-01}
+  - {code: CAROTID_US, raw_name: 双侧颈动脉/椎动脉超声, kind: imaging,
+     text: 内膜连续良好，腔内未见异常回声, source: supp, observed_at: 2026-04-01}
+  - {code: LUNG_NODULE, raw_name: 右肺下叶实性微结节, value: 4, unit: mm, kind: imaging,
+     source: supp, device: 胸部CT平扫, axis: 直径(IM170), observed_at: 2026-04-02}
+  - {code: PROSTATE_SIZE, raw_name: 前列腺径线, value: 43, unit: mm, kind: imaging,
+     source: main, method: 泌尿系彩超, axis: 长径}
+  - {code: GB_POLYP, raw_name: 胆囊息肉, value: 2, unit: mm, kind: imaging,
+     source: main, method: 腹部彩超, axis: 直径}
+  - {code: PSA, raw_name: 前列腺特异性抗原, value: 0.731, unit: ng/mL, ref: "0-4", source: onco}

@@ -1,0 +1,116 @@
+# 派生指标。这些不是新检查，全部由已有数值算得。
+# 它们之所以重要：几条主要判读的依据正是这些原报告没算的数，而不是任何单项的箭头。
+derived:
+  - code: HOMA_IR
+    name: HOMA-IR
+    expr: "GLU_FASTING.value * INSULIN.value / 22.5"
+    inputs: [GLU_FASTING, INSULIN]
+    formula_display: "{GLU_FASTING} × {INSULIN} ÷ 22.5"
+    ref_high: 2.5
+    ref_kind: disease_cutoff
+    ref_raw: "<2.5"
+    system: glucose
+    changes_what: 胰岛素敏感性是否正常，决定"代谢型脂肪肝"这个默认解释站不站得住
+
+  - code: FIB4
+    name: FIB-4
+    expr: "AGE.value * AST.value / (PLT.value * sqrt(ALT.value))"
+    inputs: [AGE, AST, PLT, ALT]
+    formula_display: "{AGE} × {AST} ÷ ({PLT} × √{ALT})"
+    ref_high: 1.45
+    ref_kind: disease_cutoff
+    ref_raw: "<1.45"
+    system: liver
+    changes_what: 进展性肝纤维化风险，与 LSM 互相印证
+
+  - code: NONHDL_C
+    name: 非高密度脂蛋白胆固醇
+    unit: mmol/L
+    expr: "TC.value - HDL_C.value"
+    inputs: [TC, HDL_C]
+    formula_display: "{TC} − {HDL_C}"
+    system: lipid
+    changes_what: 与 ApoB 是否匹配——配对背离判读的核心依据
+
+  - code: NONHDL_C_MGDL
+    name: 非高密度脂蛋白胆固醇(mg/dL)
+    unit: mg/dL
+    expr: "NONHDL_C.value * 38.67"
+    inputs: [NONHDL_C]
+    formula_display: "{NONHDL_C} × 38.67"
+    system: lipid
+
+  - code: HDL_C_MGDL
+    name: 高密度脂蛋白胆固醇(mg/dL)
+    unit: mg/dL
+    expr: "HDL_C.value * 38.67"
+    inputs: [HDL_C]
+    formula_display: "{HDL_C} × 38.67"
+    system: lipid
+
+  - code: APOB_MGDL
+    name: 载脂蛋白B(mg/dL)
+    unit: mg/dL
+    expr: "APOB.value * 100"
+    inputs: [APOB]
+    formula_display: "{APOB} g/L × 100"
+    system: lipid
+
+  - code: APOA1_MGDL
+    name: 载脂蛋白AⅠ(mg/dL)
+    unit: mg/dL
+    expr: "APOA1.value * 100"
+    inputs: [APOA1]
+    formula_display: "{APOA1} g/L × 100"
+    system: lipid
+
+  - code: TG_HDL_RATIO
+    name: TG / HDL-C
+    expr: "TG.value / HDL_C.value"
+    inputs: [TG, HDL_C]
+    formula_display: "{TG} ÷ {HDL_C}"
+    ref_high: 1.5
+    ref_kind: disease_cutoff
+    ref_raw: "<1.5"
+    system: lipid
+    changes_what: 比值低进一步说明胰岛素抵抗证据不足
+
+  - code: AST_ALT_RATIO
+    name: AST / ALT
+    expr: "AST.value / ALT.value"
+    inputs: [AST, ALT]
+    formula_display: "{AST} ÷ {ALT}"
+    system: liver
+    changes_what: 与 GGT 形成"脱节"形态时，是追问饮酒的起点
+
+  - code: WHTR
+    name: 腰高比
+    expr: "WAIST.value / HEIGHT.value"
+    inputs: [WAIST, HEIGHT]
+    formula_display: "{WAIST} ÷ {HEIGHT}"
+    ref_high: 0.5
+    ref_kind: disease_cutoff
+    ref_raw: "<0.5"
+    system: anthropometry
+    changes_what: 中心性脂肪的信号，比 BMI 更贴切
+
+  - code: WHR
+    name: 腰臀比
+    expr: "WAIST.value / HIP.value"
+    inputs: [WAIST, HIP]
+    formula_display: "{WAIST} ÷ {HIP}"
+    system: anthropometry
+
+  - code: BMI_CALC
+    name: 体重指数(重算)
+    unit: kg/m2
+    expr: "WEIGHT.value / ((HEIGHT.value / 100) * (HEIGHT.value / 100))"
+    inputs: [WEIGHT, HEIGHT]
+    formula_display: "{WEIGHT} ÷ ({HEIGHT}/100)²"
+    ref_low: 18.5
+    ref_high: 23.9
+    ref_kind: population
+    system: anthropometry
+    cross_check_code: BMI
+    cross_check_tolerance: 0.01
+    changes_what: 用于校验原报告给出的 BMI 是否与身高体重自洽

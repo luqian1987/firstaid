@@ -1,0 +1,133 @@
+# 需纠正：原报告的建议，按组合判读不成立。
+#
+# 这是全篇最值钱、也是责任最重的一章。三条硬约束写在类型层，不靠自觉：
+#   1. Correction.contradicting 不能为空 —— 每条纠正必须引用同一份报告内的反证；
+#   2. 措辞上不说"报告错了"，只说"这条建议的依据不成立"；
+#   3. what_to_do 必须落到复测或面诊，不允许写成"不用管"。
+rules:
+  # ---- 模式 2：校正值 vs 未校正值 ----
+  - id: correct.b6_plp_vs_pa
+    archetype: corrected_vs_raw
+    title: 不建议按此补充维生素 B6
+    tag: correction
+    chapter: correct
+    modifiability: self_modifiable
+    priority: 60
+    params:
+      raw: [PA_B6]
+      corrected: [PLP]
+      corrected_expect: in_range
+    correction:
+      claim: 不建议按此补充维生素 B6
+      original_advice: 维生素 B6（吡哆酸）低 → 建议您补充维生素 B6，内分泌科门诊随诊。
+      original_source: 功能医学附件 · B 族 8 项
+      flagged: PA_B6
+      why_not: >-
+        PLP 才是维生素 B6 的活性形式和公认状态指标，本次 {PLP} ng/mL 完全正常。
+        PA 只是代谢产物。这一点不需要外部知识——该实验室自己的报告说明就写着：
+        PLP 占代谢物的 70%–90%，是主要活性成分。同一页纸上的两个数，报告只用了其中较低的那个。
+      what_to_do: >-
+        不支持维生素 B6 缺乏，不需要因此服用补充剂。
+        若已经开始服用，可以停下，并在下次复查时把 PA 与 PLP 两项一起看。
+    tests:
+      - {name: 张韦韦本次, fixture: zhang_2026-03-30, expect: triggered}
+      - {name: PLP也低则纠正不成立, fixture: zhang_2026-03-30, expect: not_triggered,
+         overrides: {PLP: 3.0}}
+
+  # ---- 模式 1：上游异常 / 下游全阴 ----
+  - id: correct.folate_downstream_silent
+    archetype: upstream_contradicted
+    title: 补叶酸之前，先复测叶酸
+    tag: correction
+    chapter: correct
+    modifiability: self_modifiable
+    priority: 62
+    params:
+      upstream: FOLATE_SERUM
+      direction: low
+      downstream: [HCY, MCV, HGB, MMA]
+      downstream_expect: in_range
+    correction:
+      claim: 补叶酸之前，先复测叶酸
+      original_advice: 维生素 B9（叶酸）低 → 建议您补充维生素 B9（叶酸）。
+      original_source: 功能医学附件 · B 族 8 项
+      flagged: FOLATE_SERUM
+      why_not: >-
+        血清叶酸低到测不出，属于重度缺乏的量级。但真到这个程度，
+        同型半胱氨酸几乎一定会升高、红细胞体积会变大、常伴贫血——
+        本次 Hcy {HCY}、MCV {MCV}、血红蛋白 {HGB} 三件事一件都没发生，
+        MMA {MMA} 正常也说明 B12 通路无碍。{$n_downstream_normal} 个下游指标同时否定一个上游指标，
+        更可能是检测或样本环节的问题，而不是身体真的缺到这个程度。
+      what_to_do: >-
+        先复测血清叶酸，同时加做红细胞叶酸（反映数月的储备，不受当天饮食影响），
+        再决定补不补。顺带：同型半胱氨酸 {HCY} 虽在区间内但不算理想值，复测时一起看。
+    tests:
+      - {name: 张韦韦本次, fixture: zhang_2026-03-30, expect: triggered}
+      - {name: Hcy升高则不再是矛盾, fixture: zhang_2026-03-30, expect: not_triggered,
+         overrides: {HCY: 22.0}}
+      - {name: 缺MMA时不可评估, fixture: zhang_2026-03-30, expect: indeterminate,
+         overrides: {MMA: null}}
+
+  # ---- 模式 6：孤立异常缺乏佐证 ----
+  - id: correct.urine_bacteria_isolated
+    archetype: isolated_abnormal
+    title: 不支持尿路感染，考虑留样污染
+    tag: correction
+    chapter: correct
+    modifiability: self_modifiable
+    priority: 55
+    params:
+      abnormal: U_BACT
+      direction: high
+      corroborators: [U_WBC, U_LE, U_NIT, U_WBC_CLUMP]
+      corroborator_expect: negative_or_in_range
+    correction:
+      claim: 不支持尿路感染，考虑留样污染
+      original_advice: 细菌高 → 尿路感染可能，建议多饮水……泌尿外科诊治。
+      original_source: 综合体检主报告 · 尿液分析
+      flagged: U_BACT
+      why_not: >-
+        真正的尿路感染需要炎症证据。这里白细胞 {U_WBC}、白细胞酯酶、亚硝酸盐、
+        白细胞团 {$n_corroborators_silent} 项全部阴性或极低——只有细菌计数 {U_BACT} 单独偏高。
+        这种形态最常见的原因是留取过程中的污染，而不是尿路里有感染。
+      what_to_do: >-
+        没有尿频、尿急、尿痛的话不需要就诊。下次体检按中段尿规范留取即可；
+        若出现上述症状，按症状就诊而不是按这次的细菌计数就诊。
+    tests:
+      - {name: 张韦韦本次, fixture: zhang_2026-03-30, expect: triggered}
+      - {name: 白细胞也高则支持感染, fixture: zhang_2026-03-30, expect: not_triggered,
+         overrides: {U_WBC: 120}}
+
+  # ---- 模式 2：校正值 vs 未校正值（血流变）----
+  - id: correct.hemorheology_reduced_viscosity
+    archetype: corrected_vs_raw
+    title: "“血液粘稠”的说法这次不成立"
+    tag: correction
+    chapter: correct
+    modifiability: self_modifiable
+    priority: 58
+    params:
+      raw: [WBV_LOW, WBV_MID]
+      corrected: [WBRV_LOW, PLASMA_VISC, RBC_AGGR, RBC_DEFORM]
+      corrected_expect: in_range
+      confounders: [HCT_RHEO, HGB, FIB, ESR, HSCRP]
+    correction:
+      claim: "“血液粘稠”的说法这次不成立"
+      original_advice: 低切[1]高；中切[5]高 → 建议低盐低脂饮食，多饮水，心内科门诊复查随访。
+      original_source: 综合体检主报告 · 血流变 13 项
+      flagged: WBV_LOW
+      why_not: >-
+        关键是"全血还原粘度"这一项——它就是把压积影响扣掉之后的粘度，本次 {WBRV_LOW} 完全正常。
+        也就是说，低切 {WBV_LOW} 与中切 {WBV_MID} 的升高全部由压积 {HCT_RHEO}
+        （血红蛋白 {HGB}，都在正常上限附近）解释，红细胞本身和血浆本身都没有异常：
+        聚集指数 {RBC_AGGR}、变形指数 {RBC_DEFORM}、血浆粘度 {PLASMA_VISC} 均正常。
+        而通常会推高低切粘度的纤维蛋白原这次反而偏低（{FIB}），血沉 {ESR}、CRP {HSCRP}，
+        也没有炎症在驱动。同一份报告里的校正值直接解释了未校正值。
+      what_to_do: >-
+        保证日常饮水（体检当天常处于禁食脱水状态，会抬高压积），
+        下次复查时同样看还原粘度而不是低切绝对值。不需要为此专门就诊或服药；
+        若心内科另有其他理由建议随访，以医生面诊意见为准。
+    tests:
+      - {name: 张韦韦本次, fixture: zhang_2026-03-30, expect: triggered}
+      - {name: 还原粘度也高则说法成立, fixture: zhang_2026-03-30, expect: not_triggered,
+         overrides: {WBRV_LOW: 72.0}}

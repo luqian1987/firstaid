@@ -1,0 +1,66 @@
+rules:
+  # 模式 9：无区间的结构性发现 → 不判高低，转"比较口径"
+  - id: structural.baseline_ledger
+    archetype: unranged_structural
+    title: 结构性发现：记录可比口径，而不是记录结论
+    lede: >-
+      这些条目本次都不需要行动，但它们的价值完全取决于下次能不能按同一口径比较。
+      所以这里记的是数字和设备，不是"未见明显变化"这类无法验证的话。
+    tag: baseline
+    chapter: baseline
+    modifiability: not_modifiable
+    priority: 20
+    params:
+      codes: [CAP, LSM, SPLEEN_LENGTH, SPLEEN_THICK, LUNG_NODULE,
+              PROSTATE_SIZE, GB_POLYP, MRA_MCA_M1]
+      require_no_range: true
+    narration:
+      single_read: >-
+        原报告对这些发现给的是结论词——"脂肪肝""脾大""微结节""息肉"。
+        结论词无法比较：下次报告若换一个说法，看不出到底是变了还是没变。
+      joint_read: >-
+        本次共 {$n_structural} 项结构性发现有可量化的原始记录。
+        把它们统一转成"数值 + 设备 + 测量轴"的形式存档，下次才有比较的基础。
+        原报告没给参考区间，所以这里不判高低，只登记口径。
+      must_convey:
+        - 记录的是数值和设备，不是结论词
+        - 原报告未给参考区间，因此不作高低判定
+      must_not_claim:
+        - 不得把无参考区间当成"正常"
+        - 不得把常用切点说成原报告的参考区间
+    verdict:
+      certain: 这些发现本次都不需要行动，但必须按可比口径存档。
+      not_certain: >-
+        不能由本次单点判断趋势。没有既往体检数据时，全部结论都只是单点，趋势要等下一次。
+      next_steps:
+        - 保留本次影像的设备型号与检查日期，复查时尽量用同一台
+        - 复查时向医生要具体数值，而不是只要结论词
+      compare_next:
+        - code: CAP
+          what: CAP 是本次唯一能反映肝脏脂肪量变化的连续数值
+          caveat: 必须同一台设备
+        - code: LSM
+          what: 与 CAP 同机同次测量
+          caveat: 必须同一台设备
+        - code: LUNG_NODULE
+          what: 直径与层面编号一起记
+          caveat: 换 CT 设备或层厚即不可比
+        - code: GB_POLYP
+          what: 直径。常用处理界值是 10 mm，本次距该界值的距离才是有意义的信息
+        - code: PROSTATE_SIZE
+          what: 径线 + PSA + 有无排尿症状，三者一起看
+    tests:
+      - {name: 张韦韦本次, fixture: zhang_2026-03-30, expect: triggered}
+      - name: 结构性发现全部缺失时不可评估
+        fixture: zhang_2026-03-30
+        expect: indeterminate
+        overrides: {CAP: null, LSM: null, SPLEEN_LENGTH: null, SPLEEN_THICK: null,
+                    LUNG_NODULE: null, PROSTATE_SIZE: null, GB_POLYP: null,
+                    MRA_MCA_M1: null}
+      - name: 全部带参考区间时不进基线台账
+        fixture: zhang_2026-03-30
+        expect: not_triggered
+        overrides: {CAP__ref: "0-248", LSM__ref: "0-7", SPLEEN_LENGTH__ref: "0-120",
+                    SPLEEN_THICK__ref: "0-40", LUNG_NODULE__ref: "0-5",
+                    PROSTATE_SIZE__ref: "0-50", GB_POLYP__ref: "0-10",
+                    MRA_MCA_M1: null}
