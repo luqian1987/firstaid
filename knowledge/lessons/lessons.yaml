@@ -1,0 +1,156 @@
+# 错误台账。
+#
+# 这套系统的核心哲学是"每条观察必须有归宿，异常项无归宿即构建失败"。
+# 同样的思路用在错误上：**每个记下来的错必须有归宿**——落在哪一层、被哪条测试守着。
+# 没有归宿的错，等于只是被记下来但没真修。
+#
+# 修复层级（越靠前越有价值，因为只有前两层能防止同类再犯）：
+#   invariant  构建期断言 —— 让整类错无法通过构建
+#   criterion  可援引的判据 —— 让人的判断有依据，且"必须援引判据"本身又是断言
+#   archetype  新增一类推理模式 —— 知识库的代码侧
+#   knowledge  纯数据条目（规则/通路/本体/别名）
+#   hardcode   兜底。必须在 why_not_general 里说明为什么上不去
+#
+# guarded_by 必须指向真实存在且通过的测试，test_lessons.py 会校验这一点。
+# 台账本身是活的，不是一份没人看的文档。
+
+lessons:
+  - id: L001
+    phase: design
+    symptom: 「现在要做」档的牙龈出血没有出现在拓扑图上，而没有任何东西报错
+    root_cause: 拓扑这一层没有覆盖率断言。漏画是静默的
+    layer: invariant
+    fix: 行动档的每条判读，要么有通路、要么在 no_progression 里写明理由，否则构建失败
+    guarded_by:
+      - tests/test_depth.py::test_topology_covers_every_action_band_chain_or_says_why_not
+      - tests/test_depth.py::test_missing_declaration_fails_the_build
+      - tests/test_depth.py::test_oral_chain_is_on_the_chart
+
+  - id: L002
+    phase: design
+    symptom: 胃黏膜萎缩与脾功能亢进被排除出拓扑图，事后发现两条都是可判定的演变关口
+    root_cause: 排除是一条条凭感觉写理由，没有统一标准，所以宽严不一
+    layer: criterion
+    fix: >-
+      进图判据写死成三条（是演变过程 / 至少一关有指标能判定 / 至少一关不是判不了），
+      并加断言：排除理由必须援引判据
+    guarded_by:
+      - tests/test_depth.py::test_excluded_chains_all_cite_the_criterion
+      - tests/test_depth.py::test_the_two_previously_misjudged_chains_are_now_on_the_chart
+
+  - id: L003
+    phase: design
+    symptom: 报告里指标序号一直是空白
+    root_cause: >-
+      YAML 1.1 把不加引号的 no 解析成布尔 False，于是 {no: 1} 变成 {False: 1}，
+      模板取 f.no 得到 Undefined，静默渲染成空
+    layer: invariant
+    fix: 字段改名为 seq；并由模板渲染后的自检拦截未渲染标记与空值
+    guarded_by:
+      - tests/test_render.py::test_no_unrendered_template_markers
+    note: 泛化不成医学判据，但能变成构建期校验——所以落 invariant，不是 hardcode
+
+  - id: L004
+    phase: design
+    symptom: 参考区间 "10--60"（真实医院写法）被解析成 10 至 -60
+    root_cause: 正则里 [-+]? 把第二个连字符吃成了负号，且双连字符模式排在单连字符之后
+    layer: knowledge
+    fix: 双连字符模式前置，并限制其右侧只匹配非负数
+    guarded_by:
+      - tests/test_normalize.py::test_parse_bounded
+    note: 只能靠积累各家医院写法，无法从原理上穷举——属于知识条目层
+
+  - id: L005
+    phase: design
+    symptom: 唾液胃蛋白酶"阳性"、牙龈出血"是"静静落进"无区间"，逃过覆盖率审计
+    root_cause: 定性指标的"参考区间"其实是期望值，系统只会拿数值区间判定
+    layer: invariant
+    fix: 定性期望值判定；并引入 Observation.judged，让模式层采信已判定的状态而非只看数值区间
+    guarded_by:
+      - tests/test_pipeline.py::test_coverage_every_observation_has_a_disposition
+
+  - id: L006
+    phase: design
+    symptom: 钾的参考区间含条件从句解析失败，被当成"原报告没给区间"
+    root_cause: 系统没有区分"报告没给"与"给了但读不懂"，两者都落 NO_RANGE
+    layer: invariant
+    fix: 区分 NO_RANGE 与 UNKNOWN；后者保留原值、不判高低、进审计的"暂未判定高低"
+    guarded_by:
+      - tests/test_normalize.py::test_unparseable_range_is_none_not_guessed
+
+  - id: L007
+    phase: design
+    symptom: 药名剂量拦截正则把化验值 456.7 mg/L 当成剂量
+    root_cause: 测试自身的 bug。剂量与浓度共用 mg 单位，没有区分
+    layer: invariant
+    fix: mg 后面跟斜杠的判为浓度不拦；并同时保留正反两个用例
+    guarded_by:
+      - tests/test_depth.py::test_clinical_interventions_never_name_a_drug_or_dose
+    note: 测试写错和代码写错一样要记。误报会让人开始忽略这条测试
+
+  - id: L008
+    phase: design
+    symptom: 三条无上游路径共用一句写死的"血压、血糖均正常"，那只对肾成立
+    root_cause: 渲染层写死了本该按路径给的内容
+    layer: invariant
+    fix: 改为 no_upstream_note 按路径声明；断言三条说明各不相同且都出现在图上
+    guarded_by:
+      - tests/test_depth.py::test_tracks_without_upstream_explain_why_per_track
+
+  - id: L009
+    phase: design
+    symptom: 首屏论点写死在模板里
+    root_cause: 渲染层做了本该由 L4 排序决定的判断
+    layer: invariant
+    fix: 首屏数字全部由对账层给出；断言模板里的数与数据一致
+    guarded_by:
+      - tests/test_render.py::test_hero_counts_come_from_the_data
+
+  - id: L010
+    phase: design
+    symptom: 规则 id 与指标 code 泄漏到给客户看的正文里
+    root_cause: 内部标识与展示名没有分离
+    layer: invariant
+    fix: 边界表与验证指标改用中文名；断言正文中不出现 a.b_c 形态的内部标识
+    guarded_by:
+      - tests/test_render.py::test_no_internal_identifiers_leak
+
+  - id: L011
+    phase: design
+    symptom: 表达式引用不存在的指标时抛 NameError，未被捕获
+    root_cause: 求值层只捕获了 TypeError/AttributeError/KeyError
+    layer: invariant
+    fix: 补捕 NameError，使缺输入统一求值为 None → 上层判 INDETERMINATE
+    guarded_by:
+      - tests/test_derive.py::test_expression_missing_input_yields_none_not_false
+    note: 这条的要害是"缺输入绝不能被静默当成 False"，与全系统三态语义一致
+
+  - id: L012
+    phase: design
+    symptom: 覆盖率审计报告前白蛋白与辅酶Q10 两项异常无人认领，构建失败
+    root_cause: 知识库缺规则。不是数据特殊，是能力缺口
+    layer: archetype
+    fix: 新增第 10 类模式 range_kind_caveat（拿实验室自有百分位当疾病界值）
+    guarded_by:
+      - tests/test_pipeline.py::test_coverage_every_observation_has_a_disposition
+    note: 这是审计层按设计工作的例子——它主动暴露了知识库缺口，而不是让漏洞静默通过
+
+  - id: L013
+    phase: design
+    symptom: 尿微量白蛋白两项都在区间内、双双贴近上限，现有模式一条都覆盖不到
+    root_cause: 缺少"多指标同处区间同一端"这类推理
+    layer: archetype
+    fix: 新增第 11 类模式 borderline_concordant
+    guarded_by:
+      - tests/test_pipeline.py::test_coverage_every_observation_has_a_disposition
+
+  - id: L014
+    phase: design
+    symptom: 参考实现把脂蛋白(a) 归进"值得重视，也能主动改善"章，并配了一整套饮食运动方案
+    root_cause: 指标的可改变性不是本体的强制属性，分章时无从校验
+    layer: invariant
+    fix: modifiability 成为本体强制属性；不可改变的主线不得进可行动章，违反即构建失败
+    guarded_by:
+      - tests/test_pipeline.py::test_lpa_never_lands_in_actionable_chapter
+      - tests/test_pipeline.py::test_chapter_invariant_is_enforced
+    note: 这条不是我们犯的，是从参考实现学到的。别人的错同样要进台账
