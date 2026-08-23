@@ -34,6 +34,7 @@ pathways:
     upstream: null
     chain: renal.microalbumin_borderline
     gate_kind: recheck
+    no_upstream_note: 血压、血糖均正常
     stages:
       - name: 微量白蛋白尿
         judged_by: [UACR, U_MALB, U_PRO]

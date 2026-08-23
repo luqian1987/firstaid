@@ -69,6 +69,34 @@ def _rows(refs) -> list[dict]:
             for e in refs]
 
 
+def _track_summaries(a: Analysis, chain_id: str) -> list[dict]:
+    """这条判读在进展图上落在哪。
+
+    刻意只给一行定位 + 锚点，不在每章重画一张图：
+    报告级那张图的价值在于跨路径比较（谁共享上游、哪条已落印），
+    拆成单条就全没了；重画一遍还会变成同一件事讲两遍。
+    """
+    from ..model import StageState
+    out = []
+    for t in (a.topology.tracks if a.topology else ()):
+        if t.chain_id != chain_id:
+            continue
+        crossed = [st for st in t.stages if st.state is StageState.CROSSED]
+        ahead = next((st for st in t.stages
+                      if st.state is not StageState.CROSSED), None)
+        out.append({
+            "label": t.label,
+            "here": crossed[-1].name if crossed else None,
+            "n_crossed": len(crossed),
+            "n_total": len(t.stages),
+            "ahead": ahead.name if ahead else None,
+            "ahead_state": ({StageState.CLEAR: "本次未见",
+                             StageState.UNKNOWN: "判不了"}.get(ahead.state)
+                            if ahead else None),
+        })
+    return out
+
+
 def build_context(a: Analysis) -> dict:
     enc, cov, recon = a.encounter, a.coverage, a.recon
     obs = list(enc.observations)
@@ -85,7 +113,8 @@ def build_context(a: Analysis) -> dict:
             c = chains.get(r.chain_id)
             if c:
                 detail.append({"c": c, "rows": _rows(c.inputs), "recon": r,
-                               "depth": a.depth.get(c.id)})
+                               "depth": a.depth.get(c.id),
+                               "tracks": _track_summaries(a, c.id)})
         label, desc = BAND_META[b]
         color, bg = BAND_COLOR[b]
         bands.append({"key": b.value, "label": label, "desc": desc,

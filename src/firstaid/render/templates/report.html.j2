@@ -185,6 +185,13 @@ h2.sec{font-family:var(--serif);font-size:23px;font-weight:600;margin:56px 0 6px
 .reading p{margin:0;font-size:13.6px;line-height:1.7}
 .reading .single p{color:var(--ink-2)}
 
+.tloc{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 16px;margin:0 0 18px;
+  padding:9px 13px;background:#F7F8F9;border-radius:4px;font-size:12.6px;color:var(--ink-2)}
+.tloc .tl b{font-family:var(--mono);font-size:11px;color:var(--muted);margin-right:6px;
+  font-weight:600}
+.tloc a{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--muted);
+  text-decoration:none;border-bottom:1px solid var(--rule);white-space:nowrap}
+.tloc a:hover{color:var(--ink);border-color:var(--ink)}
 .verdict{display:grid;grid-template-columns:1fr 1fr;gap:0 24px;padding:16px 0 0;
   border-top:1px solid var(--rule-2)}
 .verdict>div{padding:5px 0}
@@ -403,6 +410,22 @@ footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--rule);
     <div class="single"><h4>只看单项会得到</h4><p>{{ c.single_read }}</p></div>
     <div class="joint"><h4>放在一起看得到</h4><p>{{ c.joint_read }}</p></div>
   </div>
+
+  {% if g.tracks %}
+  <div class="tloc">
+    {% for t in g.tracks %}
+    <span class="tl">
+      <b>{{ t.label }}</b>
+      {% if t.here %}
+        现在在「{{ t.here }}」{% if t.ahead %}　·　下一关「{{ t.ahead }}」{{ t.ahead_state }}{% else %}，后面不展开{% endif %}
+      {% else %}
+        第一关「{{ t.ahead }}」{{ t.ahead_state }}
+      {% endif %}
+    </span>
+    {% endfor %}
+    <a href="#topo">在进展图上看 →</a>
+  </div>
+  {% endif %}
 
   {% if c.verdict %}
   <div class="verdict">

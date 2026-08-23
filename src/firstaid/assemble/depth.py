@@ -109,7 +109,8 @@ class DepthEngine:
                 chain_id=p.get("chain"), stages=tuple(stages),
                 tail=_fill(p.get("tail", ""), obs),
                 next_gate=_fill(p.get("next_gate", ""), obs),
-                gate_kind=p.get("gate_kind", "recheck")))
+                gate_kind=p.get("gate_kind", "recheck"),
+                no_upstream_note=_fill(p.get("no_upstream_note", ""), obs)))
 
         order = {c: i for i, c in enumerate(chain_order)} if chain_order else {}
         tracks.sort(key=lambda t: order.get(t.chain_id, 999))

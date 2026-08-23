@@ -150,11 +150,13 @@ def test_missing_declaration_fails_the_build(zhang_real, knowledge, spec):
     from firstaid.assemble.depth import DepthEngine
     ont, units, rules, derived = knowledge
     a = analyze(zhang_real, ont, units, rules, derived)
+    # 抽掉一条仍靠声明豁免的行动档链条（维生素A，clarify 档）
+    victim = "nutrition.vitamin_a_isolated_high"
+    assert victim in {x["chain"] for x in spec["no_progression"]}
     stripped = {**spec, "no_progression":
-                [x for x in spec["no_progression"]
-                 if x["chain"] != "gastric.saliva_pepsin_vs_normal_panel"]}
+                [x for x in spec["no_progression"] if x["chain"] != victim]}
     _, errs = DepthEngine(stripped, ont, derived).scope(a.chains)
-    assert any("gastric" in e for e in errs), errs
+    assert any(victim in e for e in errs), errs
 
 
 def test_a_track_may_have_no_upstream(real):
@@ -168,3 +170,35 @@ def test_a_track_may_have_no_upstream(real):
 def test_oral_chain_is_on_the_chart(real):
     """牙龈出血在「现在要做」档，此前漏出了拓扑图。"""
     assert "oral.gingival_bleeding_is_local" in {t.chain_id for t in real.topology.tracks}
+
+
+def test_the_two_previously_misjudged_chains_are_now_on_the_chart(real):
+    """胃黏膜萎缩与脾功能亢进都是可判定的演变关口，此前被凭感觉排除了。"""
+    on_chart = {t.chain_id for t in real.topology.tracks}
+    assert "gastric.saliva_pepsin_vs_normal_panel" in on_chart
+    assert "spleen.layered_exclusion" in on_chart
+
+
+def test_excluded_chains_all_cite_the_criterion(spec):
+    """排除理由必须援引判据，不能是随手写的一句话。"""
+    for x in spec["no_progression"]:
+        assert "判据" in x["why"], x["chain"]
+
+
+def test_tracks_without_upstream_explain_why_per_track(real):
+    """三条无上游路径的说明各不相同，不能共用一句写死的话。"""
+    from firstaid.render.topology import render_topology
+    notes = {t.no_upstream_note for t in real.topology.tracks
+             if t.upstream_id is None}
+    assert len(notes) == 3, notes
+    svg = render_topology(real.topology)
+    for n in notes:
+        assert n in svg
+
+
+def test_no_per_chapter_duplicate_diagram(real, tmp_path):
+    """每章只给一行定位 + 锚点，不重画图。整份报告只有一个 svg。"""
+    from firstaid.render.html import render
+    h = render(real, tmp_path / "r.html").read_text(encoding="utf-8")
+    assert h.count("<svg") == 1
+    assert h.count('class="tloc"') == len({t.chain_id for t in real.topology.tracks})

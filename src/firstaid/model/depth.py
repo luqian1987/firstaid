@@ -61,6 +61,7 @@ class PathwayTrack(Frozen):
     tail: str = ""                    # 再往后为什么不展开
     next_gate: str = ""               # 下一关由什么决定
     gate_kind: str = "recheck"        # recheck / specialist
+    no_upstream_note: str = ""        # 没有上游时的说明。空着本身是判读结论
 
     @property
     def position(self) -> int:
