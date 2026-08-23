@@ -1,0 +1,19 @@
+# 上游：多条通路的共同起点。
+# 是否在场由本人数据求值，不手写。modifiable 决定它在图上画实线还是虚线——
+# 虚线本身就在编码"不可改变"，不用引入第四种颜色。
+upstreams:
+  - id: adipose
+    label: 中心性脂肪
+    sub: "腰高比 {WHTR} · BMI {BMI}"
+    codes: [WHTR, BMI, WAIST]
+    present_when: "WHTR.is_high or BMI.is_high"
+    modifiable: true
+    note: 可由本人改变
+
+  - id: lpa_genetic
+    label: 脂蛋白(a) 升高
+    sub: "{LPA} mg/L · 基因决定"
+    codes: [LPA]
+    present_when: "LPA.is_high"
+    modifiable: false
+    note: 饮食运动不改变它

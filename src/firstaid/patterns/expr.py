@@ -26,6 +26,8 @@ _ALLOWED_ATTRS = {
     "negative", "has_range", "present", "ratio_to_upper", "ratio_to_lower",
     "position_in_range", "censor", "code", "text", "qualitative",
     "reported_flag", "method", "device", "axis",
+    # 常用切点判定：与报告自带区间严格分开的另一套
+    "advisory_in_range", "advisory_high", "advisory_low", "has_advisory", "judged",
 }
 
 _FUNCS: dict[str, Callable[..., Any]] = {

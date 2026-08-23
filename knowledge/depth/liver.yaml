@@ -1,0 +1,94 @@
+pathways:
+  - id: liver.nafld
+    label: 肝脏
+    upstream: adipose
+    chain: liver.ggt_transaminase_dissociation
+    gate_kind: recheck
+    stages:
+      - name: 肝脂肪变
+        judged_by: [CAP]
+        crossed_when: "CAP.advisory_high"
+        detail: "脂肪衰减 {CAP} dB/m，超过常用切点"
+      - name: 脂肪性肝炎
+        judged_by: [ALT, AST]
+        edge: 血清学分不出
+        detail: 转氨酶都在区间内，但血清学本来就分不出有没有炎症——这一关判不了，不是"没有"
+      - name: 显著纤维化
+        judged_by: [LSM, FIB4]
+        crossed_when: "LSM.advisory_high or FIB4.is_high"
+        edge: 两法一致，未跨过
+        detail: "肝硬度 {LSM} kPa 与 FIB-4 {FIB4} 两个独立方法一致，都在切点以下"
+    tail: >-
+      再往后的阶段取决于纤维化是否发生。本次两个独立方法都显示它还没发生，
+      因此不在这里展开——我们对更远的阶段没有任何指标，画出来只是制造焦虑。
+    next_gate: 下一关由肝硬度与 FIB-4 判定。这两个数是复查时唯一需要盯住的。
+
+depth:
+  liver.ggt_transaminase_dissociation:
+    mechanisms:
+      - level: 分子机制
+        cites: [GGT, ALT, AST]
+        rules_out: 这个形态区分了"表达被诱导"与"细胞在漏"两类机制，指向前者
+        pivot: >-
+          GGT 位于肝细胞与胆管上皮的细胞膜上，是可诱导酶——酒精、某些药物、胆汁淤积
+          都能上调它的表达。而 ALT/AST 是胞浆酶，主要在肝细胞受损、细胞膜通透性增加时漏出。
+          两者升高的机制根本不同。所以 GGT 单独升到上限 {$lead_ratio_to_upper} 倍
+          而转氨酶在区间内，说明有诱导因素在场，但肝细胞损伤还不明显。
+      - level: 分子机制
+        cites: [HOMA_IR, HBA1C, TG_HDL_RATIO]
+        rules_out: 削弱了"代谢型脂肪肝"这个默认归因
+        pivot: >-
+          代谢型脂肪肝的核心驱动是胰岛素抵抗：脂肪组织脂解不受抑制 → 游离脂肪酸涌入肝脏，
+          同时肝脏从头脂肪合成上调 → 甘油三酯在肝细胞内蓄积。这条链上有三个可观测点，
+          本次全部正常：HOMA-IR {HOMA_IR}、HbA1c {HBA1C}、TG/HDL-C {TG_HDL_RATIO}。
+    modifiers:
+      present:
+        - {name: 中心性脂肪, codes: [WHTR, BMI, WAIST],
+           note: "腰高比 {WHTR} 已过 0.5，比 BMI 更贴切"}
+        - {name: GGT 诱导因素在场, codes: [GGT, AST_ALT_RATIO],
+           note: 但具体是酒精、药物还是胆道，纸面数据分不出}
+      absent:
+        - {name: 胰岛素抵抗, codes: [HOMA_IR, TG_HDL_RATIO], note: 两个独立指标一致}
+        - {name: 糖代谢异常, codes: [HBA1C, GLU_FASTING, C_PEPTIDE]}
+        - {name: 胆汁淤积, codes: [ALP, TBIL, DBIL], note: GGT 升高时首先要排的就是它}
+        - {name: 合成功能受损, codes: [ALB, PT, CHE]}
+        - {name: 显著全身炎症, codes: [ESR, HSCRP]}
+      unknown:
+        - {name: 每周饮酒量, why: 本次单个最重要的未知。GGT 脱节形态首先要问的就是它}
+        - {name: 在服药物与保健品, why: 多种药物可诱导 GGT；这份清单同时也是维生素A 那条在等的答案}
+        - {name: 病毒性肝炎血清学, why: 本次未查。它是脂肪肝之外最常见的慢性肝病病因}
+    interventions:
+      - kind: measurement
+        action: 用 4 周记录实际饮酒：种类、每周次数、每次毫升。不估算，只记录
+        rationale: 本次单个最重要的未知。在这个数字拿到之前，其余饮食建议都只是通用模板。
+        verify_by: GGT
+        horizon: 4 周
+      - kind: measurement
+        action: 列出在服的全部药物与保健品，包括不认为是"药"的那些
+        rationale: 多种药物可诱导 GGT；这份清单同时也是维生素A 那一条在等的答案。
+        verify_by: GGT
+        horizon: 立即
+      - kind: lifestyle
+        action: 体重下降 5%–7%（约 3.5–5 kg）
+        target: [WEIGHT, WAIST, BMI]
+        rationale: 对肝脏脂肪含量影响最确定的杠杆，比替换某一种食物更有效。
+        verify_by: CAP
+        horizon: 6 个月
+        caveat: 复查必须用同一台设备，换设备的数值不可比
+      - kind: lifestyle
+        action: 每月固定条件测一次体重与腰围（晨起、空腹、同一时段）
+        target: [WEIGHT, WAIST]
+        rationale: 两次体检之间唯一的中间反馈。没有它，中间这段路没有仪表。
+        verify_by: WAIST
+        horizon: 每月
+      - kind: clinical
+        action: 消化内科门诊时，可能面对的处理路径
+        paths:
+          - 补齐病因排查：病毒性肝炎血清学、自身免疫性肝病相关抗体、铁代谢
+          - 若饮酒量确认较高，戒断本身即是首要处理，优先级高于任何药物
+          - 肝脏弹性检测的复查间隔（通常按纤维化风险分层决定）
+        ask_doctor:
+          - 我的 HOMA-IR 和 HbA1c 都正常，脂肪肝的病因排查还需要做哪些
+          - GGT 92 而转氨酶正常，这个形态您怎么看，需不需要查胆道
+          - CAP 272 / 肝硬度 6.1，下次复查间隔定多久合适
+        note: 以上只是让你知道门诊会面对什么选择，不是建议。是否用药、用什么、用多久，由医生决定。

@@ -14,10 +14,13 @@ from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
+from markupsafe import Markup
+
 from ..model import (
-    BAND_COLOR, BAND_META, Band, Disposition, Observation, ObservationKind,
-    RangeStatus,
+    BAND_COLOR, BAND_META, KIND_LABELS, Band, Disposition, InterventionKind,
+    Observation, ObservationKind, RangeStatus,
 )
+from .topology import render_topology
 from ..pipeline import Analysis
 
 TEMPLATES = Path(__file__).parent / "templates"
@@ -81,7 +84,8 @@ def build_context(a: Analysis) -> dict:
                 continue          # 纠正统一收进「与医生确认」区，不在色带里重复
             c = chains.get(r.chain_id)
             if c:
-                detail.append({"c": c, "rows": _rows(c.inputs), "recon": r})
+                detail.append({"c": c, "rows": _rows(c.inputs), "recon": r,
+                               "depth": a.depth.get(c.id)})
         label, desc = BAND_META[b]
         color, bg = BAND_COLOR[b]
         bands.append({"key": b.value, "label": label, "desc": desc,
@@ -105,7 +109,11 @@ def build_context(a: Analysis) -> dict:
         by_src.setdefault(o.provenance.source_label or "其他", []).append(o)
 
     n_orig = len([f for f in enc.original_findings if not f.pending])
+    topo = a.topology
     return {
+        "topo_svg": Markup(render_topology(topo)) if topo and topo.tracks else None,
+        "topo": topo,
+        "kind_labels": {k.value: v for k, v in KIND_LABELS.items()},
         "subject_id": enc.subject_id.upper(),
         "age": a.timeline.subject.age_on(enc.anchor_date),
         "sex": {"male": "男", "female": "女"}.get(a.timeline.subject.sex.value, ""),

@@ -1,0 +1,17 @@
+pathways:
+  # 这条通路挂在脂肪肝那条判读上：它回答的正是"代谢驱动到底成不成立"。
+  - id: metabolic.ir
+    label: 糖代谢
+    upstream: adipose
+    chain: liver.ggt_transaminase_dissociation
+    gate_kind: recheck
+    stages:
+      - name: 胰岛素抵抗
+        judged_by: [HOMA_IR, TG_HDL_RATIO, HBA1C]
+        crossed_when: "HOMA_IR.is_high or TG_HDL_RATIO.is_high or HBA1C.is_high"
+        col: 1
+        detail: "HOMA-IR {HOMA_IR}、TG/HDL-C {TG_HDL_RATIO}、HbA1c {HBA1C} 三个独立指标一致，均未越界"
+    tail: >-
+      上游（中心性脂肪）已经在场，但这条路径的第一关就没跨过——三个独立指标同时判定，
+      都显示未发生。这正是"代谢型脂肪肝证据不足"这句判读的来源，更远的阶段不展开。
+    next_gate: 下一关由 HOMA-IR、TG/HDL-C、HbA1c 判定。三者同时上行才算方向改变。

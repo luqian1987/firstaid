@@ -1,0 +1,67 @@
+# 胃这条不进拓扑图：反流与萎缩是两个并列方向，不是一条先后链，
+# 画成阶梯会暗示不存在的先后关系。它的机制解释本身已经把方向讲清楚了。
+depth:
+  gastric.saliva_pepsin_vs_normal_panel:
+    mechanisms:
+      - level: 分子来源
+        cites: [SALIVA_PEPSIN]
+        rules_out: 排除了"这是一项胃黏膜病变筛查"这个默认读法
+        pivot: >-
+          胃蛋白酶不由唾液腺产生。它以胃蛋白酶原的形式由胃主细胞分泌，
+          必须在胃酸环境下才被切成有活性的胃蛋白酶。所以唾液里检出它，
+          唯一的来源是胃内容物到过口腔——这项阳性说明的是"反流事件发生过"，
+          而不是"胃黏膜有病变"。
+      - level: 生理病理
+        cites: [PG1, PG2, PG_RATIO]
+        rules_out: 排除了胃底腺萎缩
+        pivot: >-
+          胃黏膜有没有萎缩，本次有直接指标。胃蛋白酶原Ⅰ主要由胃底腺主细胞分泌，
+          Ⅱ 则胃窦和十二指肠也在产。胃底腺萎缩时Ⅰ下降而Ⅱ相对不变，
+          所以比值比任一单项都更能反映萎缩。本次 PGⅠ {PG1}、PGⅠ/Ⅱ {PG_RATIO}，
+          都在区间中部而不是贴边。
+      - level: 生理病理
+        cites: [GASTRIN17]
+        rules_out: 同时排除了胃窦萎缩与胃体萎缩两个方向
+        pivot: >-
+          胃泌素17 由胃窦 G 细胞分泌，受胃内 pH 负反馈调节：胃窦萎缩时它下降，
+          胃体萎缩时因为胃酸减少、负反馈解除，它反而升高。本次 {GASTRIN17}，
+          落在区间中段——两个方向的萎缩都不支持。
+    modifiers:
+      present: []
+      absent:
+        - {name: 胃底腺萎缩, codes: [PG1, PG_RATIO]}
+        - {name: 胃窦萎缩, codes: [GASTRIN17]}
+        - {name: 全身炎症背景, codes: [ESR, HSCRP]}
+      unknown:
+        - {name: 幽门螺杆菌状态, why: 本次未检测。它是萎缩方向的主要驱动因素}
+        - {name: 反流症状（烧心 / 反酸 / 夜间呛咳）, why: 决定这条要不要按反流处理}
+        - {name: 胃肠镜所见, why: 报告已生成但本次未取回。镜下所见的效力高于任何血清学筛查}
+    interventions:
+      - kind: measurement
+        action: 取回无痛电子胃肠镜报告
+        rationale: 关于胃的全部答案都在这份报告里，它的效力高于任何血清学筛查。
+        verify_by: PG_RATIO
+        horizon: 立即
+      - kind: measurement
+        action: 记录 2 周症状：烧心、反酸、夜间呛咳的发生频次与时间点
+        rationale: 唾液学阳性只说明反流事件发生过，要不要处理取决于症状，而症状本次空白。
+        verify_by: SALIVA_PEPSIN
+        horizon: 2 周
+      - kind: lifestyle
+        action: 睡前 3 小时不进食，床头整体抬高 15–20 cm
+        target: [SALIVA_PEPSIN]
+        conditional: 仅在上一步确认存在夜间症状时执行。没有症状不必先做。
+        rationale: 这两条针对的是夜间平卧时的反流暴露时间，不是胃黏膜本身。
+        verify_by: SALIVA_PEPSIN
+        horizon: 4 周
+      - kind: clinical
+        action: 消化内科门诊时，可能面对的处理路径
+        paths:
+          - 依内镜结果决定是否需要随访，以及间隔多久
+          - 若症状明确，可能会做试验性抑酸治疗（以治疗反应反推诊断）
+          - 客观量化反流事件的检查（如食管 pH-阻抗监测）
+        ask_doctor:
+          - 我的胃功能三项都正常，这次唾液学阳性还需要单独处理吗
+          - 胃肠镜已经做了，它的结果是否已经回答了这个问题
+          - 如果做试验性治疗，疗程多久，以什么作为"有效"的判断标准
+        note: 以上只是让你知道门诊会面对什么选择，不是建议。用药与疗程由医生决定。

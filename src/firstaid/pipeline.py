@@ -9,13 +9,17 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from .assemble.rank import check_chapters, group_by_chapter, rank
+from .assemble.depth import DepthEngine, load_depth_spec
 from .assemble.reconcile import reconcile
 from .audit.coverage import build_coverage
 from .derive.engine import DeriveEngine
-from .loader import load_fixture, load_knowledge
+from .loader import KNOWLEDGE, load_fixture, load_knowledge
+
+KNOWLEDGE_DEPTH = KNOWLEDGE / "depth"
 from .model import (
     BoundaryItem, Chain, ComparisonItem, ComparisonPlan, ConsistencyIssue, Correction,
-    CoverageReport, Encounter, MissingContextItem, Ontology, Reconciliation, Timeline,
+    CoverageReport, Depth, Encounter, MissingContextItem, Ontology, Reconciliation,
+    Timeline, Topology,
 )
 from .patterns.context import RuleContext
 from .patterns.engine import EngineResult, PatternEngine
@@ -32,6 +36,8 @@ class Analysis:
     consistency: list[ConsistencyIssue] = field(default_factory=list)
     coverage: CoverageReport | None = None
     recon: Reconciliation | None = None
+    topology: Topology | None = None
+    depth: dict[str, Depth] = field(default_factory=dict)
     derived_notes: dict[str, str] = field(default_factory=dict)
     plan: ComparisonPlan | None = None
     engine: EngineResult | None = None
@@ -53,9 +59,11 @@ class Analysis:
 
 
 def analyze(timeline: Timeline, ontology=None, units=None, rules=None,
-            derived=None) -> Analysis:
+            derived=None, depth_spec=None) -> Analysis:
     if ontology is None:
         ontology, units, rules, derived = load_knowledge()
+    if depth_spec is None:
+        depth_spec = load_depth_spec(KNOWLEDGE_DEPTH)
     enc = timeline.latest()
     assert enc is not None, "timeline 里没有体检记录"
     a = Analysis(timeline=timeline, encounter=enc)
@@ -96,6 +104,17 @@ def analyze(timeline: Timeline, ontology=None, units=None, rules=None,
             what=f"{f.source}（原报告标注「{f.said}」，本次未拿到）",
             impact="该项结论未纳入本判读",
         ))
+
+    # L4.7 深读：通路 / 机制 / 修饰因素 / 干预
+    de = DepthEngine(depth_spec, ontology, derived)
+    a.errors += de.validate()
+    chain_ids = {c.id for c in a.chains}
+    a.topology = de.topology(enc, chain_ids)
+    for c in a.chains:
+        d = de.depth_for(enc, c, {i.key.code for i in c.verdict.compare_next}
+                         if c.verdict else set())
+        if d and d.any():
+            a.depth[c.id] = d
 
     # L5 覆盖率
     a.coverage = build_coverage(enc, res, ontology)

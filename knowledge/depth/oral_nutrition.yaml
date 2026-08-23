@@ -1,0 +1,94 @@
+depth:
+  oral.gingival_bleeding_is_local:
+    mechanisms:
+      - level: 止血生理
+        cites: [PT, APTT, PLT, MAR_ADP]
+        rules_out: 排除了全身性出血倾向这条解释
+        pivot: >-
+          全身性出血倾向必然在三条通路之一上留下痕迹：血小板数量与聚集功能（初期止血）、
+          内源与外源凝血途径（PT 与 APTT）、以及纤维蛋白形成。本次血小板 {PLT}、
+          最大聚集率 {MAR_ADP}、PT {PT}、APTT {APTT} 全部正常——三条通路一条都没有异常。
+      - level: 局部机制
+        cites: [DENTAL_CALCULUS, GINGIVAL_RECESSION]
+        rules_out: 局部证据齐备，无需再找全身性解释
+        pivot: >-
+          牙结石是矿化的菌斑，它持续刺激龈缘造成局部炎症，炎症的毛细血管在机械刺激下
+          容易出血；牙龈退缩则是这一过程持续存在的痕迹。本次两者同时在场，
+          局部解释的证据是完整的。
+      - level: 与另一条判读的关系
+        cites: [FIB, TT]
+        rules_out: 澄清了两条并列条目之间不存在因果关系
+        pivot: >-
+          同一份报告里的纤维蛋白原 {FIB} g/L 偏低，很容易被读成牙龈出血的原因。
+          但纤维蛋白原参与的是凝血最后一步的纤维蛋白网形成，它真有质或量的问题时
+          凝血酶时间会最先延长，而本次 TT {TT} 秒正常。这两条是并列的，不是因果。
+    modifiers:
+      present:
+        - {name: 牙结石, codes: [DENTAL_CALCULUS], note: 局部刺激源，可直接去除}
+        - {name: 牙龈退缩, codes: [GINGIVAL_RECESSION], note: 已发生的部分不可逆}
+      absent:
+        - {name: 血小板数量或功能异常, codes: [PLT, MAR_ADP]}
+        - {name: 凝血途径异常, codes: [PT, APTT, INR, TT]}
+        - {name: 纤溶亢进, codes: [DDIMER, FDP]}
+      unknown:
+        - {name: 日常清洁方式与频次, why: 决定洁牙之后出血会不会复发}
+        - {name: 是否在服抗血小板或抗凝药物, why: 这类药物会改变对牙龈出血的解释}
+    interventions:
+      - kind: lifestyle
+        action: 按原报告建议洁牙，之后定期洁治
+        target: [DENTAL_CALCULUS, GINGIVAL_BLEEDING]
+        rationale: 原建议本身是对的，我们补充的只是"不必同时去查凝血"。
+        verify_by: GINGIVAL_BLEEDING
+        horizon: 1 个月内
+      - kind: lifestyle
+        action: 日常清洁把龈缘和牙缝都覆盖到，而不只是牙面
+        target: [GINGIVAL_BLEEDING]
+        rationale: 出血发生在龈缘，只刷牙面不改变刺激源。
+        verify_by: GINGIVAL_BLEEDING
+        horizon: 持续
+      - kind: measurement
+        action: 洁牙后 2–4 周观察出血是否消退
+        rationale: 这是检验"局部解释"成不成立的直接方式——若仍出血，回口腔科复评，而不是去查凝血。
+        verify_by: GINGIVAL_BLEEDING
+        horizon: 4 周
+
+  nutrition.vitamin_a_isolated_high:
+    mechanisms:
+      - level: 分布形态
+        cites: [VIT_A, VIT_E, VIT_K1, VITD_25OH]
+        rules_out: 排除了整体吸收或代谢改变这个解释
+        pivot: >-
+          四项脂溶性维生素同批检测、同一份血清、共用同一条吸收与转运路径（胆汁乳化、
+          乳糜微粒转运）。整体吸收或代谢出问题时，它们通常同向变化。本次只有维生素A
+          {VIT_A} ng/ml 偏离，而 E {VIT_E}、K1 {VIT_K1}、25-羟基总D {VITD_25OH}
+          都在区间内——这个形态更像单一来源的额外摄入。
+      - level: 排除机制
+        cites: [ALT, AST, TBIL, ALP]
+        rules_out: 排除了胆汁淤积导致脂溶性维生素蓄积
+        pivot: >-
+          脂溶性维生素在体内蓄积的另一条常见路径是肝胆异常。本次 ALT {ALT}、
+          AST {AST}、总胆红素 {TBIL}、碱性磷酸酶 {ALP} 全部正常，不支持这条路径。
+    modifiers:
+      present:
+        - {name: 维生素A 单项超出上限, codes: [VIT_A]}
+      absent:
+        - {name: 其余脂溶性维生素异常, codes: [VIT_E, VIT_K1, VITD_25OH]}
+        - {name: 胆汁淤积, codes: [TBIL, DBIL, ALP]}
+        - {name: 肝细胞损伤, codes: [ALT, AST]}
+      unknown:
+        - {name: 在服补充剂清单, why: 含复合维生素、鱼肝油、蛋白粉与功能饮料。本条在等的就是它}
+        - {name: 近期饮食（动物肝脏摄入）, why: 单次血清维生素A 受近期摄入影响明显}
+    interventions:
+      - kind: measurement
+        action: 列出在服的所有药物与保健品，含复合维生素、鱼肝油、蛋白粉与功能饮料
+        rationale: 本条要回答的问题是"来源在哪"，而不是"身体出了什么问题"。这份清单同时也是 GGT 那条在等的答案。
+        verify_by: VIT_A
+        horizon: 立即
+      - kind: lifestyle
+        action: 若确有含维生素A 的补充剂，停用 4–8 周后复测本项
+        target: [VIT_A]
+        conditional: 仅在上一步确认存在含维生素A 的补充剂时执行。
+        rationale: 停用后复测能直接回答来源问题，比做任何新检查都更省事。
+        verify_by: VIT_A
+        horizon: 8 周
+        caveat: 复测需空腹、同一实验室；同时记录停用与否、停了多久

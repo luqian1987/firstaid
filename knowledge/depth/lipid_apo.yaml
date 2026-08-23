@@ -1,0 +1,50 @@
+depth:
+  lipid.apo_paired_divergence:
+    mechanisms:
+      - level: 计量口径
+        cites: [APOB_MGDL, NONHDL_C_MGDL]
+        rules_out: 说明了这两个数为什么本来就该同步，不同步才需要解释
+        pivot: >-
+          每一个致动脉粥样硬化颗粒（VLDL、IDL、LDL、Lp(a)）都恰好携带一分子 ApoB。
+          所以 ApoB 数的是"颗粒有多少个"，非 HDL 胆固醇量的是"这些颗粒里一共装了多少胆固醇"。
+          同一批颗粒的两种计量方式，正常情况下高度同步。本次 ApoB {APOB_MGDL} mg/dL
+          对应的非 HDL 胆固醇只有 {NONHDL_C_MGDL} mg/dL。
+      - level: 同向性
+        cites: [APOA1_MGDL, HDL_C_MGDL, LPA]
+        rules_out: 同向偏离指向检测侧的系统性问题，而不是两个独立的生物学异常
+        pivot: >-
+          ApoA1 与 HDL-C 是另一组同类配对：ApoA1 {APOA1_MGDL} mg/dL 对应的
+          HDL-C 只有 {HDL_C_MGDL} mg/dL。两组配对同时朝"载脂蛋白偏高、胆固醇偏低"
+          的同一方向散开。两种彼此独立的脂蛋白异常恰好同时发生、且方向一致，
+          比一次批内的方法学或定标偏差更难解释。Lp(a) {LPA} 会贡献一部分 ApoB，
+          但按其质量估算只够补上缺口的一小部分。
+    modifiers:
+      present:
+        - {name: 两组配对同向背离, codes: [APOB_MGDL, NONHDL_C_MGDL, APOA1_MGDL, HDL_C_MGDL]}
+      absent:
+        - {name: 常规血脂异常, codes: [TC, TG, LDL_C, SDLDL_C], note: 四项全部在区间内}
+        - {name: 肝脏合成功能异常, codes: [ALB, TP, CHE], note: 载脂蛋白由肝脏合成}
+      unknown:
+        - {name: 采血是否空腹、前一晚饮食与饮酒, why: 影响脂蛋白测定，复测时两次口径必须一致}
+        - {name: 该批次的检测方法学与定标记录, why: 纸面数据分不出是方法学、定标还是样本状态}
+    interventions:
+      - kind: measurement
+        action: 另择一次空腹采血复测：血脂全套 + ApoB + ApoA1 + Lp(a)，尽量换一家实验室
+        rationale: 换实验室是为了让方法学成为变量。若换一家之后对上了，本次就是检测侧问题。
+        verify_by: APOB_MGDL
+        horizon: 1–3 个月
+        caveat: 复测时记录是否空腹、前一晚饮食与饮酒，两次口径要一致
+      - kind: measurement
+        action: 把本次 5 个数值连同单位与参考区间原样留档
+        rationale: 否则下次拿到新结果时，无法判断是真变化还是换了方法。
+        verify_by: APOB_MGDL
+        horizon: 立即
+      - kind: clinical
+        action: 复测之后如果 ApoB 仍高，门诊可能面对的处理路径
+        paths:
+          - 按颗粒数量偏高来管理，而不是只看 LDL-C
+          - 与 Lp(a) 合并考虑总的致动脉粥样硬化颗粒负荷
+        ask_doctor:
+          - 换了实验室复测后两组配对对上了吗，本次这组数还需要处理吗
+          - 如果 ApoB 确实偏高，它和我的 Lp(a) 该怎么一起看
+        note: 复测前不必就此就诊。以上是复测结果确实偏高时才需要讨论的内容。

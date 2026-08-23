@@ -1,0 +1,86 @@
+pathways:
+  - id: vascular.lpa
+    label: 血管
+    upstream: lpa_genetic
+    chain: lipid.lpa_intracranial_lead
+    gate_kind: specialist
+    stages:
+      - name: 脂蛋白(a) 升高
+        judged_by: [LPA]
+        crossed_when: "LPA.is_high"
+        detail: "{LPA} mg/L，达上限 1.52 倍；由基因决定，终生基本不变"
+      - name: 颅内 M1 段狭窄
+        judged_by: [MRA_MCA_M1]
+        crossed_when: "MRA_MCA_M1.present"
+        edge: 已落印
+        emphasis: true
+        detail: 影像已见，但程度未量化；同期颈动脉与椎动脉均干净
+    tail: >-
+      更远的阶段本次没有任何数据。狭窄程度原报告未量化，这正是要带原始影像去专科的原因——
+      能回答"接下来怎么办"的是那次面诊，不是这份文件。
+    next_gate: 下一关取决于狭窄程度与随访间隔。这两件事本判读回答不了，需要带原始影像面诊。
+
+depth:
+  lipid.lpa_intracranial_lead:
+    mechanisms:
+      - level: 分子来源
+        cites: [LPA, LDL_C, TC]
+        rules_out: 解释了为什么常规血脂全部正常却仍需处理
+        pivot: >-
+          脂蛋白(a) 是一个 LDL 样颗粒外加一条载脂蛋白(a) 通过二硫键共价连接而成。
+          常规血脂测的是颗粒里装了多少胆固醇，测不到这条额外的多肽——所以
+          总胆固醇 {TC}、LDL-C {LDL_C} 全部正常，与 Lp(a) {LPA} 升高之间没有矛盾，
+          它们本来就在测两件不同的事。
+      - level: 遗传
+        cites: [LPA]
+        rules_out: 排除了"靠生活方式处理"这条路径
+        pivot: >-
+          血中 Lp(a) 浓度九成以上由 LPA 基因位点决定，个体一生基本恒定，
+          不随饮食、运动、体重变化。这一点使它与本报告里其余所有条目性质不同：
+          其余条目的处理入口在本人，这一条的处理入口在专科。
+      - level: 分布形态
+        cites: [MRA_MCA_M1, CAROTID_US]
+        rules_out: 分布本身就是判读依据，不只是两个孤立影像描述
+        pivot: >-
+          动脉粥样硬化最常见的早期落点是颈动脉分叉这类血流剪切复杂的部位。
+          本次颈动脉与椎动脉内膜连续良好、腔内干净，而颅内 M1 段已出现狭窄——
+          这种"外周干净、颅内先出现"的分布，与唯一显著超标的是一个遗传性颗粒指标，
+          两件事合起来才构成本次的主线。
+    modifiers:
+      present:
+        - {name: 脂蛋白(a) 显著升高, codes: [LPA], note: 遗传决定，不可改变}
+        - {name: 已有影像落点, codes: [MRA_MCA_M1], note: 本次唯一的器质性发现}
+      absent:
+        - {name: 高血压, codes: [SBP, DBP]}
+        - {name: 糖代谢异常, codes: [HBA1C, GLU_FASTING]}
+        - {name: 常规血脂异常, codes: [LDL_C, TC, TG, SDLDL_C]}
+        - {name: 颈动脉粥样硬化, codes: [CAROTID_US], note: 内膜连续良好，腔内干净}
+        - {name: 已发生的脑缺血事件, codes: [BRAIN_MRI_PLAIN], note: 平扫与 DWI 均未见异常信号}
+      unknown:
+        - {name: 吸烟史, why: 与 Lp(a) 叠加时风险分层完全不同，本次报告空白}
+        - {name: 家族早发心脑血管病史, why: 男性 55 岁前 / 女性 65 岁前。Lp(a) 由基因决定，家族史直接相关}
+    interventions:
+      - kind: measurement
+        action: 补齐两项背景：吸烟史、家族早发心脑血管病史
+        rationale: 这两项直接决定风险分层，而本次报告完全空白。它们不需要做任何检查。
+        verify_by: LPA
+        horizon: 立即
+      - kind: measurement
+        action: 建议父母、兄弟姐妹、子女各查一次脂蛋白(a)，一生一次即可
+        rationale: 由基因决定，因此是家族性的；而它一生基本恒定，所以查一次就够。
+        verify_by: LPA
+        horizon: 一次即可
+      - kind: clinical
+        action: 神经内科或心内科门诊时，可能面对的处理路径
+        paths:
+          - 带原始影像（不是报告单）请医生确认 M1 段狭窄的程度与随访间隔
+          - 依 Lp(a) 水平重新设定 LDL-C 的目标值——这是 Lp(a) 影响临床决策的主要方式
+          - 是否需要经颅多普勒等功能学检查补充 MRA 的形态学信息
+        ask_doctor:
+          - 我的 Lp(a) 456.7 mg/L，LDL-C 只有 1.99，LDL-C 的目标值应该定在多少
+          - M1 段狭窄没有量化百分比，需不需要重新量化，随访间隔多久
+          - 家里人要不要也查一次 Lp(a)
+        note: >-
+          以上只是让你知道门诊会面对什么选择，不是建议。
+          Lp(a) 目前没有以它为直接靶点的常规处理，临床上通常从可干预的部分入手——
+          具体怎么做由医生结合你的整体情况决定。

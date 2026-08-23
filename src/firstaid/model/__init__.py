@@ -8,6 +8,10 @@ from .original import (
     BAND_COLOR, BAND_META, BAND_ORDER, TAG_BAND, Band, OriginalFinding,
     Reconciliation, ReconciliationRow, band_of,
 )
+from .depth import (
+    KIND_LABELS, STAGE_LABELS, Depth, Intervention, InterventionKind, Mechanism,
+    Modifier, Modifiers, PathwayStage, PathwayTrack, StageState, Topology, Upstream,
+)
 from .subject import Encounter, Subject, Timeline
 from .derived import DerivedDef, DerivedRegistry
 from .comparison import (
