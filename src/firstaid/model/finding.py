@@ -27,6 +27,7 @@ class Archetype(str, Enum):
     NORMAL_PANEL_HIDDEN_RISK = "normal_panel_hidden_risk"  # 常规全正常但组合提示风险
     UNRANGED_STRUCTURAL = "unranged_structural"          # 无区间结构性发现 → 转比较口径
     RANGE_KIND_CAVEAT = "range_kind_caveat"              # 区间口径不当：拿实验室自有百分位当疾病界值
+    BORDERLINE_CONCORDANT = "borderline_concordant"      # 多个相关指标同处区间同一端 → 建趋势基线
 
 
 class Modifiability(str, Enum):
@@ -187,7 +188,8 @@ class Correction(Frozen):
 class MissingContextItem(Frozen):
     key: ContextKey
     label: str
-    affects: tuple[str, ...] = ()    # 影响哪些 chain id
+    affects: tuple[str, ...] = ()          # 受影响的 chain id
+    affect_titles: tuple[str, ...] = ()    # 对应的判读标题，给人看的
     why: str = ""
 
 

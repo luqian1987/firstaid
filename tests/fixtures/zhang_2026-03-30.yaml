@@ -87,7 +87,7 @@ observations:
   - {code: HCY,          raw_name: 同型半胱氨酸,     value: 10.91,   unit: μmol/L, ref: "0-15",       source: main}
   - {code: MMA,          raw_name: 甲基丙二酸,       value: 1.79,    unit: ng/mL,  ref: "≤47.2",      source: supp}
   - {code: PREALBUMIN,   raw_name: 前白蛋白,         value: 407,     unit: mg/L,   ref: "200-400",    source: main, flag: "↑"}
-  - {code: COQ10,        raw_name: 辅酶Q10,          value: 767.64,  unit: ng/mL,  ref: "800-1600",   source: supp, flag: "↓",
+  - {code: COQ10,        raw_name: 辅酶Q10,          value: 767.64,  unit: μg/L,  ref: "850-2700",   source: supp, flag: "↓",
      ref_kind: lab_percentile, ref_note: 该实验室按340例健康人5%-95%分位定的自有区间，不是疾病界值}
 
   # ---- 尿液 ----

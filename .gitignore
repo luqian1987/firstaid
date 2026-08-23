@@ -13,3 +13,6 @@ out/
 *.pdf
 tests/fixtures/.tmp_*.yaml
 .pytest_cache/
+
+# 渲染产物含个人健康数据，不进版本库
+out/

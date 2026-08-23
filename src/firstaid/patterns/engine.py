@@ -48,7 +48,7 @@ class PatternEngine:
 
     def run(self, ctx: RuleContext) -> EngineResult:
         res = EngineResult()
-        ctx_missing: dict[ContextKey, list[str]] = {}
+        ctx_missing: dict[ContextKey, list[tuple[str, str]]] = {}
 
         for rule in self.ruleset.enabled():
             impl = REGISTRY.get(rule.archetype)
@@ -62,9 +62,11 @@ class PatternEngine:
                 continue
             res.hits.append(hit)
 
-            for key in rule.needs_context:
-                if not ctx.has_context(key):
-                    ctx_missing.setdefault(key, []).append(rule.id)
+            if hit.state is TriState.TRIGGERED:
+                # 只有真正成立的判读才谈得上"受某项背景影响"
+                for key in rule.needs_context:
+                    if not ctx.has_context(key):
+                        ctx_missing.setdefault(key, []).append((rule.id, rule.title))
 
             if hit.state is TriState.INDETERMINATE:
                 res.boundaries.append(BoundaryItem(
@@ -86,9 +88,11 @@ class PatternEngine:
             except Exception as e:
                 res.errors.append(f"{rule.id}: 组装失败 {type(e).__name__}: {e}")
 
-        for key, rules in ctx_missing.items():
+        for key, pairs in ctx_missing.items():
             res.missing_context.append(MissingContextItem(
-                key=key, label=CONTEXT_LABELS[key], affects=tuple(rules),
+                key=key, label=CONTEXT_LABELS[key],
+                affects=tuple(p[0] for p in pairs),
+                affect_titles=tuple(p[1] for p in pairs),
                 why="报告里没有这项背景，本判读不替你假设",
             ))
         return res

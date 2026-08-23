@@ -30,6 +30,7 @@ class Analysis:
     missing_context: list[MissingContextItem] = field(default_factory=list)
     consistency: list[ConsistencyIssue] = field(default_factory=list)
     coverage: CoverageReport | None = None
+    derived_notes: dict[str, str] = field(default_factory=dict)
     plan: ComparisonPlan | None = None
     engine: EngineResult | None = None
     errors: list[str] = field(default_factory=list)
@@ -58,6 +59,7 @@ def analyze(timeline: Timeline, ontology=None, units=None, rules=None,
     # L2 派生
     _, issues = DeriveEngine(derived).run(enc)
     a.consistency = issues
+    a.derived_notes = {d.code: d.changes_what for d in derived.defs if d.changes_what}
 
     # L3/L4 模式 → 链条
     engine = PatternEngine(rules, ontology)

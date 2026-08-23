@@ -1,0 +1,61 @@
+rules:
+  # 模式 11：多指标同处区间同一端 → 建趋势基线
+  - id: renal.microalbumin_borderline
+    archetype: borderline_concordant
+    title: 尿微量白蛋白两项都在区间内，但双双贴近上限
+    lede: >-
+      单看任何一项都是"正常"，不会出现在任何异常清单里。
+      但两项是同一件事的两种算法，同时贴近上限时，一致性本身就是信息。
+    tag: baseline
+    chapter: baseline
+    modifiability: self_modifiable
+    priority: 35
+    params:
+      codes: [UACR, U_MALB]
+      end: high
+      threshold: 0.75
+      min_members: 2
+      context_normal: [CREATININE, CYSTATIN_C, UREA, U_PRO]
+      context_expect: in_range
+    narration:
+      single_read: >-
+        两项都在参考区间内，不打箭头，因此不会进入任何需要关注的清单，
+        整份报告里也不会被提到一次。
+      joint_read: >-
+        尿微量白蛋白/肌酐 {UACR} mg/g 与尿微量白蛋白 {U_MALB} mg/L 参考上限都是 30，
+        两项分别位于区间的 {$pos_UACR} 和 {$pos_U_MALB} 位置——都在最上面四分之一。
+        而肾功能其余项都在区间中部：肌酐 {CREATININE}、胱抑素C {CYSTATIN_C}、
+        尿素 {UREA}、尿蛋白定性阴性。所以这不是肾功能问题，
+        而是一个值得从现在开始记的起点：微量白蛋白是早期变化里最先动的那一类指标，
+        它的意义几乎完全在趋势上，单点没有意义。
+      must_convey:
+        - 两项都在区间内，本次不构成异常
+        - 两项是同一件事的两种算法，同时贴近上限使其值得建基线
+        - 肾功能其余指标都在区间中部，本次不指向肾功能受损
+      must_not_claim:
+        - 不得称存在早期肾损害
+        - 不得由单次结果推断趋势
+        - 不得据此安排任何检查或用药
+    verdict:
+      certain: >-
+        本次不需要任何行动。唯一要做的是把这两个数记下来，
+        使下一次体检能够比较——这也是它出现在本判读里的全部理由。
+      not_certain: >-
+        不能称存在早期肾损害。单次尿微量白蛋白受运动、发热、体位、留样时间影响很大，
+        本判读也没有拿到既往数据，无法判断这是本人的常态还是本次的波动。
+      next_steps:
+        - 下次体检保留同样的两项，并尽量用晨起中段尿、避免前一日剧烈运动
+        - 如果血压或血糖出现变化，这两项的意义会随之上升，届时再一起看
+      compare_next:
+        - code: UACR
+          what: 比 UACR 本身的数值走向，不是比"有没有超过 30"
+          rationale: 从 25 走到 29 仍然"正常"，但方向已经说明问题
+        - code: U_MALB
+          what: 与 UACR 一起看，两项背离时优先信 UACR（已按尿液浓缩程度校正）
+          caveat: 需同为晨起中段尿才可比
+    tests:
+      - {name: 张韦韦真实数据, fixture: zhang_real_2026-03-30, expect: triggered}
+      - {name: 已超上限则属普通异常不归此类, fixture: zhang_real_2026-03-30,
+         expect: not_triggered, overrides: {U_MALB: 45}}
+      - {name: 位于区间中部时不成立, fixture: zhang_real_2026-03-30,
+         expect: not_triggered, overrides: {UACR: 12, U_MALB: 11}}

@@ -49,7 +49,11 @@ class RefRange(Frozen):
 
     def display(self) -> str:
         if self.raw:
-            return self.raw
+            # 各家医院的连接符写法不一（"--" "~" "至"），统一成一个短破折号再展示；
+            # 原始写法仍保留在 raw 里，不丢。
+            if self.low is not None and self.high is not None:
+                return f"{_num(self.low)}–{_num(self.high)}"
+            return self.raw.replace("--", "–")
         if self.low is not None and self.high is not None:
             return f"{_num(self.low)}–{_num(self.high)}"
         if self.high is not None:
@@ -117,6 +121,11 @@ class Observation(Frozen):
         return self.status in (RangeStatus.HIGH, RangeStatus.LOW)
 
     @property
+    def judged(self) -> bool:
+        """状态已判定。定性指标靠期望值判定，没有数值区间但结论确定。"""
+        return self.status in (RangeStatus.IN_RANGE, RangeStatus.HIGH, RangeStatus.LOW)
+
+    @property
     def has_range(self) -> bool:
         return self.ref is not None and (
             self.ref.low is not None or self.ref.high is not None
@@ -177,14 +186,17 @@ class Observation(Frozen):
         return (self.code, self.unit, self.method, self.device, self.axis)
 
     def display_value(self) -> str:
-        if self.text:
+        if self.value is None and self.text:
             return self.text
         if self.qualitative is not None:
             return {"negative": "阴性", "positive": "阳性", "trace": "±",
                     "not_detected": "未检出", "normal": "正常"}[self.qualitative.value]
         if self.value is None:
             return "—"
-        return f"{self.censor or ''}{_num(self.value)}"
+        # 派生值内部保留全精度（供比较与校验），展示时收敛到 2 位小数：
+        # "HOMA-IR 1.33716" 这种写法会让读者以为精度真有那么高。
+        v = round(self.value, 2) if self.kind is ObservationKind.DERIVED else self.value
+        return f"{self.censor or ''}{_num(v)}"
 
     @model_validator(mode="after")
     def _check(self):

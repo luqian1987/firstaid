@@ -20,13 +20,15 @@ KNOWLEDGE = ROOT / "knowledge"
 
 
 def load_ontology(path: Path | None = None) -> Ontology:
-    p = path or (KNOWLEDGE / "ontology" / "indicators.yaml")
-    doc = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
+    base = path or (KNOWLEDGE / "ontology")
+    files = sorted(base.glob("indicators*.yaml")) if base.is_dir() else [base]
     ont = Ontology()
-    for raw in doc.get("indicators", []):
-        raw = dict(raw)
-        raw["aliases"] = tuple(raw.get("aliases", []))
-        ont.add(IndicatorDef.model_validate(raw))
+    for f in files:
+        doc = yaml.safe_load(f.read_text(encoding="utf-8")) or {}
+        for raw in doc.get("indicators", []):
+            raw = dict(raw)
+            raw["aliases"] = tuple(raw.get("aliases", []))
+            ont.add(IndicatorDef.model_validate(raw))
     return ont
 
 

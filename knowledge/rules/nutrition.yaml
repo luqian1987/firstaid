@@ -84,3 +84,59 @@ rules:
       - {name: 张韦韦本次, fixture: zhang_2026-03-30, expect: triggered}
       - {name: 疾病界值口径时不适用, fixture: zhang_2026-03-30, expect: not_triggered,
          overrides: {COQ10__ref_kind: disease_cutoff}}
+
+  # 模式 6：孤立异常缺乏佐证
+  - id: nutrition.vitamin_a_isolated_high
+    archetype: isolated_abnormal
+    title: 维生素A 单独升高，其余脂溶性维生素都在区间内
+    lede: >-
+      脂溶性维生素会在体内蓄积。四项里只有一项高、其余三项正常，
+      这个形态首先要问的是来源，而不是代谢。
+    tag: retest_first
+    chapter: watch
+    modifiability: self_modifiable
+    priority: 38
+    params:
+      abnormal: VIT_A
+      direction: high
+      corroborators: [VIT_E, VIT_K1, VITD_25OH]
+      corroborator_expect: in_range
+    extra_evidence: [ALT, AST, TBIL, VITD_25OHD2, VITD_25OHD3]
+    needs_context: [medications]
+    narration:
+      single_read: >-
+        "维生素A 高"被列进"其他"一栏，和 B6、叶酸的建议放在一起，
+        没有说明它意味着什么，也没有说明该不该处理。
+      joint_read: >-
+        维生素A {VIT_A} ng/ml 超出上限，而同一次检测的维生素E {VIT_E}、
+        维生素K1 {VIT_K1}、25-羟基维生素总D {VITD_25OH} 全部在区间内。
+        四项脂溶性维生素同批检测、同一份样本，只有一项偏离——
+        这不像吸收或代谢的整体改变，更像单一来源的额外摄入。
+        肝功能侧也没有支持胆汁淤积的证据：ALT {ALT}、AST {AST}、总胆红素 {TBIL} 均正常。
+        所以第一个要回答的问题是：有没有在吃含维生素A 的补充剂、复合维生素或鱼肝油。
+      must_convey:
+        - 四项脂溶性维生素只有一项偏离，形态指向单一来源
+        - 肝功能正常，不支持胆汁淤积导致的脂溶性维生素蓄积
+        - 在拿到补充剂清单之前，不对这一条做进一步解释
+      must_not_claim:
+        - 不得诊断维生素A 过量或中毒
+        - 不得在不知道摄入来源的情况下建议停用任何东西
+    verdict:
+      certain: >-
+        需要先补一份信息而不是先做一项检查：在服的所有补充剂清单。
+        这份清单同时也会影响 GGT 那一条判读，两处都在等同一个答案。
+      not_certain: >-
+        不能认定维生素A 过量。单次血清维生素A 受近期摄入影响明显，
+        且本判读完全不知道本人的补充剂情况。
+      next_steps:
+        - 列出在服的所有药物与保健品，含复合维生素、鱼肝油、蛋白粉与功能饮料
+        - 若确有含维生素A 的补充剂，停用 4–8 周后复测本项
+        - 不需要为此单独就诊；下次体检顺带复查即可
+      compare_next:
+        - code: VIT_A
+          what: 复测时同时记录停用与否、停用多久，否则数值无法解释
+          caveat: 需空腹、同一实验室
+    tests:
+      - {name: 张韦韦真实数据, fixture: zhang_real_2026-03-30, expect: triggered}
+      - {name: 其余脂溶性维生素也高则不是孤立形态, fixture: zhang_real_2026-03-30,
+         expect: not_triggered, overrides: {VIT_E: 22000}}

@@ -1,0 +1,57 @@
+rules:
+  # 模式 6：孤立异常缺乏佐证
+  # 这条判读两份参考实现都没有做：牙龈出血与同一份报告里的低纤维蛋白原并列出现，
+  # 很容易被读成"凝血有问题"。凝血全套正常 + 牙结石在场，方向完全不同。
+  - id: oral.gingival_bleeding_is_local
+    archetype: isolated_abnormal
+    title: 牙龈出血的原因在牙结石，不在凝血
+    lede: >-
+      同一份报告里既有"牙龈出血"，又有"纤维蛋白原低"。
+      这两条挨在一起看，很容易被读成同一件事，但它们不是。
+    tag: self_action
+    chapter: easy_win
+    modifiability: self_modifiable
+    priority: 45
+    params:
+      abnormal: GINGIVAL_BLEEDING
+      direction: high
+      corroborators: [PT, APTT, INR, PLT, MAR_ADP, DDIMER]
+      corroborator_expect: in_range
+    extra_evidence: [DENTAL_CALCULUS, GINGIVAL_RECESSION, TT, FIB]
+    narration:
+      single_read: >-
+        报告里"牙龈出血"被归进口腔科，"纤维蛋白原低"被归进血液科，
+        两条建议分别给出，谁也不解释谁。而当事人自己很容易把两件事连起来担心。
+      joint_read: >-
+        凝血侧全部正常：凝血酶原时间 {PT}、APTT {APTT}、INR {INR}、
+        血小板 {PLT}、最大聚集率 {MAR_ADP}、D-二聚体 {DDIMER}。
+        全身性出血倾向会在这些指标上留下痕迹，这里一个都没有。
+        而局部证据是齐的：牙结石轻度、牙龈退缩同时存在。
+        纤维蛋白原 {FIB} 偏低属于另一条判读里的低炎症背景，不解释牙龈出血。
+      must_convey:
+        - 凝血功能指标全部正常，不支持全身性出血倾向
+        - 牙结石与牙龈退缩同时在场，是局部原因的直接证据
+        - 纤维蛋白原偏低与牙龈出血是两件事
+      must_not_claim:
+        - 不得排除牙周炎需要口腔科评估
+        - 不得据此判断牙周病的分期或严重程度
+    verdict:
+      certain: >-
+        这一条的处理入口在口腔科洁牙和日常清洁，不在血液科。
+        它是本次少数几件负担很低、又能自己直接改变的事之一。
+      not_certain: >-
+        不能排除牙周炎，牙龈退缩本身需要口腔科面诊评估。
+        也不能由凝血正常推断牙龈健康——两者本来就不在一个层面。
+      next_steps:
+        - 按原报告建议洁牙，之后定期洁治
+        - 日常清洁把牙龈边缘和牙缝都覆盖到，这是出血是否消退的关键变量
+        - 洁牙后 2–4 周若出血仍未减少，回口腔科复评，而不是去查凝血
+      compare_next:
+        - code: GINGIVAL_BLEEDING
+          what: 比洁牙后出血是否消退，这是判断局部解释成不成立的直接检验
+        - code: GINGIVAL_RECESSION
+          what: 牙龈退缩不可逆，记录本次状态作为基线
+    tests:
+      - {name: 张韦韦真实数据, fixture: zhang_real_2026-03-30, expect: triggered}
+      - {name: 血小板低时不能归为局部原因, fixture: zhang_real_2026-03-30,
+         expect: not_triggered, overrides: {PLT: 42}}

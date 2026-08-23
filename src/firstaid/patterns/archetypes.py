@@ -33,26 +33,28 @@ def check_state(o: Observation | None, expect: str, threshold: float | None = No
     if e == "present":
         return True
     if e == "in_range":
-        return o.in_range if o.has_range else None
+        return o.in_range if o.judged else None
     if e == "high":
-        return o.is_high if o.has_range else None
+        return o.is_high if o.judged else None
     if e == "low":
-        return o.is_low if o.has_range else None
+        return o.is_low if o.judged else None
     if e == "abnormal":
-        return o.abnormal if o.has_range else None
+        return o.abnormal if o.judged else None
     if e == "not_high":
-        return (not o.is_high) if o.has_range else None
+        return (not o.is_high) if o.judged else None
     if e == "negative":
         if o.qualitative is not None:
-            return o.negative
-        return o.in_range if o.has_range else None
+            return o.negative if not o.judged else o.in_range
+        return o.in_range if o.judged else None
     if e == "negative_or_in_range":
-        return o.negative if (o.qualitative is not None or o.has_range) else None
+        if o.judged:
+            return o.in_range
+        return o.negative if o.qualitative is not None else None
     if e in ("low_end", "high_end"):
         pos = o.position_in_range
         if pos is None:
             # 单边区间时退化：低端看是否 low，高端看是否 high
-            if not o.has_range:
+            if not o.judged:
                 return None
             return o.is_low if e == "low_end" else o.is_high
         t = threshold if threshold is not None else (
@@ -69,7 +71,7 @@ def check_state(o: Observation | None, expect: str, threshold: float | None = No
     if e == "advisory_low":
         return o.advisory_low if o.has_advisory else None
     if e == "in_range_or_advisory_in_range":
-        if o.has_range:
+        if o.judged:
             return o.in_range
         return o.advisory_in_range if o.has_advisory else None
     if e == "normal_text":
@@ -582,11 +584,70 @@ class RangeKindCaveat(ArchetypeImpl):
         )
 
 
+# --------------------------------------------------------------------------
+# 11. 多指标同处区间同一端  → 单个都不算异常，但一致性使其值得建趋势基线
+#     例：尿微量白蛋白 27.74 与 尿微量白蛋白/肌酐 25.79 都在 0–30 内，
+#     但双双贴近上限，而肾功能其余项都在区间中部。单看任一项都会被略过。
+# --------------------------------------------------------------------------
+class BorderlineConcordantParams(BaseModel):
+    codes: list[str]
+    end: str = "high"                    # high / low
+    threshold: float = 0.75              # 区间内相对位置阈值
+    min_members: int = 2
+    context_normal: list[str] = Field(default_factory=list)
+    context_expect: str = "in_range"
+
+
+class BorderlineConcordant(ArchetypeImpl):
+    archetype = Archetype.BORDERLINE_CONCORDANT
+    params_model = BorderlineConcordantParams
+
+    def evaluate(self, rule_id, ctx, p: BorderlineConcordantParams) -> PatternHit:
+        refs, missing, detail = [], [], {}
+        hits = 0
+        for c in p.codes:
+            o = ctx.obs(c)
+            if o is None:
+                missing.append(c)
+                continue
+            pos = o.position_in_range
+            if pos is None:
+                missing.append(c)
+                continue
+            detail[f"pos_{c}"] = round(pos, 3)
+            refs.append(EvidenceRef(observation=o, role="borderline"))
+            # 必须仍在区间内——已经越界的属于普通异常，不归这一类
+            if not o.in_range:
+                return self._hit(rule_id, TriState.NOT_TRIGGERED, evidence=refs,
+                                 detail=detail)
+            if (p.end == "high" and pos >= p.threshold) or \
+               (p.end == "low" and pos <= 1 - p.threshold):
+                hits += 1
+        if missing:
+            return self._hit(rule_id, TriState.INDETERMINATE, missing=missing,
+                             evidence=refs, detail=detail)
+        cr, cmiss = self._gather(ctx, p.context_normal, "context")
+        if cmiss:
+            return self._hit(rule_id, TriState.INDETERMINATE, missing=cmiss)
+        cstates = [check_state(r.observation, p.context_expect) for r in cr]
+        if any(s is None for s in cstates):
+            return self._hit(rule_id, TriState.INDETERMINATE,
+                             missing=[r.observation.code
+                                      for r, s in zip(cr, cstates) if s is None])
+        detail["n_borderline"] = float(hits)
+        ok = hits >= p.min_members and all(cstates)
+        allrefs = refs + cr
+        return self._hit(
+            rule_id, TriState.TRIGGERED if ok else TriState.NOT_TRIGGERED,
+            evidence=allrefs, consumed=[r.observation.code for r in allrefs],
+            detail=detail)
+
+
 REGISTRY: dict[Archetype, ArchetypeImpl] = {
     impl.archetype: impl for impl in (
         UpstreamContradicted(), CorrectedVsRaw(), PairedDivergence(),
         PatternDissociation(), LayeredExclusion(), IsolatedAbnormal(),
         AcutePhaseCoherence(), NormalPanelHiddenRisk(), UnrangedStructural(),
-        RangeKindCaveat(),
+        RangeKindCaveat(), BorderlineConcordant(),
     )
 }

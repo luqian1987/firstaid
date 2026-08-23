@@ -21,7 +21,14 @@ _QUAL = {
     "未检出": Qualitative.NOT_DETECTED, "未见": Qualitative.NOT_DETECTED,
     "正常": Qualitative.NORMAL, "未见异常": Qualitative.NORMAL,
     "未见明显异常": Qualitative.NORMAL, "normal": Qualitative.NORMAL,
+    "是": Qualitative.POSITIVE, "有": Qualitative.POSITIVE,
+    "否": Qualitative.NEGATIVE, "无": Qualitative.NEGATIVE,
+    "轻度": Qualitative.TRACE,
 }
+
+# 定性指标的"参考区间"其实是期望值（如唾液胃蛋白酶 参考:阴性、牙龈出血 参考:否）。
+# 实测与期望不符即为异常——否则这类项会静静落进"无区间"，逃过覆盖率审计。
+_QUAL_EXPECT = {"阴性", "阳性", "否", "是", "无", "有", "正常", "negative", "-"}
 
 
 class Normalizer:
@@ -46,19 +53,25 @@ class Normalizer:
         kind = ObservationKind(row["kind"]) if row.get("kind") else (
             d.kind if d else ObservationKind.QUANTITATIVE)
 
+        ref_raw = row.get("ref")
         ref = parse_range(
-            row.get("ref"),
+            ref_raw,
             kind=RangeKind(row["ref_kind"]) if row.get("ref_kind")
             else (d.default_range_kind if d else RangeKind.UNSPECIFIED),
             source_note=row.get("ref_note"),
         )
 
+        # "报告没给区间" 与 "给了但解析不了" 是两回事：
+        # 前者 NO_RANGE，后者 UNKNOWN —— 保留原值、进审计的"暂未判定高低"，不判高低。
+        unparsed_ref = bool(ref_raw) and ref is None and value is not None
         obs = Observation(
             code=code, raw_name=raw_name or (d.name if d else code), kind=kind,
             value=value, censor=censor, qualitative=qual, text=text,
             unit=row.get("unit"), ref=ref,
-            status=judge(value, censor, ref) if (value is not None or ref) else (
-                RangeStatus.NO_RANGE if qual is None and text else RangeStatus.UNKNOWN),
+            status=(RangeStatus.UNKNOWN if unparsed_ref else
+                    judge(value, censor, ref) if (value is not None or ref) else
+                    (RangeStatus.NO_RANGE if qual is None and text
+                     else RangeStatus.UNKNOWN)),
             reported_flag=row.get("flag"),
             method=row.get("method"), device=row.get("device"),
             specimen=row.get("specimen"), axis=row.get("axis"),
@@ -66,7 +79,21 @@ class Normalizer:
             provenance=provenance,
         )
         if qual is not None:
-            obs = obs.model_copy(update={"status": RangeStatus.NO_RANGE})
+            expect_raw = str(row.get("ref") or "").strip()
+            expected = _QUAL.get(expect_raw) if expect_raw in _QUAL_EXPECT else None
+            if expected is not None:
+                same = (qual == expected) or (
+                    qual in (Qualitative.NEGATIVE, Qualitative.NOT_DETECTED,
+                             Qualitative.NORMAL)
+                    and expected in (Qualitative.NEGATIVE, Qualitative.NOT_DETECTED,
+                                     Qualitative.NORMAL))
+                obs = obs.model_copy(update={
+                    "status": RangeStatus.IN_RANGE if same else RangeStatus.HIGH,
+                    "ref": RefRange(kind=RangeKind.UNSPECIFIED, raw=expect_raw,
+                                    source_note="定性期望值"),
+                })
+            else:
+                obs = obs.model_copy(update={"status": RangeStatus.NO_RANGE})
 
         # 补常用切点（只在原报告没给区间时）
         if d and (d.advisory_low is not None or d.advisory_high is not None) \

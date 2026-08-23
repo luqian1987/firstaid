@@ -109,8 +109,10 @@ rules:
     params:
       raw: [WBV_LOW, WBV_MID]
       corrected: [WBRV_LOW, PLASMA_VISC, RBC_AGGR, RBC_DEFORM]
+      # 真实报告里三档还原粘度与刚性指数都在，一并纳入使反证更完整
       corrected_expect: in_range
-      confounders: [HCT_RHEO, HGB, FIB, ESR, HSCRP]
+      confounders: [HCT_RHEO, HGB, FIB, ESR, HSCRP, HCT, WBV_HIGH,
+                    WBRV_MID, WBRV_HIGH, RBC_RIGID, WBV_MID50]
     correction:
       claim: "“血液粘稠”的说法这次不成立"
       original_advice: 低切[1]高；中切[5]高 → 建议低盐低脂饮食，多饮水，心内科门诊复查随访。

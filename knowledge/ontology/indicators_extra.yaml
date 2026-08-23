@@ -1,0 +1,135 @@
+# 由张韦韦 2026-03-30 真实报告扩充。按系统分组。
+indicators:
+  # ---------------- 脂溶性维生素 ----------------
+  - {code: VIT_A,  name: 维生素A, aliases: ["维生素A(Vit A)", "Vit A"], canonical_unit: ng/ml,
+     system: nutrition, modifiability: self_modifiable,
+     note: 脂溶性，可蓄积；单项升高常与补充剂相关}
+  - {code: VIT_E,  name: 维生素E, aliases: ["维生素E(Vit E)", "Vit E"], canonical_unit: ng/ml,
+     system: nutrition, modifiability: self_modifiable}
+  - {code: VIT_K1, name: 维生素K1, aliases: ["维生素K1(Vit K1)", "Vit K1"], canonical_unit: ng/mL,
+     system: nutrition, modifiability: self_modifiable}
+  - {code: VITD_25OH,  name: 25-羟基维生素总D, aliases: ["25OHD", "25-羟基维生素D"],
+     canonical_unit: ng/ml, system: nutrition, modifiability: self_modifiable}
+  - {code: VITD_25OHD2, name: 25-羟基维生素D2, aliases: ["25OHD2"], canonical_unit: ng/ml,
+     system: nutrition, modifiability: self_modifiable}
+  - {code: VITD_25OHD3, name: 25-羟基维生素D3, aliases: ["25OHD3"], canonical_unit: ng/ml,
+     system: nutrition, modifiability: self_modifiable}
+  # ---------------- 水溶性维生素 ----------------
+  - {code: VIT_B1, name: 维生素B1, aliases: ["维生素B1(硫胺素)", "硫胺素", "Vit B1"],
+     canonical_unit: ng/mL, system: nutrition, modifiability: self_modifiable}
+  - {code: VIT_B2, name: 维生素B2, aliases: ["维生素B2(核黄素)", "核黄素", "Vit B2"],
+     canonical_unit: ng/mL, system: nutrition, modifiability: self_modifiable}
+  - {code: VIT_B3, name: 维生素B3, aliases: ["维生素B3(烟酸)", "烟酸", "Vit B3"],
+     canonical_unit: ng/mL, system: nutrition, modifiability: self_modifiable}
+  - {code: VIT_B5, name: 维生素B5, aliases: ["维生素B5(泛酸)", "泛酸", "Vit B5"],
+     canonical_unit: ng/mL, system: nutrition, modifiability: self_modifiable}
+  - {code: TMAO, name: 氧化三甲胺, aliases: ["TMAO"], canonical_unit: μmol/L,
+     system: nutrition, modifiability: self_modifiable}
+  # ---------------- 生化 ----------------
+  - {code: TBA,   name: 总胆汁酸, aliases: ["总胆汁酸(TBA)", "TBA"], canonical_unit: umol/L, system: liver, modifiability: clinical}
+  - {code: ADA,   name: 腺苷脱氨酶, aliases: ["腺苷脱氨酶(ADA)"], canonical_unit: U/L, system: liver, modifiability: clinical}
+  - {code: ALP,   name: 碱性磷酸酶, aliases: ["碱性磷酸酶(ALP)", "ALP"], canonical_unit: U/L, system: liver, modifiability: clinical}
+  - {code: LDH,   name: 乳酸脱氢酶, aliases: ["乳酸脱氢酶(LDH)", "LDH"], canonical_unit: U/L, system: liver, modifiability: clinical}
+  - {code: TBIL,  name: 总胆红素, aliases: ["总胆红素(TBIL)", "TBIL"], canonical_unit: umol/L, system: liver, modifiability: clinical}
+  - {code: DBIL,  name: 直接胆红素, aliases: ["直接胆红素(DBIL)"], canonical_unit: umol/L, system: liver, modifiability: clinical}
+  - {code: IBIL,  name: 间接胆红素, aliases: ["间接胆红素(IBIL)"], canonical_unit: umol/L, system: liver, modifiability: clinical}
+  - {code: TP,    name: 总蛋白, aliases: ["总蛋白(TP)", "TP"], canonical_unit: g/L, system: liver, modifiability: clinical}
+  - {code: GLOB,  name: 球蛋白, aliases: ["球蛋白(GLOB)"], canonical_unit: g/L, system: liver, modifiability: clinical}
+  - {code: AG_RATIO, name: 白球比例, aliases: ["白球比例(A/G)", "A/G"], system: liver, modifiability: clinical}
+  - {code: CHE,   name: 胆碱脂酶, aliases: ["胆碱酯酶"], canonical_unit: U/L, system: liver, modifiability: clinical}
+  - {code: UREA,  name: 尿素, aliases: ["尿素(UREA)", "UREA"], canonical_unit: mmol/L, system: renal, modifiability: clinical}
+  - {code: CREATININE, name: 肌酐, aliases: ["肌酐(CREA)", "CREA"], canonical_unit: umol/L, system: renal, modifiability: clinical}
+  - {code: UA,    name: 尿酸, aliases: ["尿酸(UA)", "UA"], canonical_unit: umol/L, system: renal, modifiability: self_modifiable}
+  - {code: CYSTATIN_C, name: 胱抑素C, aliases: ["胱抑素C检测(Cys-C)", "Cys-C"], canonical_unit: mg/L, system: renal, modifiability: clinical}
+  - {code: CK,    name: 肌酸激酶, aliases: ["肌酸激酶(CK)", "CK"], canonical_unit: U/L, system: cardiac, modifiability: clinical}
+  - {code: CKMB,  name: 肌酸激酶同工酶, aliases: ["肌酸激酶同工酶(CK-MB)", "CK-MB"], canonical_unit: U/L, system: cardiac, modifiability: clinical}
+  - {code: POTASSIUM, name: 钾, aliases: ["钾(K)", "K"], canonical_unit: mmol/L, system: electrolyte, modifiability: clinical}
+  - {code: SODIUM, name: 钠, aliases: ["钠(Na)"], canonical_unit: mmol/L, system: electrolyte, modifiability: clinical}
+  - {code: CHLORIDE, name: 氯, aliases: ["氯(CL)"], canonical_unit: mmol/L, system: electrolyte, modifiability: clinical}
+  - {code: CALCIUM, name: 钙, aliases: ["钙(Ca)"], canonical_unit: mmol/L, system: electrolyte, modifiability: clinical}
+  - {code: PHOS,  name: 磷, aliases: ["磷(PHOS)"], canonical_unit: mmol/L, system: electrolyte, modifiability: clinical}
+  - {code: CO2CP, name: 二氧化碳结合力, aliases: ["二氧化碳结合力(CO2-CP)"], canonical_unit: mmol/L, system: electrolyte, modifiability: clinical}
+  - {code: AMY,   name: 淀粉酶, aliases: ["淀粉酶(AMY)"], canonical_unit: U/L, system: pancreas, modifiability: clinical}
+  - {code: PROINSULIN, name: 胰岛素原, aliases: ["pro-Ins胰岛素原"], canonical_unit: pg/ml, system: glucose, modifiability: self_modifiable}
+  # ---------------- 血常规补充 ----------------
+  - {code: RBC,   name: 红细胞计数, aliases: ["红细胞计数[RBC]", "RBC"], canonical_unit: 10^12/L, system: hematology, modifiability: clinical}
+  - {code: NEUT_ABS, name: 中性粒细胞绝对值, aliases: ["中性粒细胞绝对值  [NE#]", "NE#"], canonical_unit: 10^9/L, system: hematology, modifiability: clinical}
+  - {code: LYMPH_ABS, name: 淋巴细胞绝对值, aliases: ["淋巴细胞绝对值[LY#]", "LY#"], canonical_unit: 10^9/L, system: hematology, modifiability: clinical}
+  - {code: MONO_ABS, name: 单核细胞绝对值, aliases: ["单核细胞绝对值[MO#]"], canonical_unit: 10^9/L, system: hematology, modifiability: clinical}
+  - {code: MCH,   name: 平均血红蛋白量, aliases: ["平均血红蛋白量[MCH]"], canonical_unit: pg, system: hematology, modifiability: clinical}
+  - {code: MCHC,  name: 平均血红蛋白浓度, aliases: ["平均血红蛋白浓度[MCHC]"], canonical_unit: g/L, system: hematology, modifiability: clinical}
+  - {code: RDW,   name: 红细胞分布宽度, aliases: ["红细胞分布宽度[RDW]"], canonical_unit: "%", system: hematology, modifiability: clinical}
+  # ---------------- 血流变补充 ----------------
+  - {code: WBV_MID50, name: 全血粘度中切50, aliases: ["中切[50]"], canonical_unit: mPa·s, system: hemorheology, modifiability: self_modifiable}
+  - {code: WBRV_MID,  name: 全血还原粘度(中切), aliases: ["全血还原粘度[中切]"], canonical_unit: mPa·s, system: hemorheology, modifiability: self_modifiable}
+  - {code: WBRV_HIGH, name: 全血还原粘度(高切), aliases: ["全血还原粘度[高切]"], canonical_unit: mPa·s, system: hemorheology, modifiability: self_modifiable}
+  - {code: ESR_K,     name: 血沉方程K值, system: hemorheology, modifiability: clinical}
+  - {code: RBC_RIGID, name: 红细胞刚性指数, system: hemorheology, modifiability: clinical}
+  - {code: RBC_EPHOR, name: 红细胞电泳指数, system: hemorheology, modifiability: clinical}
+  - {code: WBRV_LOW_REL,  name: 全血低切相对粘度, system: hemorheology, modifiability: self_modifiable}
+  - {code: WBRV_HIGH_REL, name: 全血高切相对粘度, system: hemorheology, modifiability: self_modifiable}
+  # ---------------- 甲状腺 / 性激素 ----------------
+  - {code: TSH,  name: 促甲状腺激素, aliases: ["促甲状腺激素[TSH]", "TSH"], canonical_unit: mIU/L, system: thyroid, modifiability: clinical}
+  - {code: FT4,  name: 游离甲状腺激素, aliases: ["游离甲状腺激素[FT4]", "FT4"], canonical_unit: pmol/L, system: thyroid, modifiability: clinical}
+  - {code: FT3,  name: 游离三碘甲状腺原氨酸, aliases: ["游离三碘甲状腺原氨酸[FT3]", "FT3"], canonical_unit: pmol/L, system: thyroid, modifiability: clinical}
+  - {code: TT3,  name: 总三碘甲状腺原氨酸, aliases: ["总三碘甲状腺原氨酸[T3]"], canonical_unit: nmol/L, system: thyroid, modifiability: clinical}
+  - {code: TT4,  name: 总甲状腺素, aliases: ["总甲状腺素[T4]"], canonical_unit: nmol/L, system: thyroid, modifiability: clinical}
+  - {code: TG_AB, name: 抗甲状腺球蛋白抗体, aliases: ["抗甲状腺球蛋白抗体测定[Tg-Ab]"], canonical_unit: IU/mL, system: thyroid, modifiability: clinical}
+  - {code: TPO_AB, name: 抗甲状腺过氧化物酶抗体, aliases: ["抗甲状腺过氧化物酶抗体测定[TPO-Ab]"], canonical_unit: IU/mL, system: thyroid, modifiability: clinical}
+  - {code: TESTOSTERONE, name: 睾酮, aliases: ["睾酮【TESTO】"], canonical_unit: nmol/L, system: hormone, modifiability: clinical}
+  - {code: PRL,  name: 垂体泌乳素, aliases: ["垂体泌乳素【PRL】"], canonical_unit: mIU/L, system: hormone, modifiability: clinical}
+  - {code: LH,   name: 黄体生成素, aliases: ["黄体生成素【LH】"], canonical_unit: IU/L, system: hormone, modifiability: clinical}
+  - {code: FSH,  name: 卵泡生成素, aliases: ["卵泡生成素[FSH]"], canonical_unit: IU/L, system: hormone, modifiability: clinical}
+  - {code: E2,   name: 雌二醇, aliases: ["雌二醇【E2】"], canonical_unit: pmol/L, system: hormone, modifiability: clinical}
+  # ---------------- 炎症 / 免疫 ----------------
+  - {code: RF,   name: 类风湿因子, aliases: ["类风湿因子(RF)"], canonical_unit: IU/mL, system: inflammation, modifiability: clinical}
+  - {code: CRP,  name: C反应蛋白, aliases: ["C反应蛋白(CRP)"], canonical_unit: mg/L, system: inflammation, modifiability: clinical}
+  - {code: ASO,  name: 抗链球菌溶血素O, aliases: ["抗链球菌溶血素O(ASO)"], canonical_unit: IU/mL, system: inflammation, modifiability: clinical}
+  - {code: CD4_CD8, name: CD4/CD8比值, aliases: ["CD4+/CD8+"], system: immunity, modifiability: clinical}
+  - {code: LYMPH_TOTAL, name: 淋巴细胞总数, aliases: ["LY"], canonical_unit: 个/ul, system: immunity, modifiability: clinical}
+  - {code: CD3_ABS, name: 总T淋巴细胞, aliases: ["CD3+"], canonical_unit: 个/ul, system: immunity, modifiability: clinical}
+  - {code: CD19_ABS, name: 总B淋巴细胞, aliases: ["CD19+"], canonical_unit: 个/ul, system: immunity, modifiability: clinical}
+  - {code: NK_ABS, name: NK细胞, aliases: ["CD3-/CD16+56+"], canonical_unit: 个/ul, system: immunity, modifiability: clinical}
+  # ---------------- 肿瘤标志物 ----------------
+  - {code: CEA,  name: 癌胚抗原, aliases: ["癌胚抗原[CEA]"], canonical_unit: ng/mL, system: tumor_marker, modifiability: clinical}
+  - {code: AFP,  name: 甲胎蛋白, aliases: ["甲胎蛋白[AFP]"], canonical_unit: ng/mL, system: tumor_marker, modifiability: clinical}
+  - {code: CA242, name: 糖链抗原CA242, aliases: ["糖链抗原CA24-2测定[CA242]"], canonical_unit: U/mL, system: tumor_marker, modifiability: clinical}
+  - {code: CYFRA21_1, name: 细胞角蛋白19片段, aliases: ["细胞角蛋白19片段[CYFRA21-1]"], canonical_unit: ng/mL, system: tumor_marker, modifiability: clinical}
+  - {code: NSE_TUMOR, name: 神经元特异性烯醇化酶, aliases: ["神经元特异性烯醇化酶[NSE]", "☆神经元特异性烯醇化酶[NSE]"], canonical_unit: ng/mL, system: tumor_marker, modifiability: clinical}
+  - {code: SCC,  name: 鳞状上皮细胞癌抗原, aliases: ["鳞状上皮细胞癌抗原[SCCA]"], canonical_unit: ng/mL, system: tumor_marker, modifiability: clinical}
+  - {code: CK18_M30, name: 人细胞角蛋白18片段M30, aliases: ["人细胞角蛋白18片段(M30)"], canonical_unit: U/L, system: tumor_marker, modifiability: clinical}
+  - {code: CK18_M65, name: 人细胞角蛋白18片段M65, aliases: ["人细胞角蛋白18片段(M65)"], canonical_unit: U/L, system: tumor_marker, modifiability: clinical}
+  - {code: VEGF, name: 血管内皮生长因子, canonical_unit: pg/mL, system: tumor_marker, modifiability: clinical}
+  - {code: PAP,  name: 前列腺酸性磷酸酶, system: tumor_marker, modifiability: clinical,
+     note: 原报告未给参考区间，不判高低}
+  - {code: LUNG_AB_PANEL, name: 肺癌七种相关自身抗体谱, kind: qualitative, system: tumor_marker, modifiability: clinical}
+  # ---------------- 胃 ----------------
+  - {code: SALIVA_PEPSIN, name: 唾液胃蛋白酶, aliases: ["胃蛋白酶"], kind: qualitative, system: gastric, modifiability: clinical}
+  - {code: GASTRIN17, name: 胃泌素17, canonical_unit: pmol/L, system: gastric, modifiability: clinical}
+  - {code: PG1,  name: 胃蛋白酶原I, canonical_unit: ng/mL, system: gastric, modifiability: clinical}
+  - {code: PG2,  name: 胃蛋白酶原II, canonical_unit: ng/mL, system: gastric, modifiability: clinical}
+  - {code: PG_RATIO, name: PGI/PGII, system: gastric, modifiability: clinical}
+  # ---------------- 肾/尿补充 ----------------
+  - {code: UACR, name: 尿微量白蛋白/肌酐, canonical_unit: mg/g, system: renal, modifiability: self_modifiable}
+  - {code: U_MALB, name: 尿微量白蛋白, canonical_unit: mg/L, system: renal, modifiability: self_modifiable}
+  - {code: U_CREA, name: 尿肌酐, canonical_unit: mg/dL, system: renal, modifiability: clinical}
+  - {code: U_PRO, name: 尿蛋白, aliases: ["尿蛋白[PRO]"], kind: qualitative, system: urine, modifiability: clinical}
+  - {code: U_BLD, name: 隐血, aliases: ["隐血[BLD]"], kind: qualitative, system: urine, modifiability: clinical}
+  - {code: U_GLU, name: 尿糖, aliases: ["尿糖[GLU]"], kind: qualitative, system: urine, modifiability: clinical}
+  - {code: U_KET, name: 尿酮体, aliases: ["尿酮体[KET]"], kind: qualitative, system: urine, modifiability: clinical}
+  - {code: U_RBC, name: 尿红细胞, aliases: ["红细胞[RBC]尿"], canonical_unit: 个/ul, system: urine, modifiability: clinical}
+  - {code: U_PH,  name: 尿酸碱度, aliases: ["尿酸碱度[PH]"], system: urine, modifiability: clinical}
+  - {code: U_SG,  name: 尿比重, aliases: ["比重[SG]"], system: urine, modifiability: clinical}
+  # ---------------- 心脏 / 其他 ----------------
+  - {code: HFABP, name: 心脏脂肪酸结合蛋白, aliases: ["心脏脂肪酸结合蛋白(HFABP)"], canonical_unit: ng/ml, system: cardiac, modifiability: clinical}
+  - {code: EF,   name: 左室射血分数, aliases: ["EF"], kind: imaging, canonical_unit: "%", system: cardiac, modifiability: clinical}
+  - {code: PULSE, name: 脉搏, canonical_unit: 次/分, system: cardiovascular, modifiability: self_modifiable}
+  # ---------------- 口腔 ----------------
+  - {code: DENTAL_CALCULUS, name: 牙结石, kind: qualitative, system: oral, modifiability: self_modifiable}
+  - {code: GINGIVAL_BLEEDING, name: 牙龈出血, kind: qualitative, system: oral, modifiability: self_modifiable}
+  - {code: GINGIVAL_RECESSION, name: 牙龈退缩, kind: qualitative, system: oral, modifiability: self_modifiable}
+  # ---------------- 影像补充 ----------------
+  - {code: VERTEBRAL_US, name: 双侧椎动脉彩超, kind: imaging, system: imaging, modifiability: not_modifiable}
+  - {code: LIVER_ECHO, name: 肝脏超声回声, kind: imaging, system: imaging, modifiability: self_modifiable}
+  - {code: BRAIN_MRI_PLAIN, name: 颅脑MRI平扫+DWI, kind: imaging, system: imaging, modifiability: not_modifiable, device_sensitive: true}
+  - {code: ECG, name: 心电图, kind: imaging, system: cardiac, modifiability: clinical}

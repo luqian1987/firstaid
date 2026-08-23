@@ -1,0 +1,51 @@
+rules:
+  # 模式 6：孤立异常缺乏佐证
+  - id: gastric.saliva_pepsin_vs_normal_panel
+    archetype: isolated_abnormal
+    title: 唾液胃蛋白酶阳性，但胃功能三项不支持萎缩性胃炎
+    lede: >-
+      唾液里查到胃蛋白酶，说明胃内容物到过口腔，这是反流方向的线索；
+      它和"胃黏膜有没有萎缩"是两个问题，而后者本次有直接指标。
+    tag: retest_first
+    chapter: watch
+    modifiability: clinical
+    priority: 40
+    params:
+      abnormal: SALIVA_PEPSIN
+      direction: high
+      corroborators: [GASTRIN17, PG1, PG2, PG_RATIO]
+      corroborator_expect: in_range
+    narration:
+      single_read: >-
+        "胃蛋白酶：阳性"被单独列为需要进一步检查，建议消化内科随诊。
+        单看这一条，很难判断它到底指向什么。
+      joint_read: >-
+        胃功能三项在同一份报告里给出了直接答案：胃泌素17 {GASTRIN17}、
+        胃蛋白酶原Ⅰ {PG1}、胃蛋白酶原Ⅱ {PG2}、PGⅠ/Ⅱ 比值 {PG_RATIO}，全部在区间内。
+        这一组正是用来筛查胃黏膜萎缩的，它们正常，就不支持萎缩性胃炎。
+        唾液胃蛋白酶阳性剩下的指向是反流，那属于症状问题，不是这套血清学能回答的。
+      must_convey:
+        - 胃功能三项全部正常，不支持萎缩性胃炎
+        - 唾液胃蛋白酶阳性偏向反流方向，需要结合症状而不是结合血清学
+      must_not_claim:
+        - 不得诊断胃食管反流病
+        - 不得替代已完成的胃肠镜——镜下所见优先于血清学筛查
+    verdict:
+      certain: >-
+        本次血清学不支持胃黏膜萎缩。这一条真正的答案在已经做过的无痛胃肠镜报告里，
+        镜下所见的效力高于任何一项血清学筛查。
+      not_certain: >-
+        不能诊断反流病，也不能排除它。本判读没有拿到胃肠镜报告，
+        因此关于胃的全部结论都只是筛查层面的。
+      next_steps:
+        - 先取回无痛电子胃肠镜报告——本次关于胃的结论应以它为准
+        - 记录是否有烧心、反酸、夜间呛咳，这三项决定反流方向要不要处理
+        - 消化内科随诊时把胃肠镜与胃功能三项一起出示，不要只拿唾液这一项
+      compare_next:
+        - code: PG_RATIO
+          what: 比 PGⅠ/Ⅱ 比值本身，这是萎缩筛查里最有意义的一个数
+          rationale: 单看 PGⅠ 或 PGⅡ 都不如比值稳定
+    tests:
+      - {name: 张韦韦真实数据, fixture: zhang_real_2026-03-30, expect: triggered}
+      - {name: PG比值下降则支持萎缩, fixture: zhang_real_2026-03-30,
+         expect: not_triggered, overrides: {PG_RATIO: 1.8}}

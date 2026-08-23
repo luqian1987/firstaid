@@ -22,6 +22,7 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="firstaid")
     ap.add_argument("fixture", type=Path, help="夹具 YAML 路径")
     ap.add_argument("--verbose", "-v", action="store_true")
+    ap.add_argument("--html", type=Path, help="同时渲染 HTML 报告到该路径")
     args = ap.parse_args(argv)
 
     a = analyze_fixture(args.fixture)
@@ -82,7 +83,8 @@ def main(argv=None) -> int:
     if a.missing_context:
         w("\n【背景空白】本判读没有替你假设：")
         for m in a.missing_context:
-            w(f"  · {m.label}  → 影响 {len(m.affects)} 条判读")
+            w(f"  · {m.label}  → 影响 {len(m.affect_titles)} 条判读："
+              + "、".join(m.affect_titles))
 
     if a.boundaries:
         w(f"\n【边界】{len(a.boundaries)} 项")
@@ -102,6 +104,11 @@ def main(argv=None) -> int:
             w(f"  纯图像页（不解读）: {len(cov.unreadable_pages)} 页")
         if cov.unjudged_codes:
             w(f"  暂未判定高低: {', '.join(cov.unjudged_codes)}")
+
+    if args.html:
+        from .render.html import render
+        p = render(a, args.html)
+        w(f"\n【L6 渲染】{p}  ({p.stat().st_size // 1024} KB)")
 
     w("\n" + "=" * 74)
     if a.ok():
