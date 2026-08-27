@@ -45,18 +45,23 @@ def page_count(pdf: Path) -> int:
     return 0
 
 
-def extract_text(pdf: Path, dest: Path) -> tuple[Path | None, int]:
-    """抽文字层。返回 (文件路径或 None, 字符数)。"""
+FONT_NOISE = ("Missing language pack", "Unknown font tag", "No font in show",
+              "premature end of data")
+
+
+def extract_text(pdf: Path, dest: Path) -> tuple[Path | None, int, bool]:
+    """抽文字层。返回 (文件路径或 None, 字符数, 是否有字体告警)。"""
     txt = dest / (pdf.stem + ".txt")
-    subprocess.run(["pdftotext", "-layout", str(pdf), str(txt)],
-                   capture_output=True, text=True)
+    r = subprocess.run(["pdftotext", "-layout", str(pdf), str(txt)],
+                       capture_output=True, text=True)
+    noisy = any(k in r.stderr for k in FONT_NOISE)
     if not txt.exists():
-        return None, 0
+        return None, 0, noisy
     n = len(txt.read_text(encoding="utf-8", errors="replace").strip())
     if n == 0:
         txt.unlink()
-        return None, 0
-    return txt, n
+        return None, 0, noisy
+    return txt, n, noisy
 
 
 def render(pdf: Path, dest: Path, px: int, quality: int) -> list[Path]:
@@ -111,8 +116,16 @@ def handle(pdf: Path, px: int, quality: int, limit: float, keep_images: bool):
     pages = page_count(pdf)
     print(f"\n── {pdf.name}　{size_mb(pdf):.1f} MB　{pages} 页 " + "─" * 20)
 
-    txt, chars = extract_text(pdf, dest)
+    txt, chars, noisy = extract_text(pdf, dest)
     per_page = chars / pages if pages else 0
+
+    if noisy:
+        # 字体告警本身不一定意味着抽错了——氨基酸那份报了三种告警，抽出来的字
+        # 其实是对的，「结果全是 1」是报告本身就那样。但告警是个信号：
+        # 别信文字层，先渲一页出来用眼睛比一遍。
+        print("   ! 有字体/编码告警。抽出来的字**先别信**，"
+              "渲一页比对过再用：")
+        print(f"       pdftoppm -scale-to 2200 -png {pdf} /tmp/qa && 用 Read 看图")
 
     if txt and per_page >= TEXT_PER_PAGE:
         print(f"   文字层可用：{chars} 字，每页约 {per_page:.0f} 字")

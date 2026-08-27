@@ -97,7 +97,10 @@
 ```bash
 pip install playwright && playwright install chromium   # 渲染 PDF
 pip install Pillow                                      # prep.py 重打包扫描件用
-apt-get install -y poppler-utils                        # pdfinfo/pdftotext/pdftoppm
+apt-get install -y poppler-utils poppler-data            # pdfinfo/pdftotext/pdftoppm
 ```
+
+`poppler-data` 别漏 —— 缺了读中文 PDF 会刷 `Missing language pack for 'Adobe-GB1'`，
+是干扰项，会让人以为文件坏了。
 
 中文字体需要 Noto Sans CJK SC，缺了 PDF 会出方块。
