@@ -1,0 +1,15 @@
+.sec{ margin:3.6mm 0 1.6mm; }
+.evi{ margin-top:3.6mm; padding-top:2mm; }
+.evi > div{ margin-bottom:.9mm; line-height:1.54; }
+.acts > div{ padding-top:1.6mm; line-height:1.56; }
+.acts i{ padding-bottom:1.2mm; margin-bottom:1.2mm; line-height:1.5; }
+.who > div{ line-height:1.48; }
+.faq .a{ line-height:1.58; }
+.vs > div{ line-height:1.6; }
+.dnote{ padding:1.6mm 0 2mm; line-height:1.6; }
+.actnote{ margin-top:2.6mm; line-height:1.6; }
+p.lead{ line-height:1.72; }
+.pbreak{ margin-bottom:3.4mm; padding-bottom:1.8mm; }
+.tbd{ font-size:15pt !important; color:#B26A00 !important; letter-spacing:.1em; }
+.tbd small{ color:#B26A00 !important; letter-spacing:0; }
+.tiers .tb b{ color:var(--deep); }

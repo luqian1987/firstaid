@@ -1,0 +1,256 @@
+<meta charset="utf-8">
+<title>功能医学检测项目 · 精简说明</title>
+<style>
+:root{ --b1:#5B9BD5; --b2:#2E75B6; --deep:#1F4E79; --teal:#00A08C;
+       --soft:#EAF2FA; --rule:#D6E0E8; --muted:#666; --red:#C0504D; }
+*{ box-sizing:border-box; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+
+@page{ size:A4; margin:14mm 13mm 12mm 13mm; }
+html,body{ background:#e9edf2; margin:0; padding:0; }
+body{ font-family:"Microsoft YaHei","PingFang SC","Source Han Sans SC",
+      "Noto Sans CJK SC","Noto Sans SC","Hiragino Sans GB","Heiti SC",sans-serif;
+      color:#262626; font-size:11pt; line-height:1.85; }
+
+.doc{ width:210mm; margin:10mm auto; background:#fff; padding:14mm 13mm 12mm;
+      box-shadow:0 2px 16px rgba(20,40,70,.14); }
+@media print{ html,body{ background:#fff; }
+  .doc{ width:auto; margin:0; padding:0; box-shadow:none; }
+  .doc + .doc{ break-before:page; }
+  .pbreak{ margin-top:0; padding-top:0; }
+  .pbreak::before{ display:none; } }
+
+.hero,.tiers > div,.acts > div,.faq .qa,.evi,.actnote,.res-wrap{ break-inside:avoid; }
+.res-wrap.big{ break-inside:auto; }
+.res-wrap.big ~ .dnote{ padding:1.4mm 0 1.8mm; font-size:9pt; }
+.res-wrap.big ~ .dnote{ padding:1.6mm 0 2mm; font-size:9.2pt; }
+.res-wrap.big table.resm tr{ break-inside:avoid; }
+.res-wrap.big table.resm tr.grp{ break-after:avoid; }
+.sec{ break-after:avoid; break-inside:avoid; }
+p.lead,.who,.vs{ break-inside:avoid; }
+
+/* ── 页眉 / 页脚 ── */
+.mast{ display:flex; justify-content:space-between; align-items:baseline;
+       font-size:9pt; color:#8A98A3; border-bottom:1px solid #333;
+       padding-bottom:2.2mm; margin-bottom:7mm; }
+.mast b{ color:#262626; font-weight:600; }
+.endnote{ margin-top:8mm; padding-top:2.4mm; border-top:1px solid #DDE3E9;
+          font-size:9.2pt; color:#8A98A3; }
+
+/* ── 抬头：纯排版，无框 ── */
+.hero{ display:grid; grid-template-columns:1fr auto; gap:10mm; align-items:end;
+       border-bottom:2px solid var(--deep); padding-bottom:3.2mm; }
+.hero .cat{ font-size:9pt; color:var(--teal); letter-spacing:.16em; font-weight:700; }
+.hero h1{ margin:1.1mm 0 0; font-size:23pt; color:var(--deep); letter-spacing:.02em;
+          line-height:1.2; font-weight:700; }
+.hero .en{ font-size:9.4pt; color:#9AA6B0; font-family:"Times New Roman",serif; margin-top:1mm; }
+.hero .one{ margin-top:2.2mm; font-size:11pt; color:#3C4A57; line-height:1.6; max-width:118mm; }
+.hero .r{ text-align:right; white-space:nowrap; }
+.hero .plb{ font-size:9.2pt; color:#9AA6B0; letter-spacing:.06em; }
+.hero .pv{ font-size:27pt; font-weight:700; color:var(--deep); line-height:1.1;
+           font-family:"Times New Roman",Georgia,serif; }
+.hero .pv small{ font-size:10pt; font-weight:400; color:#8A98A3; margin-left:1.4mm;
+                 font-family:"Microsoft YaHei",sans-serif; }
+.hero .meta{ margin-top:3mm; font-size:9.4pt; color:#5B6B78; line-height:1.72; }
+.hero .meta b{ color:#3C4A57; font-weight:600; }
+
+/* ── 章节标题：去掉方块序号 ── */
+.sec{ display:flex; align-items:baseline; gap:3mm; margin:4.6mm 0 2mm; }
+.sec .n{ font-family:"Times New Roman",serif; font-size:12pt; color:#C4D3DC; font-weight:700;
+         flex:0 0 auto; }
+.sec h2{ margin:0; font-size:13.4pt; color:var(--deep); font-weight:700; letter-spacing:.02em; }
+.sec span{ font-size:9.6pt; color:#9AA6B0; font-weight:400; }
+p.lead{ margin:0; font-size:10.6pt; line-height:1.8; text-indent:2em; color:#333; }
+
+/* ── 结果表：只留细线 ── */
+.res-wrap{ border-top:1.6px solid var(--deep); border-bottom:1px solid #DDE3E9; }
+.rescap{ display:flex; align-items:baseline; gap:3mm; padding:2.4mm 0 2mm;
+         border-bottom:1px solid #DDE3E9; font-size:9.2pt; color:#8A98A3; }
+.rescap b{ color:#3C4A57; font-size:10pt; }
+.rescap .cap{ margin-left:auto; }
+table.res{ width:100%; border-collapse:collapse; table-layout:fixed; }
+table.res th{ color:#9AA6B0; font-size:9.2pt; font-weight:400; padding:2.2mm 0 1.6mm;
+              text-align:left; border-bottom:1px solid #EDF1F4; }
+table.res td{ padding:2.8mm 0; font-size:10.5pt; vertical-align:middle; }
+table.res td.itm{ font-weight:700; color:var(--deep); font-size:11.4pt; }
+table.res td.num{ font-family:"Times New Roman",Georgia,serif; font-size:21pt; font-weight:700; }
+table.res td.ref{ font-family:"Times New Roman",serif; font-size:10.6pt; color:#5B6B78;
+                  line-height:1.6; }
+table.res td.vd{ font-weight:700; font-size:11.4pt; }
+table.resm{ width:100%; border-collapse:collapse; table-layout:fixed; }
+table.resm th{ color:#9AA6B0; font-size:9.2pt; font-weight:400; padding:2.2mm 0 1.6mm;
+               text-align:left; border-bottom:1px solid #EDF1F4; }
+table.resm td{ padding:1mm 0; font-size:9.8pt; line-height:1.5; vertical-align:top;
+               border-bottom:1px solid #F5F8FA; }
+table.resm tr.grp td{ padding:1.9mm 0 .8mm; font-size:9.6pt; font-weight:700; color:var(--teal);
+                      letter-spacing:.06em; border-bottom:1px solid #DDE3E9; }
+table.resm tr.grp td span{ font-weight:400; color:#9AA6B0; margin-left:2mm; font-size:8.4pt; }
+table.resm td.mi{ color:var(--deep); }
+table.resm td.mv{ font-family:"Times New Roman",serif; font-size:11pt; font-weight:700; }
+table.resm td.mv em{ font-style:normal; color:var(--red); font-size:9pt; }
+table.resm td.mr,table.resm td.mu{ font-family:"Times New Roman",serif; font-size:9.6pt;
+                                   color:#6B7C88; }
+table.resm tr.ab td.mv{ color:var(--red); }
+table.resm tr.ab td.mi{ font-weight:700; }
+.res-wrap.big table.resm td{ padding:.4mm 0; font-size:9.2pt; line-height:1.34; }
+.res-wrap.big table.resm tr.grp td{ padding:1.2mm 0 .5mm; font-size:9.4pt; }
+.res-wrap.big table.resm td.mv{ font-size:10.2pt; }
+.res-wrap.big table.resm td.mr,.res-wrap.big table.resm td.mu{ font-size:9.2pt; }
+.res-wrap.big ~ .dnote{ padding:1.4mm 0 1.8mm; font-size:9pt; }
+.dnote{ padding:2.2mm 0 2.6mm; font-size:9.6pt; color:#5B6B78; line-height:1.72; }
+.dnote b{ color:#3C4A57; }
+.pos{ position:relative; padding-top:5mm; padding-right:6mm; }
+.pos .seg{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:1mm; }
+.pos .seg span{ height:4.8mm; display:flex; align-items:center; justify-content:center;
+                font-size:8.6pt; color:#fff; white-space:nowrap; }
+.pos .mk{ position:absolute; top:0; transform:translateX(-50%); font-size:9pt;
+          font-weight:700; white-space:nowrap; line-height:1.1; text-align:center; }
+.pos .mk::after{ content:"▼"; display:block; font-size:6pt; line-height:1; }
+
+/* ── 三档：顶线 + 文字，无框无底 ── */
+.tiers{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:8mm; margin-top:4mm; }
+.tiers .th{ display:block; font-weight:700; font-size:11pt; padding-bottom:2mm;
+            border-top:2.4px solid currentColor; padding-top:2.2mm; }
+.tiers .tb{ display:block; font-size:10pt; line-height:1.7; color:#3C4A57; }
+.tiers > div.lt .th{ color:#9AA6B0; }
+
+/* ── 干预方向：顶线 + 文字 ── */
+.acts{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:8mm; }
+.acts > div{ border-top:2.4px solid var(--teal); padding-top:1.8mm; font-size:9.7pt;
+             line-height:1.58; color:#3C4A57; }
+.acts .t{ display:flex; align-items:baseline; gap:2.4mm; color:var(--deep); font-size:11pt;
+          font-weight:700; margin-bottom:1.8mm; }
+.acts .t em{ font-style:normal; font-size:9pt; font-weight:700; color:var(--teal);
+             letter-spacing:.1em; }
+.acts i{ display:block; font-style:normal; color:#6B7C88; font-size:9.2pt; line-height:1.52;
+         padding-bottom:1.3mm; margin-bottom:1.3mm; border-bottom:1px solid #EDF1F4; }
+.acts b{ color:var(--deep); }
+.actnote{ margin-top:3.4mm; padding-left:4mm; border-left:2.4px solid var(--teal);
+          font-size:9.9pt; line-height:1.66; color:#3C4A57; }
+.actnote b{ color:var(--deep); }
+
+/* ── 适合人群：纯列表 ── */
+.who{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.5mm 6mm; }
+.who > div{ font-size:9.6pt; line-height:1.5; color:#33404A; padding-left:3.6mm;
+            position:relative; }
+.who > div::before{ content:""; position:absolute; left:0; top:2.4mm; width:1.6mm; height:1.6mm;
+                    border-radius:50%; background:var(--teal); }
+
+/* ── 分工：纯列表 ── */
+.vs{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:3mm 8mm; }
+.vs > div{ font-size:10pt; line-height:1.7; color:#3C4A57; }
+.vs .vt{ display:block; color:var(--deep); font-weight:700; }
+.vs b{ color:var(--deep); }
+
+/* ── 问答 ── */
+.faq{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:0 8mm; align-items:start; }
+.faq .q{ font-size:10.6pt; font-weight:700; color:var(--deep); line-height:1.55; }
+.faq .a{ font-size:9.7pt; line-height:1.6; color:#3C4A57; padding-top:.8mm; }
+
+/* ── 科学依据 ── */
+.evi{ margin-top:4.4mm; border-top:1.6px solid var(--deep); padding-top:2.2mm; }
+.evi .evh{ display:block; font-size:10.4pt; font-weight:700; color:var(--deep);
+           letter-spacing:.08em; margin-bottom:2.6mm; }
+.evi > div{ display:grid; grid-template-columns:5.4mm 1fr; gap:0 1mm; font-size:9.2pt;
+            line-height:1.58; color:#5B6B78; margin-bottom:1.1mm; }
+.evi > div:last-child{ margin-bottom:0; }
+.evi i{ font-style:normal; font-family:"Times New Roman",serif; font-weight:700;
+        color:#A9BAC8; font-size:10.4pt; }
+.evi b{ color:#3C4A57; font-weight:600; }
+
+/* ── 分页 ── */
+.pbreak{ break-before:page; display:flex; justify-content:space-between; align-items:baseline;
+         border-bottom:1px solid #333; padding-bottom:2.2mm; margin-bottom:7mm;
+         font-size:9pt; color:#8A98A3; }
+.pbreak b{ color:#262626; font-weight:600; }
+@media screen{
+  .pbreak{ position:relative; margin-top:18mm; padding-top:10mm; }
+  .pbreak::before{ content:"✂ 打 印 分 页 处"; position:absolute; left:0; right:0; top:0;
+                   border-top:1px dashed #C4B49C; font-size:7.4pt; color:#9A8A72;
+                   letter-spacing:.34em; padding-top:1.8mm; text-align:center; }
+}
+</style>
+<style>
+.sec{ margin:3.6mm 0 1.6mm; }
+.evi{ margin-top:3.6mm; padding-top:2mm; }
+.evi > div{ margin-bottom:.9mm; line-height:1.54; }
+.acts > div{ padding-top:1.6mm; line-height:1.56; }
+.acts i{ padding-bottom:1.2mm; margin-bottom:1.2mm; line-height:1.5; }
+.who > div{ line-height:1.48; }
+.faq .a{ line-height:1.58; }
+.vs > div{ line-height:1.6; }
+.dnote{ padding:1.6mm 0 2mm; line-height:1.6; }
+.actnote{ margin-top:2.6mm; line-height:1.6; }
+p.lead{ line-height:1.72; }
+.pbreak{ margin-bottom:3.4mm; padding-bottom:1.8mm; }
+.tbd{ font-size:15pt !important; color:#B26A00 !important; letter-spacing:.1em; }
+.tbd small{ color:#B26A00 !important; letter-spacing:0; }
+.tiers .tb b{ color:var(--deep); }
+</style>
+
+<!-- ══════════════════ 神经 01 · 阿尔茨海默病血液标志物 ══════════════════ -->
+<div class="doc"><div class="mast"><div><b>项目说明</b>　神经 · 认知与脑健康</div><div>神经 01　版本 2026-08　·　第 1 页 / 共 2 页</div></div>
+<div class="hero">
+<div class="l"><div class="cat">神经 · 认知与脑健康</div><h1>阿尔兹海默症抗体4项</h1>
+<div class="en">Alzheimer's Disease Blood Biomarkers (A&beta;42/40 · p-tau181 · p-tau217)</div><div class="one">记忆力下降不等于阿尔茨海默——抽血就能看脑内病理有没有开始。</div></div>
+<div class="r"><div class="plb">参考收费</div>
+<div class="pv">¥3200<small>元 / 项</small></div>
+<div class="meta"><b>样本</b>　血浆｜采集量以检验科要求为准<br><b>注意</b>　方法学 流式细胞术　·　报告周期待补</div></div></div>
+<div class="sec"><div class="n">1</div><h2>临床意义</h2></div><p class="lead">阿尔茨海默病的两条核心病理——<b>β 淀粉样蛋白（Aβ）沉积</b>与 <b>tau 蛋白异常磷酸化</b>——在出现症状前十余年就已开始。过去要看到它们只能做淀粉样蛋白 PET 或腰穿取脑脊液；现在<b>抽血即可测</b>。本项目同时出具 Aβ1-42、Aβ1-40 及其比值、p-tau181、p-tau217 五项，其中 <b>p-tau217 是目前特异性最高的一项血液标志物</b>。</p>
+<div class="sec"><div class="n">2</div><h2>报告模板</h2><span>检测结果的呈现方式</span></div><div class="res-wrap"><div class="rescap"><b>报告项目与判读阈值</b><span>本项目报告不设固定示例值</span><span class="cap">实际数值以检验报告为准</span></div><table class="resm"><tr><th style="width:40%">检测项目</th><th style="width:18%">简称</th><th style="width:28%">参考区间</th><th style="width:14%">单位</th></tr><tr class="grp"><td colspan="4">Aβ 通路<span>淀粉样蛋白沉积</span></td></tr><tr><td class="mi">β 淀粉样蛋白 1-42</td><td class="mv">Aβ1-42</td><td class="mr">不单独设参考值</td><td class="mu">pg/mL</td></tr><tr><td class="mi">β 淀粉样蛋白 1-40</td><td class="mv">Aβ1-40</td><td class="mr">不单独设参考值</td><td class="mu">pg/mL</td></tr><tr><td class="mi">Aβ1-42 / Aβ1-40 比值</td><td class="mv">Aβ42/40</td><td class="mr">&gt;0.24</td><td class="mu">—</td></tr><tr class="grp"><td colspan="4">tau 病理<span>本项目的核心增量</span></td></tr><tr><td class="mi">磷酸化 tau181 蛋白</td><td class="mv">p-tau181</td><td class="mr">≤2</td><td class="mu">pg/mL</td></tr><tr><td class="mi">磷酸化 tau217 蛋白</td><td class="mv">p-tau217</td><td class="mr">≤1</td><td class="mu">pg/mL</td></tr></table></div><div class="dnote">Aβ1-42 与 Aβ1-40 <b>不单独设参考区间</b>，其意义体现在比值上。p-tau217 ≥1 或 p-tau181 ≥2 中<b>任一项达标即视为 tau 病理阳性</b>。最终风险分档不看单项，而由 <b>Aβ42/40 比值与 p-tau 的组合</b>决定——</div><div class="tiers"><div><span class="th" style="color:#C0504D">Aβ42/40 &lt;0.24</span><span class="tb">p-tau 均阴性 → <b>中风险</b><br>任一 p-tau 阳性 → <b>高风险</b></span></div><div><span class="th" style="color:#B26A00">Aβ42/40 0.24–0.35</span><span class="tb">p-tau 均阴性 → <b>低风险</b><br>任一 p-tau 阳性 → <b>高风险</b></span></div><div><span class="th" style="color:#00A08C">Aβ42/40 &gt;0.35</span><span class="tb">p-tau 均阴性 → <b>低风险</b><br>任一 p-tau 阳性 → <b>中风险</b></span></div></div>
+<div class="pbreak"><b>阿尔兹海默症抗体4项</b><span>第 2 页 / 共 2 页</span></div>
+<div class="sec"><div class="n">3</div><h2>适合人群</h2><span>以下情况建议了解本项目</span></div><div class="who"><div>50 岁以上，自觉记忆力下降</div><div>家人发现近事遗忘、重复提问</div><div>有阿尔茨海默病或痴呆家族史</div><div>已知携带 ApoE ε4 基因</div><div>已诊断轻度认知障碍（MCI），需明确病因</div><div>长期高血糖或胰岛素抵抗</div><div>长期失眠或睡眠质量差</div><div>做过认知量表筛查，需客观指标佐证</div><div>关注脑健康，希望早期建立基线</div></div>
+<div class="sec"><div class="n">4</div><h2>与相关检查的区别</h2></div><div class="vs"><div><span class="vt">认知量表（MMSE / MoCA）</span>测的是<b>认知表现</b>，受教育程度与情绪影响；本项目测的是<b>脑内病理</b>，症状出现前即可异常。</div><div><span class="vt">头颅 MRI / CT</span>看的是<b>结构改变</b>（萎缩、梗死）；结构变化出现时，病理往往已进展多年。</div><div><span class="vt">淀粉样蛋白 PET / 脑脊液</span>诊断价值更高，但需注射示踪剂或腰穿；血液标志物<b>适合作为先做的一步</b>。</div></div>
+<div class="sec"><div class="n">5</div><h2>可以做什么</h2><span>结果异常时的干预方向</span></div><div class="acts"><div><span class="t">风险分层<em>定位</em></span><i>五项组合给出低 / 中 / 高三档。<b>中高风险不等于确诊</b>，它的作用是把人分流——提示需要进一步做影像、脑脊液或专科评估。</i>中高风险者至神经内科记忆门诊就诊，结合量表与影像进一步确认。</div><div><span class="t">血管与代谢<em>控源</em></span><i>高血糖与胰岛素抵抗会减少 Aβ 清除并促进 tau 磷酸化，高血脂、肥胖亦参与其中。<b>这是目前最可干预的一层</b>。</i>控制血糖、血压、血脂；减重；戒烟限酒。</div><div><span class="t">认知储备<em>增益</em></span><i>睡眠、运动、社交与认知活动共同构成认知储备，<b>Aβ 的清除主要发生在深睡期</b>——睡眠不足直接削弱这条通路。</i>保证睡眠时长与质量；每周中等强度运动；保持社交与持续学习。</div></div><div class="actnote">低风险者可 <b>1–2 年复查以建立基线</b>；中高风险者按专科医师建议随访。血液标志物的价值在于<b>趋势</b>——连续观察比单次结果更有意义。</div>
+<div class="sec"><div class="n">6</div><h2>常见问题</h2></div><div class="faq"><div class="qa"><div class="q">查出中高风险就是得了阿尔茨海默病吗？</div><div class="a">不是。本项目是<b>风险与病理状态评估</b>，不是诊断。确诊须由专科医师结合认知量表、影像与病史综合判断。</div></div><div class="qa"><div class="q">和「阿尔茨海默超早期当下风险评估」有什么区别？</div><div class="a">该项目查的是<b>终身遗传易感性</b>，不随时间变化；本项目查的是<b>当下病理是否已启动</b>。ε4 携带者 Aβ 清除能力下降、p-tau 常偏高，两者互补。</div></div><div class="qa"><div class="q">哪些情况会干扰结果？</div><div class="a">肝肾功能异常、脑梗、脑外伤、感染、肿瘤及化疗等均可能影响 p-tau 水平；<b>有心梗或卒中病史者的 p-tau181 需谨慎解读</b>。</div></div></div>
+<div class="evi"><div class="evh">科学依据</div><div><i>1</i><span>本项目采用<b>流式细胞术</b>检测血浆 Aβ1-42、Aβ1-40、Aβ42/40 比值、p-tau181、p-tau217 共五项，按比值与 p-tau 的组合给出低 / 中 / 高三档风险分层。</span></div><div><i>2</i><span>报告设定判读阈值：<b>Aβ42/40 &gt;0.24、p-tau181 ≤2 pg/mL、p-tau217 ≤1 pg/mL</b>；判读参考《中国阿尔茨海默病痴呆诊疗指南（2020 年版）》与《阿尔茨海默病源性轻度认知障碍诊疗中国专家共识 2021》。</span></div><div><i>3</i><span>结果受 <b>ApoE ε4 基因型、代谢性疾病、肿瘤及肝肾功能</b>等多种因素影响，额颞叶痴呆、路易体痴呆、脑损伤、感染等亦可造成异常；<b>本项目属风险与状态评估，不作为阿尔茨海默病的诊断依据</b>。</span></div></div><div class="endnote">本资料为检测项目说明，不构成医疗建议；检测结果需由医师结合临床综合判断。文中数值为示例，仅用于说明报告结构。</div></div>
+
+<!-- ══════════════════ 神经 02 · 阿尔茨海默症（AD）早期检测 ══════════════════ -->
+<div class="doc"><div class="mast"><div><b>项目说明</b>　神经 · 遗传与表观遗传</div><div>神经 02　版本 2026-08　·　第 1 页 / 共 2 页</div></div>
+<div class="hero">
+<div class="l"><div class="cat">神经 · 遗传与表观遗传</div><h1>阿尔茨海默超早期当下风险评估</h1>
+<div class="en">Alzheimer's Disease Gene &amp; Methylation Test</div><div class="one">一半风险写在基因里，另一半写在基因的开关上——两层一起查。</div></div>
+<div class="r"><div class="plb">参考收费</div>
+<div class="pv">¥1380<small>元 / 项</small></div>
+<div class="meta"><b>样本</b>　血液<br><b>注意</b>　基因分型 ＋ cfDNA 甲基化　·　报告周期待补</div></div></div>
+<div class="sec"><div class="n">1</div><h2>临床意义</h2></div><p class="lead">阿尔茨海默症有两层可查的底数。一层是<b>基因</b>：APOE 分型是迟发型 AD 最主要的风险因子，另含 PSEN1/2 与 MTHFR。另一层是<b>表观遗传</b>——NCAPH2、LMF2、UQCRC1 三个基因启动子区的甲基化状态，通过外周血游离 DNA（cfDNA）检测。<b>两层回答的问题不一样</b>：基因说的是「这辈子风险有多高」，甲基化说的是「现在有没有出现改变」。</p>
+<div class="sec"><div class="n">2</div><h2>报告模板</h2><span>检测结果的呈现方式</span></div><div class="res-wrap"><div class="rescap"><b>检测结果</b><span>示例数据</span><span class="cap">实际数值以检验报告为准</span></div><table class="resm"><tr><th style="width:36%">检测项目</th><th style="width:24%">检测类型</th><th style="width:18%">结果</th><th style="width:22%">表型</th></tr><tr class="grp"><td colspan="4">一、基因分型（gDNA）<span>终身不变</span></td></tr><tr><td class="mi">APOE 分型（rs429358 / rs7412）</td><td class="mv">SNV</td><td class="mr">E3E3</td><td class="mu">正常型</td></tr><tr><td class="mi">PSEN1 / PSEN2</td><td class="mv">region</td><td class="mr">negative</td><td class="mu">阴性</td></tr><tr><td class="mi">MTHFR</td><td class="mv">SNV</td><td class="mr">CC</td><td class="mu">野生型</td></tr><tr class="grp"><td colspan="4">二、启动子区甲基化（cfDNA）<span>可随状态改变</span></td></tr><tr><td class="mi">NCAPH2 promotor region</td><td class="mv">CpG 岛甲基化</td><td class="mr">negative</td><td class="mu">阴性</td></tr><tr><td class="mi">LMF2 promotor region</td><td class="mv">CpG 岛甲基化</td><td class="mr">negative</td><td class="mu">阴性</td></tr><tr><td class="mi">UQCRC1 promotor region</td><td class="mv">CpG 岛甲基化</td><td class="mr">negative</td><td class="mu">阴性</td></tr></table></div><div class="dnote">示例结果 APOE 为 <b>E3E3（正常型）</b>、三项甲基化均阴性，判定为患病风险低。其中 <b>APOE 分型是报告信息量最大的一项</b>——它不只关系 AD 风险，还同时影响脑梗、冠心病、黄斑变性风险以及他汀疗效与饮食建议：</div><div class="tiers"><div><span class="th" style="color:#00A08C">ApoE2　E2/E2 · E2/E3</span><span class="tb">AD、脑梗、冠心病风险<b>低</b>；黄斑变性风险高。他汀疗效好。正常饮食、可适量饮酒，鱼油效果好。</span></div><div><span class="th" style="color:#5B6B78">ApoE3　E2/E4 · E3/E3</span><span class="tb">各项风险<b>正常</b>。他汀疗效正常。正常饮食，鱼油效果好。</span></div><div><span class="th" style="color:#C0504D">ApoE4　E3/E4 · E4/E4</span><span class="tb">AD 风险<b>很高</b>，脑梗、冠心病风险高；黄斑变性风险低。他汀疗效较差。建议低脂低糖饮食，忌烟酒、忌鱼油。</span></div></div>
+<div class="pbreak"><b>阿尔茨海默超早期当下风险评估</b><span>第 2 页 / 共 2 页</span></div>
+<div class="sec"><div class="n">3</div><h2>适合人群</h2><span>以下情况建议了解本项目</span></div><div class="who"><div>50 岁以上，关注认知功能变化</div><div>自觉记忆力下降、近事遗忘</div><div>有阿尔茨海默或痴呆家族史</div><div>家族中有 65 岁前发病的痴呆病例</div><div>已诊断轻度认知障碍（MCI）</div><div>有高血压、糖尿病或血脂异常</div><div>有脑梗或心血管疾病史</div><div>长期服用他汀，想了解疗效差异</div><div>在吃鱼油，想确认是否适合自己</div></div>
+<div class="sec"><div class="n">4</div><h2>与相关检查的区别</h2></div><div class="vs"><div><span class="vt">阿尔兹海默症抗体4项</span>测的是<b>脑内病理是否已启动</b>（Aβ 与 p-tau）；本项目测的是<b>遗传底数与表观遗传状态</b>，两者互补而非替代。</div><div><span class="vt">认知量表（MMSE / MoCA）</span>测的是<b>认知表现</b>，须已有症状才能反映；本项目在无症状阶段即可给出风险分层。</div><div><span class="vt">血脂 / 同型半胱氨酸</span>测的是<b>指标本身</b>；本项目的 APOE 与 MTHFR 说明的是<b>你对这些指标的遗传反应方式</b>，含他汀疗效与鱼油适配。</div></div>
+<div class="sec"><div class="n">5</div><h2>可以做什么</h2><span>结果异常时的干预方向</span></div><div class="acts"><div><span class="t">APOE 分型<em>定策</em></span><i>分型不只关系 AD 风险，还直接影响<b>他汀疗效、鱼油是否适合、饮酒建议</b>。ε4 型与 E2/E3 型的饮食建议方向<b>正好相反</b>——这是报告里最可直接落地的一条。</i>按分型调整饮食与用药方向；具体方案须由医师确定。</div><div><span class="t">甲基化<em>随访</em></span><i>与终身不变的基因型不同，<b>启动子区甲基化是可变的</b>，受年龄、环境与共病影响。这一层的价值在于连续观察而非单次结果。</i>阴性者按医师意见定期复查；阳性者结合认知评估与专科意见进一步排查。</div><div><span class="t">可控风险<em>减负</em></span><i>无论分型如何，血压、血糖、血脂、体重、烟酒、睡眠与运动构成共同底座，<b>对 ε4 携带者尤其关键</b>——遗传不可改，这一层可改。</i>控制三高与体重；戒烟限酒；规律有氧运动；保证睡眠与社交。</div></div><div class="actnote">一份报告里同时装了<b>不变</b>与<b>可变</b>两层：基因分型终身有效、无需复查；甲基化部分可随状态改变，建议按医师意见随访。</div>
+<div class="sec"><div class="n">6</div><h2>常见问题</h2></div><div class="faq"><div class="qa"><div class="q">携带 APOE ε4 就一定会得阿尔茨海默吗？</div><div class="a">不会。ε4 是<b>风险因子，不是致病基因</b>——携带一个约提高 3–4 倍、两个约 9–15 倍，但相当比例携带者终身不发病，非携带者也可能患病。</div></div><div class="qa"><div class="q">甲基化阴性是不是就没事了？</div><div class="a">不能这样理解。受方法学限制，<b>本检测无法覆盖与疾病相关的全部基因和位点</b>，阴性只说明所测位点未见异常。</div></div><div class="qa"><div class="q">和血液 Aβ / p-tau 检测冲突吗？</div><div class="a">不冲突，是两个层面。本项目回答<b>风险底数</b>，蛋白标志物回答<b>病理是否已经开始</b>，可先后或同时做。</div></div></div>
+<div class="evi"><div class="evh">科学依据</div><div><i>1</i><span>APOE 有 ε2 / ε3 / ε4 三种等位基因，是<b>迟发型阿尔茨海默症的主要风险因子</b>：ε2 具保护作用；携带一个 ε4 患病风险约提高 <b>3–4 倍</b>，携带两个约提高 <b>9–15 倍</b>。</span></div><div><i>2</i><span>NCAPH2 与 LMF2 位于同一启动子区域，其 DNA 甲基化水平与 MMSE 评分、CDR-SOB 及海马体萎缩程度相关，可作为 AD 与遗忘型轻度认知障碍（aMCI）的生物标志物；UQCRC1 启动子区甲基化在一项研究的 500 例 AD 组中见于 320 例。</span></div><div><i>3</i><span>本报告<b>不作为疾病的临床诊断依据</b>；受方法学限制，本检测无法覆盖与疾病相关的所有基因和位点，如有疑似症状须求助于医疗机构。</span></div></div><div class="endnote">本资料为检测项目说明，不构成医疗建议；检测结果需由医师结合临床综合判断。文中数值为示例，仅用于说明报告结构。</div></div>
+
+<!-- ══════════════════ 血栓 01 · 易栓症及静脉血栓风险基因检测 ══════════════════ -->
+<div class="doc"><div class="mast"><div><b>项目说明</b>　血栓 · 遗传易感</div><div>血栓 01　版本 2026-08　·　第 1 页 / 共 2 页</div></div>
+<div class="hero">
+<div class="l"><div class="cat">血栓 · 遗传易感</div><h1>静脉血栓易感性胚系风险评估</h1>
+<div class="en">Thrombophilia &amp; Venous Thromboembolism Genetic Risk Panel</div><div class="one">同样是久坐、手术、怀孕，有人得血栓有人不得——差别写在基因里。</div></div>
+<div class="r"><div class="plb">参考收费</div>
+<div class="pv">¥1380<small>元 / 项</small></div>
+<div class="meta"><b>样本</b>　口腔拭子｜无需空腹、不受用药影响<br><b>注意</b>　22 基因 24 位点 · 方法学 核酸质谱</div></div></div>
+<div class="sec"><div class="n">1</div><h2>临床意义</h2></div><p class="lead">静脉血栓（深静脉血栓、肺栓塞）常在<b>手术、长期卧床、久坐、妊娠、口服避孕药</b>之后突然发生。这些是诱因，但同样的诱因下有人发病、有人不发病，差别在遗传底数。本项目分两层：一层查<b>致病性位点</b>——单个突变即显著升高风险的强效应变异；一层查 18 个<b>风险位点</b>，用多基因评分累加成一个可比较的倍数。</p>
+<div class="sec"><div class="n">2</div><h2>报告模板</h2><span>检测结果的呈现方式</span></div><div class="res-wrap big"><div class="rescap"><b>检测结果</b><span>示例数据</span><span class="cap">实际数值以检验报告为准</span></div><table class="resm"><tr><th style="width:38%">检测项目</th><th style="width:15%">检测结果</th><th style="width:34%">参考 / 说明</th><th style="width:13%">判定</th></tr><tr class="grp"><td colspan="4">综合结论<span>报告首页给出</span></td></tr><tr><td class="mi">易栓症致病性位点</td><td class="mv">0 个</td><td class="mr">检出的致病位点数量</td><td class="mu">低风险</td></tr><tr><td class="mi">静脉血栓遗传风险</td><td class="mv">1.27 倍</td><td class="mr">相对一般人群（OR-GRS 评分）</td><td class="mu">中风险</td></tr><tr class="grp"><td colspan="4">一、致病性位点<span>5 基因 6 位点 · 强效应变异</span></td></tr><tr><td class="mi">PROC（蛋白 C）c.565C&gt;T</td><td class="mv">CC</td><td class="mr">野生型</td><td class="mu">阴性</td></tr><tr><td class="mi">PROC（蛋白 C）c.577_579delAAG</td><td class="mv">DUP/DUP</td><td class="mr">野生型 · DUP 表示 AAG 插入</td><td class="mu">阴性</td></tr><tr><td class="mi">PROS1（蛋白 S）c.1680T&gt;A</td><td class="mv">TT</td><td class="mr">野生型</td><td class="mu">阴性</td></tr><tr><td class="mi">F2（凝血因子 II）c.*97G&gt;A</td><td class="mv">GG</td><td class="mr">野生型 · 即 20210G-A</td><td class="mu">阴性</td></tr><tr><td class="mi">F5（凝血因子 V）c.1601G&gt;A</td><td class="mv">GG</td><td class="mr">野生型 · 即 Factor V Leiden</td><td class="mu">阴性</td></tr><tr><td class="mi">THBD（血栓调节蛋白）c.-151G&gt;T</td><td class="mv">GG</td><td class="mr">野生型</td><td class="mu">阴性</td></tr><tr class="grp"><td colspan="4">二、风险位点<span>18 项 · 此处节选 7 项</span></td></tr><tr class="ab"><td class="mi">ABO c.259-1_259insG</td><td class="mv">CC <em>↑</em></td><td class="mr">insG 等位基因 OR 1.85</td><td class="mu">升高</td></tr><tr class="ab"><td class="mi">FGG g.155525276G&gt;A</td><td class="mv">GA <em>↑</em></td><td class="mr">A 等位基因 OR 1.56</td><td class="mu">升高</td></tr><tr class="ab"><td class="mi">F11 c.56-282T&gt;C</td><td class="mv">CC <em>↑</em></td><td class="mr">C 等位基因 OR 1.32</td><td class="mu">升高</td></tr><tr class="ab"><td class="mi">SLC44A2 c.461A&gt;G</td><td class="mv">GA <em>↑</em></td><td class="mr">G 等位基因 OR 1.12</td><td class="mu">升高</td></tr><tr><td class="mi">APOH c.461G&gt;A</td><td class="mv">GG</td><td class="mr">A 等位基因 OR 1.55</td><td class="mu">未升高</td></tr><tr><td class="mi">NOS3 c.894T&gt;A</td><td class="mv">GG</td><td class="mr">T 等位基因 OR 1.41</td><td class="mu">未升高</td></tr><tr><td class="mi">MTHFR c.665C&gt;T</td><td class="mv">CC</td><td class="mr">T 等位基因 OR 1.3</td><td class="mu">未升高</td></tr></table></div><div class="dnote">报告分<b>两层</b>出具。致病性位点是<b>单个位点即显著升高风险</b>的强效应变异；风险位点单个效应很弱，需通过 <b>OR-GRS 多基因评分</b>累加，再折算成相对一般人群的倍数。示例未检出致病位点、遗传风险为一般人群的 <b>1.27 倍</b>，综合判定为中风险（常规风险）。</div>
+<div class="pbreak"><b>静脉血栓易感性胚系风险评估</b><span>第 2 页 / 共 2 页</span></div>
+<div class="sec"><div class="n">3</div><h2>适合人群</h2><span>以下情况建议了解本项目</span></div><div class="who"><div>本人有深静脉血栓或肺栓塞病史</div><div>直系亲属有静脉血栓病史</div><div>50 岁以前发生过血栓</div><div>血栓部位少见或原因不明</div><div>计划接受骨科、肿瘤等较大手术</div><div>需长期卧床或术后制动</div><div>备孕、妊娠或处于产褥期</div><div>反复流产、胎停育</div><div>计划口服避孕药或激素替代治疗</div><div>长途飞行、久坐工作人群</div><div>肿瘤患者，治疗期血栓风险升高</div><div>合并肥胖、吸烟等多个危险因素</div></div>
+<div class="sec"><div class="n">4</div><h2>与相关检查的区别</h2></div><div class="vs"><div><span class="vt">D-二聚体</span>反映<b>体内此刻是否已有血栓形成与溶解</b>，是当下状态；本项目查的是<b>终身不变的遗传底数</b>。</div><div><span class="vt">蛋白 C / 蛋白 S 活性、凝血四项</span>测的是<b>蛋白功能水平</b>，受急性期、抗凝药、妊娠影响大；<b>基因检测不受这些干扰</b>。</div><div><span class="vt">Caprini / Padua 评估量表</span>评的是<b>获得性危险因素</b>（手术、制动、年龄）；本项目补上<b>遗传这一层</b>，两者叠加使用。</div></div>
+<div class="sec"><div class="n">5</div><h2>可以做什么</h2><span>结果异常时的干预方向</span></div><div class="acts"><div><span class="t">高危时段<em>预警</em></span><i>遗传风险不会自己发病，它<b>只在手术、制动、妊娠、长途飞行这些诱因叠加时才兑现</b>。知道底数，才知道何时需要额外防护。</i>术前、孕前主动告知医师检测结果；结合量表评估是否需预防性抗凝。</div><div><span class="t">药物与激素<em>避雷</em></span><i>口服避孕药与激素替代治疗本身即升高静脉血栓风险，遗传易感者叠加后更高。报告还会标注<b>用药禁忌</b>——如蛋白 C / S 缺陷者不宜以华法林起始抗凝。</i>用药前与医师沟通结果；避孕方式与激素方案需个体化选择。</div><div><span class="t">日常行为<em>减负</em></span><i>久坐、脱水、吸烟、肥胖是可控的叠加项，<b>它们和遗传是相乘而非相加的关系</b>。</i>长途出行每小时活动下肢并充分饮水；控制体重、戒烟；必要时使用梯度压力袜。</div></div><div class="actnote">基因结果<b>终身不变，无需复查</b>——这是它与绝大多数检测的根本区别。它的价值在于<b>在正确的时间点被想起</b>：术前、备孕、长途出行、调整用药时拿出来用。</div>
+<div class="sec"><div class="n">6</div><h2>常见问题</h2></div><div class="faq"><div class="qa"><div class="q">结果异常就一定会得血栓吗？</div><div class="a">不会。遗传提供的只是<b>易感性</b>，是否发病取决于有没有叠加手术、制动、妊娠、用药等诱因，<b>多数携带者终身不发病</b>。</div></div><div class="qa"><div class="q">需要空腹或停药吗？</div><div class="a">都不需要。样本是<b>口腔拭子</b>，测的是 DNA，不受进食、用药、急性期或妊娠状态影响，任何时候都能采。</div></div><div class="qa"><div class="q">结果正常是不是就可以放心了？</div><div class="a">不能。<b>遗传只是血栓风险的一部分</b>，手术、创伤、长期制动、高龄、妊娠、肿瘤治疗等获得性因素同样重要，仍须按临床评估防控。</div></div></div>
+<div class="evi"><div class="evh">科学依据</div><div><i>1</i><span>本项目采用<b>核酸质谱</b>方法检测易栓症及静脉血栓风险相关的 <b>22 个基因 24 个位点</b>，位点命名依据 ClinVar 数据库。</span></div><div><i>2</i><span>报告分两层出具：致病性位点（PROC、PROS1、THBD、F2、F5）为强效应变异；风险位点采用 <b>OR-GRS 多基因风险评分</b>，以受检者风险值与低风险阈值之比，折算为相对一般人群的风险倍数。</span></div><div><i>3</i><span>判读参考《易栓症诊断与防治中国指南（2021 年版）》及美国血液学会（ASH）2023 静脉血栓栓塞管理指南等；<b>阴性结果不能排除检测范围之外的其他基因突变</b>，手术、创伤、长期制动、高龄、妊娠及产褥期、口服避孕药、激素替代治疗、肿瘤治疗等获得性因素同样影响发病，结果须结合临床综合评估。</span></div></div><div class="endnote">本资料为检测项目说明，不构成医疗建议；检测结果需由医师结合临床综合判断。文中数值为示例，仅用于说明报告结构。</div></div>
+
+<!-- ══════════════════ 代谢 02 · 血脂亚组分 VAP ══════════════════ -->
+<div class="doc"><div class="mast"><div><b>项目说明</b>　代谢 · 血脂精细分型</div><div>代谢 02　版本 2026-08　·　第 1 页 / 共 2 页</div></div>
+<div class="hero">
+<div class="l"><div class="cat">代谢 · 血脂精细分型</div><h1>心血管VAP血脂亚组分当下风险评估</h1>
+<div class="en">Vertical Auto Profile (VAP) Lipid Subfraction Analysis</div><div class="one">血脂四项正常也可能出事——真正致病的是颗粒的大小和密度。</div></div>
+<div class="r"><div class="plb">参考收费</div>
+<div class="pv">¥1680<small>元 / 项</small></div>
+<div class="meta"><b>样本</b>　血清｜建议空腹采血<br><b>注意</b>　15 项亚组分 ＋ 全血脂谱图谱　·　报告周期待补</div></div></div>
+<div class="sec"><div class="n">1</div><h2>临床意义</h2></div><p class="lead">常规血脂四项给的是胆固醇的<b>总量</b>。但同样的 LDL-C 数值，颗粒是<b>大而轻</b>还是<b>小而密</b>，致动脉硬化的能力差别很大——小而密颗粒更易穿过血管内皮、更难被清除。VAP 把血脂拆成 <b>15 项亚组分</b>，包括 sdLDL-C、残粒 RLP-C、Lp(a)、IDL-C、VLDL3-C 与 LDL 密度模式。<b>血脂四项正常却仍发生心梗的人，问题常常藏在这一层。</b></p>
+<div class="sec"><div class="n">2</div><h2>报告模板</h2><span>检测结果的呈现方式</span></div><div class="res-wrap big"><div class="rescap"><b>检测结果</b><span>示例数据</span><span class="cap">实际数值以检验报告为准</span></div><table class="resm"><tr><th style="width:40%">检测项目</th><th style="width:13%">结果</th><th style="width:34%">参考区间</th><th style="width:13%">单位</th></tr><tr class="grp"><td colspan="4">常规四项<span>与普通血脂检查重叠的部分</span></td></tr><tr><td class="mi">甘油三酯（TG）</td><td class="mv">1.23</td><td class="mr">合适 &lt;1.69｜边缘 1.69-2.26｜升高 &gt;2.26</td><td class="mu">mmol/L</td></tr><tr><td class="mi">总胆固醇（TC）</td><td class="mv">3.28</td><td class="mr">合适 &lt;5.18｜边缘 5.18-6.22｜升高 ≥6.22</td><td class="mu">mmol/L</td></tr><tr><td class="mi">低密度脂蛋白胆固醇（LDL-C）</td><td class="mv">1.70</td><td class="mr">合适 &lt;3.37｜边缘 3.37-4.14｜升高 ≥4.14</td><td class="mu">mmol/L</td></tr><tr class="ab"><td class="mi">高密度脂蛋白胆固醇（HDL-C）</td><td class="mv">1.02 <em>↓</em></td><td class="mr">≥1.04</td><td class="mu">mmol/L</td></tr><tr class="grp"><td colspan="4">致病性亚组分<span>本项目的核心增量</span></td></tr><tr><td class="mi">残粒样脂蛋白胆固醇（RLP-C）</td><td class="mv">0.50</td><td class="mr">合适 &lt;0.78｜升高 ≥0.78</td><td class="mu">mmol/L</td></tr><tr><td class="mi">中密度脂蛋白胆固醇（IDL-C）</td><td class="mv">0.21</td><td class="mr">合适 &lt;0.52｜边缘 0.52-0.78｜升高 ≥0.78</td><td class="mu">mmol/L</td></tr><tr class="ab"><td class="mi">极低密度脂蛋白 3 亚型（VLDL3-C）</td><td class="mv">0.29 <em>↑</em></td><td class="mr">合适 &lt;0.26｜边缘 0.26-0.34｜升高 &gt;0.34</td><td class="mu">mmol/L</td></tr><tr><td class="mi">小而致密 LDL 胆固醇（sdLDL-C）</td><td class="mv">0.581</td><td class="mr">合适 &lt;1.362｜升高 &gt;1.362</td><td class="mu">mmol/L</td></tr><tr class="ab"><td class="mi">LDL 密度模式</td><td class="mv">混合 <em>↑</em></td><td class="mr">大而轻｜混合｜小而密</td><td class="mu">—</td></tr><tr><td class="mi">脂蛋白 a〔Lp(a)〕</td><td class="mv">33</td><td class="mr">合适 ≤300｜升高 &gt;300</td><td class="mu">mg/L</td></tr><tr class="grp"><td colspan="4">计算指标与 HDL 亚型</td></tr><tr><td class="mi">非高密度脂蛋白胆固醇（Non-HDL-C）</td><td class="mv">2.25</td><td class="mr">合适 &lt;4.14｜边缘 4.14-4.92｜升高 ≥4.92</td><td class="mu">mmol/L</td></tr><tr><td class="mi">LDL 1~4 亚型胆固醇（LDL4+3+2+1-C）</td><td class="mv">1.35</td><td class="mr">合适 &lt;2.59｜边缘 2.59-3.37｜升高 ≥3.37</td><td class="mu">mmol/L</td></tr><tr><td class="mi">极低密度脂蛋白胆固醇（VLDL-C）</td><td class="mv">0.55</td><td class="mr">合适 &lt;0.78｜升高 ≥0.78</td><td class="mu">mmol/L</td></tr><tr><td class="mi">高密度脂蛋白 2 亚型（HDL2-C）</td><td class="mv">0.33</td><td class="mr">&gt;0.26</td><td class="mu">mmol/L</td></tr><tr class="ab"><td class="mi">高密度脂蛋白 3 亚型（HDL3-C）</td><td class="mv">0.69 <em>↓</em></td><td class="mr">&gt;0.78</td><td class="mu">mmol/L</td></tr></table></div><div class="dnote">示例中<b>常规四项几乎全在合适水平</b>——LDL-C 1.70、TC 3.28，仅 HDL-C 略低；但拆到亚组分层面，VLDL3-C 边缘升高、LDL 密度模式为混合型、HDL3-C 偏低。<b>这正是常规血脂看不到的部分。</b>报告另附全血脂谱图谱，直观显示各组分的分离峰。</div>
+<div class="pbreak"><b>心血管VAP血脂亚组分当下风险评估</b><span>第 2 页 / 共 2 页</span></div>
+<div class="sec"><div class="n">3</div><h2>适合人群</h2><span>以下情况建议了解本项目</span></div><div class="who"><div>血脂四项正常但仍担心心血管风险</div><div>有心梗、脑梗病史或家族史</div><div>已服他汀，想评估效果与残余风险</div><div>已发现颈动脉斑块或冠脉狭窄</div><div>糖尿病、胰岛素抵抗、代谢综合征</div><div>甘油三酯升高</div><div>体重超标、腰围偏大</div><div>家族性高胆固醇血症或早发心血管病家族史</div><div>40 岁以上常规心血管风险评估</div></div>
+<div class="sec"><div class="n">4</div><h2>与相关检查的区别</h2></div><div class="vs"><div><span class="vt">常规血脂四项</span>给的是<b>总量</b>；本项目在此基础上拆出颗粒的<b>大小、密度与残粒</b>，共 15 项。</div><div><span class="vt">载脂蛋白 ApoB / ApoA1</span>反映致病颗粒的<b>数量</b>；本项目反映颗粒的<b>构成与密度分布</b>，与 LDL 密度模式同测更利于判断。</div><div><span class="vt">心血管与肠道代谢 TMAO 精准评估</span>查的是<b>肠道菌群代谢通路</b>；本项目查的是<b>脂质本身的精细结构</b>，两条路径互不替代。</div></div>
+<div class="sec"><div class="n">5</div><h2>可以做什么</h2><span>结果异常时的干预方向</span></div><div class="acts"><div><span class="t">靶点排序<em>定标</em></span><i>LDL-C 是首要靶标，Non-HDL-C 是次要靶标——<b>甘油三酯升高、糖尿病、代谢综合征或慢性肾病者更应盯住 Non-HDL-C</b>。先确认哪一项没达标，再谈怎么降。</i>逐项对照报告的治疗目标；目标值随心血管危险分层变化，须由医师确定。</div><div><span class="t">密度模式<em>改型</em></span><i>LDL 从「小而密」转向「大而轻」是可以做到的，<b>关键路径是降低甘油三酯</b>——减少精制碳水与含糖饮料的效果通常快于减少脂肪。</i>治疗性生活方式改变（TLC）：减重、限糖限酒、规律有氧运动。</div><div><span class="t">残余风险<em>补漏</em></span><i>他汀把 LDL-C 降到达标后仍有事件发生，<b>残粒 RLP-C、VLDL3-C 与 Lp(a) 是常见来源</b>；其中 Lp(a) 由遗传决定，生活方式几乎无效。</i>残粒与 VLDL3 升高者可与医师讨论 ω-3 脂肪酸或贝特类；Lp(a) 高者重在强化其他可控危险因素。</div></div><div class="actnote">生活方式改变或调脂治疗后 <b>3 个月建议复查</b>——LDL 密度模式与残粒对饮食及甘油三酯变化反应较快，是能较早看到干预效果的一层。</div>
+<div class="sec"><div class="n">6</div><h2>常见问题</h2></div><div class="faq"><div class="qa"><div class="q">血脂四项正常还有必要做吗？</div><div class="a">有必要。<b>总量正常不代表颗粒结构正常</b>——小而密 LDL、残粒、Lp(a) 都可能在四项正常时升高，这正是本项目要补的一层。</div></div><div class="qa"><div class="q">要空腹吗？</div><div class="a"><b>建议空腹采血</b>，尤其在关注甘油三酯与残粒时。是否空腹会影响部分指标，具体按检验科要求执行。</div></div><div class="qa"><div class="q">已经在吃他汀了，还要查吗？</div><div class="a">更需要。他汀主要降 LDL-C，<b>对 Lp(a) 与残粒的作用有限</b>；本项目既能评估治疗效果，也能找出残余风险的来源。</div></div></div>
+<div class="evi"><div class="evh">科学依据</div><div><i>1</i><span>本项目采用 <b>VAP（垂直自动分离）技术</b>检测血脂与脂蛋白亚组分共 15 项，含 sdLDL-C、RLP-C、IDL-C、VLDL3-C、Lp(a) 及 LDL 密度模式，并出具全血脂谱图谱。</span></div><div><i>2</i><span>以小而密颗粒为主的 <b>B 型 LDL 密度模式</b>可能是冠心病及严重事件的独立危险因素；<b>sdLDL-C</b> 在无糖尿病合并症的冠心病患者中预测价值优于 LDL-C；<b>RLP-C</b> 为 ASCVD 独立风险因素。</span></div><div><i>3</i><span>判读参考《VAP 技术检测血脂与脂蛋白亚组分及其临床应用中国专家共识（2025 版）》与《中国血脂管理指南（2023 年）》；<b>治疗目标须依据个体心血管危险分层由医师确定</b>，本资料不作为用药依据。</span></div></div><div class="endnote">本资料为检测项目说明，不构成医疗建议；检测结果需由医师结合临床综合判断。文中数值为示例，仅用于说明报告结构。</div></div>

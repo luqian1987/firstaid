@@ -1,0 +1,12 @@
+# 检验报告原件含受检人个人健康数据，永不进版本库
+input/*
+!input/.gitkeep
+
+# 构建产物不进版本库（build.py 会自行创建 out/）
+# 根 .gitignore 排除了整个 out/，这里先放行目录本身，再排除其内容
+!out/
+out/*
+!out/.gitkeep
+
+# 成稿是交付物，破例纳入（根 .gitignore 排除了 *.pdf）
+!成稿/*.pdf
