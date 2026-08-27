@@ -41,6 +41,12 @@ def wrap(body: str) -> str:
     )
 
 
+def section(name: str) -> str:
+    """文件名 NN_板块编号_项目名.html 里的板块编号，如 代谢02。"""
+    parts = name.split("_")
+    return parts[1] if len(parts) > 2 else ""
+
+
 def pick(filters):
     names = [l.strip() for l in (SHEETS / "manifest.txt").read_text(encoding="utf-8").splitlines() if l.strip()]
     missing = [n for n in names if not (SHEETS / n).exists()]
@@ -48,10 +54,17 @@ def pick(filters):
         sys.exit(f"manifest 里这些文件不存在: {missing}")
     if not filters:
         return names
-    hit = [n for n in names if any(f in n for f in filters)]
-    if not hit:
-        sys.exit(f"没有匹配 {filters} 的项目。现有: {names}")
-    return hit
+
+    # 先按板块匹配（"代谢" 命中 代谢01–04，不会误伤 营养05_营养元素代谢…），
+    # 板块匹配不上再退回文件名子串匹配（"VAP" 这种）。
+    hit = []
+    for f in filters:
+        m = [n for n in names if section(n).startswith(f)] or [n for n in names if f in n]
+        if not m:
+            secs = sorted({section(n) for n in names if section(n)})
+            sys.exit(f"没有匹配「{f}」的项目。现有板块: {secs}")
+        hit += [n for n in m if n not in hit]
+    return [n for n in names if n in hit]          # 按 manifest 顺序出稿
 
 
 async def render(html_path: Path, pdf_path: Path):
