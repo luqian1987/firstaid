@@ -10,7 +10,8 @@
 
 用户把检验报告（PDF / docx / 图片）放进 `input/`，然后说做哪几项。你的流程：
 
-1. **读报告**。PDF 用 `pdftotext -layout`，读不出文字层的用 `pdftoppm -r 150 -png` 转图再看。docx 用 `extract-text` 或 `python-docx`。
+1. **读报告**。PDF 用 `pdftotext -layout`，读不出文字层的用 `pdftoppm -scale-to 1700 -png` 转图再看（不要用 `-r dpi`，页面 box 不正常的 PDF 会渲出七千像素）。docx 用 `extract-text` 或 `python-docx`。
+   - 用户抱怨报告传不上来（上传有 30MB 上限，改不了）时，让他先跑 `python prep.py input/xxx.pdf`：有文字层就只传抽出来的 `.txt`，扫描件压到长边 1700px 重打包，还超就自动分卷。**不要建议他改设置**，那是平台侧的，改不了。
 2. **查名称、价格、板块位置**。名称和价格一律以 `项目清单.md` 为准，那是协议附件原文；这份稿子归哪个板块、编号多少、跟谁合并，查 `板块划分.md`。**不要自己起名，不要自己定价，不要自己编号。** 清单里没有的，停下来问用户。
 3. **写 sheet**。在 `sheets/` 下新建 `NN_系统NN_项目名.html`，只写 `<div class="doc">…</div>` 片段，不要写 `<html>` `<style>`。
 4. **加进 manifest**。`sheets/manifest.txt` 一行一个文件名，顺序就是成稿顺序。
@@ -94,6 +95,7 @@
 
 ```bash
 pip install playwright && playwright install chromium   # 渲染 PDF
+pip install Pillow                                      # prep.py 重打包扫描件用
 apt-get install -y poppler-utils                        # pdfinfo/pdftotext/pdftoppm
 ```
 
