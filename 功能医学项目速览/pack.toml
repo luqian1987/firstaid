@@ -1,10 +1,11 @@
 # 总包成册清单　—— 顺序即 NN，名称与价格以 项目清单.md（协议附件 1）为准
+# price 写成字符串：合并项要标「260 × 4」这种逐项计价，不是一个总价。
 
 [[item]]
 nn = "01"
 code = "内分泌 01"
 name = "褪黑素水平分析"
-price = 507
+price = "507"
 sec = "内分泌"
 kind = "pdf"
 file = "成稿/既有PDF/内分泌6份.pdf"
@@ -14,7 +15,7 @@ page = 1
 nn = "02"
 code = "内分泌 02"
 name = "压力与性激素平衡评估-男"
-price = 540
+price = "540"
 sec = "内分泌"
 kind = "pdf"
 file = "成稿/既有PDF/内分泌6份.pdf"
@@ -24,7 +25,7 @@ page = 3
 nn = "03"
 code = "内分泌 03"
 name = "压力与性激素平衡评估-女"
-price = 710
+price = "710"
 sec = "内分泌"
 kind = "pdf"
 file = "成稿/既有PDF/内分泌6份.pdf"
@@ -34,7 +35,7 @@ page = 5
 nn = "04"
 code = "内分泌 04"
 name = "肾上腺皮质压力管理与评估"
-price = 1318
+price = "1318"
 sec = "内分泌"
 kind = "pdf"
 file = "成稿/既有PDF/内分泌6份.pdf"
@@ -44,7 +45,7 @@ page = 7
 nn = "05"
 code = "内分泌 05"
 name = "全套男性荷尔蒙健康评估"
-price = 2574
+price = "2574"
 sec = "内分泌"
 kind = "pdf"
 file = "成稿/既有PDF/内分泌6份.pdf"
@@ -54,7 +55,7 @@ page = 9
 nn = "06"
 code = "内分泌 06"
 name = "全套女性荷尔蒙健康评估"
-price = 2574
+price = "2574"
 sec = "内分泌"
 kind = "pdf"
 file = "成稿/既有PDF/内分泌6份.pdf"
@@ -64,7 +65,7 @@ page = 11
 nn = "07"
 code = "营养 01"
 name = "微量元素谱分析"
-price = 150
+price = "150"
 sec = "营养"
 kind = "pdf"
 file = "成稿/既有PDF/营养4份.pdf"
@@ -74,7 +75,7 @@ page = 1
 nn = "08"
 code = "营养 02"
 name = "矿物元素谱分析"
-price = 180
+price = "180"
 sec = "营养"
 kind = "pdf"
 file = "成稿/既有PDF/营养4份.pdf"
@@ -84,7 +85,7 @@ page = 3
 nn = "09"
 code = "营养 03"
 name = "辅酶Q10的精准评估"
-price = 220
+price = "220"
 sec = "营养"
 kind = "pdf"
 file = "成稿/既有PDF/营养4份.pdf"
@@ -94,17 +95,26 @@ page = 5
 nn = "10"
 code = "营养 04"
 name = "维生素B族8项检测"
-price = 540
+price = "540"
 sec = "营养"
 kind = "pdf"
 file = "成稿/既有PDF/营养4份.pdf"
 page = 7
 
 [[item]]
+nn = "11"
+code = "营养 05"
+name = "营养元素代谢/吸收能力检测"
+price = "637"
+sec = "营养"
+kind = "sheet"
+file = "11_营养05_营养元素代谢-吸收能力检测.html"
+
+[[item]]
 nn = "12"
 code = "代谢 01"
 name = "心血管与肠道代谢TMAO精准评估"
-price = 480
+price = "480"
 sec = "代谢"
 kind = "pdf"
 file = "成稿/既有PDF/代谢01与环境毒素01.pdf"
@@ -114,7 +124,7 @@ page = 1
 nn = "13"
 code = "代谢 02"
 name = "心血管VAP血脂亚组分当下风险评估"
-price = 1680
+price = "1680"
 sec = "代谢"
 kind = "sheet"
 file = "13_代谢02_心血管VAP血脂亚组分当下风险评估.html"
@@ -123,16 +133,34 @@ file = "13_代谢02_心血管VAP血脂亚组分当下风险评估.html"
 nn = "14"
 code = "代谢 03"
 name = "全谱氨基酸代谢风险评估"
-price = 680
+price = "680"
 sec = "代谢"
 kind = "sheet"
 file = "14_代谢03_全谱氨基酸代谢风险评估.html"
 
 [[item]]
+nn = "15"
+code = "代谢 04"
+name = "体重管理与代谢类型分析"
+price = "637"
+sec = "代谢"
+kind = "sheet"
+file = "15_代谢04_体重管理与代谢类型分析.html"
+
+[[item]]
+nn = "16"
+code = "胃肠 01"
+name = "肠道微生态宏基因组分析"
+price = "1980"
+sec = "胃肠"
+kind = "sheet"
+file = "16_胃肠01_肠道微生态宏基因组分析.html"
+
+[[item]]
 nn = "17"
 code = "免疫 01"
 name = "TBNK淋巴细胞亚群"
-price = 507
+price = "507"
 sec = "免疫"
 kind = "sheet"
 file = "17_免疫01_TBNK淋巴细胞亚群.html"
@@ -141,7 +169,7 @@ file = "17_免疫01_TBNK淋巴细胞亚群.html"
 nn = "18"
 code = "免疫 02"
 name = "免疫功能综合评估"
-price = 1664
+price = "1664"
 sec = "免疫"
 kind = "sheet"
 file = "18_免疫02_免疫功能综合评估.html"
@@ -150,7 +178,7 @@ file = "18_免疫02_免疫功能综合评估.html"
 nn = "19"
 code = "免疫 03"
 name = "食物不耐受分析-180项"
-price = 4056
+price = "4056"
 sec = "免疫"
 kind = "sheet"
 file = "19_免疫03_食物不耐受分析-180项.html"
@@ -159,17 +187,26 @@ file = "19_免疫03_食物不耐受分析-180项.html"
 nn = "20"
 code = "环境毒素 01"
 name = "核酸氧化损伤分析谱"
-price = 468
+price = "468"
 sec = "环境毒素"
 kind = "pdf"
 file = "成稿/既有PDF/代谢01与环境毒素01.pdf"
 page = 3
 
 [[item]]
+nn = "21"
+code = "环境毒素 02"
+name = "脂肪酸分析（细胞膜）"
+price = "3380"
+sec = "环境毒素"
+kind = "sheet"
+file = "21_环境毒素02_脂肪酸分析-细胞膜.html"
+
+[[item]]
 nn = "22"
 code = "神经 01"
 name = "阿尔兹海默症抗体4项"
-price = 3200
+price = "3200"
 sec = "神经"
 kind = "sheet"
 file = "22_神经01_阿尔兹海默症抗体4项.html"
@@ -178,7 +215,7 @@ file = "22_神经01_阿尔兹海默症抗体4项.html"
 nn = "23"
 code = "神经 02"
 name = "阿尔茨海默超早期当下风险评估"
-price = 1380
+price = "1380"
 sec = "神经"
 kind = "sheet"
 file = "23_神经02_阿尔茨海默超早期当下风险评估.html"
@@ -187,7 +224,79 @@ file = "23_神经02_阿尔茨海默超早期当下风险评估.html"
 nn = "24"
 code = "血栓 01"
 name = "静脉血栓易感性胚系风险评估"
-price = 1380
+price = "1380"
 sec = "血栓"
 kind = "sheet"
 file = "24_血栓01_静脉血栓易感性胚系风险评估.html"
+
+[[item]]
+nn = "25"
+code = "衰老 01"
+name = "人体衰老程度端粒检测"
+price = "637"
+sec = "衰老"
+kind = "sheet"
+file = "25_衰老01_人体衰老程度端粒检测.html"
+
+[[item]]
+nn = "26"
+code = "衰老 02"
+name = "多器官衰老程度检测"
+price = "1274"
+sec = "衰老"
+kind = "sheet"
+file = "26_衰老02_多器官衰老程度检测.html"
+
+[[item]]
+nn = "27"
+code = "感染 01"
+name = "CT / NG / UU / MG 核酸检测（4 项）"
+price = "260 × 4"
+sec = "感染"
+kind = "sheet"
+file = "27_感染01_性传播病原体核酸检测4项.html"
+
+[[item]]
+nn = "28"
+code = "分子筛查 01"
+name = "高发肿瘤NGS超早期深度评估（男6 / 女8含保险）"
+price = "3880"
+sec = "分子筛查"
+kind = "sheet"
+file = "28_分子筛查01_高发肿瘤NGS超早期深度评估.html"
+
+[[item]]
+nn = "29"
+code = "分子筛查 02"
+name = "九癌种甲基化早筛（9 项合并）"
+price = "900 × 9"
+sec = "分子筛查"
+kind = "sheet"
+file = "29_分子筛查02_九癌种甲基化早筛.html"
+
+[[item]]
+nn = "30"
+code = "分子筛查 03"
+name = "肿瘤遗传易感性胚系风险评估"
+price = "680"
+sec = "分子筛查"
+kind = "sheet"
+file = "30_分子筛查03_肿瘤遗传易感性胚系风险评估.html"
+
+[[item]]
+nn = "31"
+code = "分子筛查 04"
+name = "胸苷激酶TK1细胞增殖风险评估"
+price = "145"
+sec = "分子筛查"
+kind = "sheet"
+file = "31_分子筛查04_胸苷激酶TK1细胞增殖风险评估.html"
+
+[[item]]
+nn = "32"
+code = "分子筛查 05"
+name = "全外显子遗传易感性胚系风险评估"
+price = "2980"
+sec = "分子筛查"
+kind = "sheet"
+file = "32_分子筛查05_全外显子遗传易感性胚系风险评估.html"
