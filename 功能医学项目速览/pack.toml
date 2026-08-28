@@ -1,0 +1,193 @@
+# 总包成册清单　—— 顺序即 NN，名称与价格以 项目清单.md（协议附件 1）为准
+
+[[item]]
+nn = "01"
+code = "内分泌 01"
+name = "褪黑素水平分析"
+price = 507
+sec = "内分泌"
+kind = "pdf"
+file = "成稿/既有PDF/内分泌6份.pdf"
+page = 1
+
+[[item]]
+nn = "02"
+code = "内分泌 02"
+name = "压力与性激素平衡评估-男"
+price = 540
+sec = "内分泌"
+kind = "pdf"
+file = "成稿/既有PDF/内分泌6份.pdf"
+page = 3
+
+[[item]]
+nn = "03"
+code = "内分泌 03"
+name = "压力与性激素平衡评估-女"
+price = 710
+sec = "内分泌"
+kind = "pdf"
+file = "成稿/既有PDF/内分泌6份.pdf"
+page = 5
+
+[[item]]
+nn = "04"
+code = "内分泌 04"
+name = "肾上腺皮质压力管理与评估"
+price = 1318
+sec = "内分泌"
+kind = "pdf"
+file = "成稿/既有PDF/内分泌6份.pdf"
+page = 7
+
+[[item]]
+nn = "05"
+code = "内分泌 05"
+name = "全套男性荷尔蒙健康评估"
+price = 2574
+sec = "内分泌"
+kind = "pdf"
+file = "成稿/既有PDF/内分泌6份.pdf"
+page = 9
+
+[[item]]
+nn = "06"
+code = "内分泌 06"
+name = "全套女性荷尔蒙健康评估"
+price = 2574
+sec = "内分泌"
+kind = "pdf"
+file = "成稿/既有PDF/内分泌6份.pdf"
+page = 11
+
+[[item]]
+nn = "07"
+code = "营养 01"
+name = "微量元素谱分析"
+price = 150
+sec = "营养"
+kind = "pdf"
+file = "成稿/既有PDF/营养4份.pdf"
+page = 1
+
+[[item]]
+nn = "08"
+code = "营养 02"
+name = "矿物元素谱分析"
+price = 180
+sec = "营养"
+kind = "pdf"
+file = "成稿/既有PDF/营养4份.pdf"
+page = 3
+
+[[item]]
+nn = "09"
+code = "营养 03"
+name = "辅酶Q10的精准评估"
+price = 220
+sec = "营养"
+kind = "pdf"
+file = "成稿/既有PDF/营养4份.pdf"
+page = 5
+
+[[item]]
+nn = "10"
+code = "营养 04"
+name = "维生素B族8项检测"
+price = 540
+sec = "营养"
+kind = "pdf"
+file = "成稿/既有PDF/营养4份.pdf"
+page = 7
+
+[[item]]
+nn = "12"
+code = "代谢 01"
+name = "心血管与肠道代谢TMAO精准评估"
+price = 480
+sec = "代谢"
+kind = "pdf"
+file = "成稿/既有PDF/代谢01与环境毒素01.pdf"
+page = 1
+
+[[item]]
+nn = "13"
+code = "代谢 02"
+name = "心血管VAP血脂亚组分当下风险评估"
+price = 1680
+sec = "代谢"
+kind = "sheet"
+file = "13_代谢02_心血管VAP血脂亚组分当下风险评估.html"
+
+[[item]]
+nn = "14"
+code = "代谢 03"
+name = "全谱氨基酸代谢风险评估"
+price = 680
+sec = "代谢"
+kind = "sheet"
+file = "14_代谢03_全谱氨基酸代谢风险评估.html"
+
+[[item]]
+nn = "17"
+code = "免疫 01"
+name = "TBNK淋巴细胞亚群"
+price = 507
+sec = "免疫"
+kind = "sheet"
+file = "17_免疫01_TBNK淋巴细胞亚群.html"
+
+[[item]]
+nn = "18"
+code = "免疫 02"
+name = "免疫功能综合评估"
+price = 1664
+sec = "免疫"
+kind = "sheet"
+file = "18_免疫02_免疫功能综合评估.html"
+
+[[item]]
+nn = "19"
+code = "免疫 03"
+name = "食物不耐受分析-180项"
+price = 4056
+sec = "免疫"
+kind = "sheet"
+file = "19_免疫03_食物不耐受分析-180项.html"
+
+[[item]]
+nn = "20"
+code = "环境毒素 01"
+name = "核酸氧化损伤分析谱"
+price = 468
+sec = "环境毒素"
+kind = "pdf"
+file = "成稿/既有PDF/代谢01与环境毒素01.pdf"
+page = 3
+
+[[item]]
+nn = "22"
+code = "神经 01"
+name = "阿尔兹海默症抗体4项"
+price = 3200
+sec = "神经"
+kind = "sheet"
+file = "22_神经01_阿尔兹海默症抗体4项.html"
+
+[[item]]
+nn = "23"
+code = "神经 02"
+name = "阿尔茨海默超早期当下风险评估"
+price = 1380
+sec = "神经"
+kind = "sheet"
+file = "23_神经02_阿尔茨海默超早期当下风险评估.html"
+
+[[item]]
+nn = "24"
+code = "血栓 01"
+name = "静脉血栓易感性胚系风险评估"
+price = 1380
+sec = "血栓"
+kind = "sheet"
+file = "24_血栓01_静脉血栓易感性胚系风险评估.html"

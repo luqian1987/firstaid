@@ -8,5 +8,7 @@ input/*
 out/*
 !out/.gitkeep
 
-# 成稿是交付物，破例纳入（根 .gitignore 排除了 *.pdf）
+# 成稿是交付物，破例纳入（根 .gitignore 的 *.pdf 排掉了它们）。
+# 两行都要：!成稿/*.pdf 不覆盖子目录，既有PDF/ 在子目录里。
 !成稿/*.pdf
+!成稿/**/*.pdf
