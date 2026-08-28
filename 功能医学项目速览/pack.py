@@ -117,6 +117,23 @@ def slice_pdf(src: Path, first: int, dst: Path):
 
 def merge(parts, dst: Path):
     subprocess.run(["pdfunite", *map(str, parts), str(dst)], check=True, capture_output=True)
+    squeeze(dst)
+
+
+def squeeze(pdf: Path):
+    """去重对象、压缩流。
+
+    pdfseparate 会把整套中文字体原样拷进每一个单页，12 份切页各背一份 2MB 的
+    字体子集，合出来 38MB —— 源文件加起来才 7.9MB。mutool 的 -gggg 把重复对象
+    合掉，-z 压缩流，结果 16MB 左右，页数和 A4 尺寸不变。
+    顺带修掉 pdfunite 留下的 broken xref（clean 会自己 repair，警告可以不管）。
+
+    38MB 那版发不出去：上传/下发都卡 30MB。
+    """
+    tmp = pdf.with_suffix(".tmp.pdf")
+    subprocess.run(["mutool", "clean", "-ggggz", str(pdf), str(tmp)],
+                   check=True, capture_output=True)
+    tmp.replace(pdf)
 
 
 def main():
@@ -169,7 +186,9 @@ def main():
 
     ns = sum(1 for i in items if i["kind"] == "sheet")
     print(f"\n完成")
-    print(f"  {pdf.name}   {total} 页（目录 {build.page_count(toc_pdf)} + {len(items)} 份 × 2）")
+    mb = pdf.stat().st_size / 1024 / 1024
+    print(f"  {pdf.name}   {total} 页（目录 {build.page_count(toc_pdf)} + {len(items)} 份 × 2）"
+          f"　{mb:.1f} MB{'' if mb < 30 else '　!! 超 30MB，发不出去'}")
     print(f"  {html.name}  目录 + {ns} 份原生 HTML（另 {len(items)-ns} 份仅 PDF，无源码）")
 
 
