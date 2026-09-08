@@ -128,6 +128,25 @@ def build_book(items, toc_html_text: str, tmp: Path, dst: Path) -> None:
     asyncio.run(build.render(h, dst, footer=True))
 
 
+def add_cover(pdf: Path, tmp: Path) -> None:
+    """封面单独渲好再前置合并，**不并进整册那一次渲染**。
+
+    页脚的连续页码是 Chrome 打印管线画的，没有单页开关：封面若跟正文一起渲，
+    底下就会印一行「第 1 页 / 共 94 页」，封面带页码看着业余。代价是多嵌一套
+    中文字体子集（约 1MB）——封面不计页码本来就是通行做法，目录里印的页码
+    也因此仍与页脚一致。
+    """
+    h = tmp / "_封面.html"
+    h.write_text(build.wrap((ROOT / "封面.html").read_text(encoding="utf-8")), encoding="utf-8")
+    cov = tmp / "_封面.pdf"
+    asyncio.run(build.render(h, cov))          # 不传 footer，封面才没有页码
+    assert build.page_count(cov) == 1, "封面渲成了多页"
+    merged = tmp / "_带封面.pdf"
+    subprocess.run(["pdfunite", str(cov), str(pdf), str(merged)], check=True)
+    subprocess.run(["mutool", "clean", "-ggggz", str(merged), str(pdf)],
+                   check=True, capture_output=True)
+
+
 def verify(pdf: Path, items, n_toc: int):
     """逐份核对页眉上印的板块编号，确认重排没错位。
     合渲之后单份页数不再单独可见，这是替代的分页校验。"""
@@ -189,6 +208,11 @@ def main():
 
     if "--split" in sys.argv:
         split_by_section(items, pdf, n_toc)
+
+    # 封面放最后加：分册按页码从整册切页，先加封面会让每一份都错一位
+    add_cover(pdf, tmp)
+    print(f"\n  封面已前置（不计页码）　总册 {build.page_count(pdf)} 页"
+          f"　{pdf.stat().st_size / 1024 / 1024:.1f} MB")
 
 
 def split_by_section(items, pdf: Path, n_toc: int):

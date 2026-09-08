@@ -1,0 +1,21 @@
+<style>
+/* 封面：整册唯一一页不带页码的纸——页脚是 Chrome 打印管线画的，没有单页开关，
+   所以封面单独渲、渲完前置合并（见 pack.py add_cover）。
+   版式跟内页一条路：白底、大留白、左对齐、一条细线，不用底色不用配图。 */
+.cover{ height:271mm; display:flex; flex-direction:column; color:#1a1a1a; }
+.cover .mid{ margin-top:74mm; }
+.cover h1{ margin:0; font-size:31pt; font-weight:600; letter-spacing:.03em; line-height:1.3; }
+.cover .rule{ width:58mm; border-top:1px solid #1a1a1a; margin:9.5mm 0 8mm; }
+.cover .slg{ font-size:15.5pt; font-weight:600; letter-spacing:.2em; color:var(--deep); }
+.cover .sub{ margin-top:4.2mm; font-size:10.5pt; color:#5A5A5A; letter-spacing:.02em; }
+.cover .btm{ margin-top:auto; font-size:8.4pt; color:#9A9A9A; letter-spacing:.08em; }
+</style>
+<div class="doc cover">
+<div class="mid">
+<h1>功能医学检测项目速览</h1>
+<div class="rule"></div>
+<div class="slg">关口前移　防患未然</div>
+<div class="sub">让身体的变化，在成为疾病之前被看见。</div>
+</div>
+<div class="btm">本资料仅供医疗卫生专业人士参考</div>
+</div>
