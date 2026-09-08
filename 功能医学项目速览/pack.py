@@ -80,26 +80,29 @@ def toc_html(items, start_page):
         if it["sec"] != cur:
             cur = it["sec"]
             n = sum(1 for x in items if x["sec"] == cur)
-            rows.append(f'<tr class="grp"><td colspan="4"><b>{cur}</b>'
-                        f'<span>{n} 份</span></td></tr>')
+            lab = "" if cur == "附录" else f"<span>{n} 份</span>"   # 附录不计份数
+            rows.append(f'<tr class="grp"><td colspan="4"><b>{cur}</b>{lab}</td></tr>')
         extra = f'<span style="color:#9AA6B0"> · {it["n"]} 页</span>' if it["n"] != 2 else ""
+        nm = f'<b>{it["code"]}</b>　{it["name"]}' if it["code"] else it["name"]
+        pr = f'¥{it["price"]}' if it["price"] else ""
         rows.append(
             f'<tr><td class="nn">{it["nn"]}</td>'
-            f'<td class="nm"><b>{it["code"]}</b>　{it["name"]}{extra}</td>'
-            f'<td class="pr">¥{it["price"]}</td>'
+            f'<td class="nm">{nm}{extra}</td>'
+            f'<td class="pr">{pr}</td>'
             f'<td class="pg">{pg}</td></tr>')
         pg += it["n"]
-    n_pdf = sum(1 for i in items if i["kind"] == "pdf")
+    n_item = sum(1 for i in items if i["kind"] != "appendix")
     return (
         f'<style>{TOC_CSS}</style>\n<div class="toc">'
         f'<h1>功能医学检测项目速览</h1>'
-        f'<div class="sub">共 {len(items)} 份 · {sum(i["n"] for i in items)} 页 A4 · 版本 2026-08</div>'
+        f'<div class="sub">共 {n_item} 份 · {sum(i["n"] for i in items)} 页 A4 · 版本 2026-08</div>'
         f'<div class="rule"></div>'
         f'<table>{COLS}{"".join(rows)}</table>'
         f'<div class="foot">'
         f'名称与收费以《心理睡眠体检检测项目协议》附件 1 为准。'
         f'本册为检测项目说明，不构成医疗建议；检测结果需由医师结合临床综合判断。<br>'
-        f'除分子筛查 02 权益卡为 <b>4 页</b>外，其余各份均为 2 页。'
+        f'除分子筛查 02 权益卡为 <b>4 页</b>外，其余各份均为 2 页；'
+        f'末页<b>附录</b>为全册统一的版本与免责说明。'
         f'</div></div>')
 
 
@@ -131,9 +134,9 @@ def assemble(items, toc_pdf: Path, sheets_pdf: Path, dst: Path) -> int:
     文件内部重排页序，结果 14.6MB、耗时不到 1 秒——页序对了，体积也对了。
     30MB 是发送上限，这不是可选优化。
     """
-    srcs = []
+    srcs = []          # 早先有过 kind="pdf" 的外部成稿，现已全部还原成 HTML；保留这条路
     for it in items:
-        if it["kind"] == "pdf" and it["file"] not in srcs:
+        if it.get("kind") == "pdf" and it["file"] not in srcs:
             srcs.append(it["file"])
     whole = [toc_pdf, sheets_pdf] + [ROOT / f for f in srcs]
     tmp_all = dst.parent / "_全部未排序.pdf"
@@ -166,7 +169,7 @@ def verify(pdf: Path, items, n_toc: int):
     bad, k = [], n_toc
     for it in items:
         page = re.sub(r"\s", "", txt[k])
-        if re.sub(r"\s", "", it["code"]) not in page:
+        if re.sub(r"\s", "", it["code"] or it["name"]) not in page:
             bad.append((it["nn"], it["code"], it["name"]))
         k += it["n"]
     if bad:
@@ -190,9 +193,8 @@ def main():
             break
     print(f"目录 {build.page_count(toc_pdf)} 页")
 
-    sheets = [i for i in items if i["kind"] == "sheet"]
-    sheets_pdf = render_sheets(sheets, tmp)
-    print(f"  原生稿 {len(sheets)} 份合渲 {build.page_count(sheets_pdf)} 页"
+    sheets_pdf = render_sheets(items, tmp)   # 项目与附录都是原生 HTML，一起渲
+    print(f"  原生稿 {len(items)} 份合渲 {build.page_count(sheets_pdf)} 页"
           f"　{sheets_pdf.stat().st_size / 1024 / 1024:.1f} MB")
 
     pdf = OUT / "总包_全册.pdf"
@@ -205,16 +207,16 @@ def main():
     # HTML 版：目录 + 有源码的那些
     body = [toc_html([i for i in items], build.page_count(toc_pdf) + 1)]
     body += [(ROOT / "sheets" / i["file"]).read_text(encoding="utf-8")
-             for i in items if i["kind"] == "sheet"]
+             for i in items]          # 含附录
     html = OUT / "总包_全册.html"
     html.write_text(build.wrap("\n".join(body)), encoding="utf-8")
 
-    ns = sum(1 for i in items if i["kind"] == "sheet")
+    ns = sum(1 for i in items if i["kind"] != "appendix")
     print(f"\n完成")
     mb = pdf.stat().st_size / 1024 / 1024
     print(f"  {pdf.name}   {total} 页（目录 {n_toc} + {len(items)} 份共 {total - n_toc} 页）"
           f"　{mb:.1f} MB{'' if mb < 30 else '　!! 超 30MB，发不出去'}")
-    print(f"  {html.name}  目录 + {ns} 份原生 HTML（另 {len(items)-ns} 份仅 PDF，无源码）")
+    print(f"  {html.name}  目录 + {ns} 份项目说明 + 附录")
 
     if "--split" in sys.argv:
         split_by_section(items, pdf, n_toc)

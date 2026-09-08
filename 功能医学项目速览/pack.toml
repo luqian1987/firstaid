@@ -396,3 +396,13 @@ price = "2980"
 sec = "分子筛查"
 kind = "sheet"
 file = "44_分子筛查14_全外显子遗传易感性胚系风险评估.html"
+
+# 附录不是检测项目：无编号、无价格，不计入「共 N 份」，排在全册最后
+[[item]]
+nn = "—"
+code = ""
+name = "版本与免责说明"
+price = ""
+sec = "附录"
+kind = "appendix"
+file = "99_附录_版本与免责说明.html"
