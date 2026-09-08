@@ -1,0 +1,77 @@
+<style>
+/* 附录自带样式：白皮书路子，只用黑白灰 + 一条深色细线，不用色块、不用卡片。
+   全部限定在 .wp 下，不影响另外 44 份项目说明。 */
+.wp{ color:#1a1a1a; font-size:9.6pt; line-height:1.5; }
+.wp .top{ display:flex; justify-content:space-between; align-items:baseline;
+          font-size:8.6pt; color:#8A8A8A; letter-spacing:.04em;
+          padding-bottom:2.4mm; border-bottom:1px solid #1a1a1a; }
+.wp h1{ margin:4.6mm 0 0; font-size:20pt; font-weight:600; letter-spacing:.01em; color:#1a1a1a; }
+.wp .sub{ margin-top:2.2mm; font-size:10pt; color:#4A4A4A; line-height:1.66; }
+.wp .rule{ border-bottom:1px solid #1a1a1a; margin:4.4mm 0 0; }
+.wp p{ margin:0 0 2.2mm; }
+.wp b{ font-weight:600; color:#1a1a1a; }
+.wp table{ width:100%; border-collapse:collapse; margin-top:5mm; }
+.wp th{ font-size:8.4pt; font-weight:400; color:#8A8A8A; text-align:left;
+        letter-spacing:.16em; padding:0 4mm 1.6mm 0; border-bottom:1px solid #1a1a1a; }
+.wp td{ font-size:9.4pt; padding:2.2mm 4mm 2.2mm 0; vertical-align:top;
+        border-bottom:1px solid #E4E4E4; }
+.wp td:last-child,.wp th:last-child{ padding-right:0; }
+.wp td.k{ font-weight:600; }
+.wp td.o{ color:#7A7A7A; }
+.wp .note{ font-size:8.8pt; color:#6A6A6A; line-height:1.68; margin-top:4mm; }
+.wp .foot{ margin-top:4.4mm; padding-top:2.4mm; border-top:1px solid #C8C8C8;
+           font-size:8.4pt; color:#8A8A8A; line-height:1.72; }
+</style>
+<div class="doc wp"><div class="top"><div>附录　方法学选型</div><div>功能医学检测项目速览　V1.0 / 2026-08　·　共 1 页</div></div>
+<h1>方法学选型</h1>
+<div class="sub">同一个指标往往有多种方法学可以测，测出来的分辨率与特异性并不相同。本册项目在可选范围内，<b>原则上采用分辨率、特异性或自动化程度更高的一档</b>。各项目实际采用的方法学以其检验报告载明为准。</div>
+<div class="rule"></div>
+
+<table>
+<tr><th style="width:20%">检测类别</th><th style="width:18%">同类常见做法</th><th style="width:25%">本册采用</th><th>差别</th></tr>
+
+<tr><td class="k">激素 · 维生素 · 辅酶 · 代谢物</td>
+<td class="o">免疫法测定</td>
+<td>液相色谱串联质谱<br>LC-MS/MS</td>
+<td>不依赖抗体，不受结构类似物交叉干扰，可把同族物分别定量；是甾体激素与小分子定量公认的参考方法学。</td></tr>
+
+<tr><td class="k">矿物质 · 微量元素</td>
+<td class="o">原子吸收 AAS<br>发射光谱 ICP-OES</td>
+<td>电感耦合等离子体质谱<br>ICP-MS</td>
+<td>检出限显著更低，一次进样覆盖全部待测元素，元素之间的比例关系可比。</td></tr>
+
+<tr><td class="k">已知位点胚系分型</td>
+<td class="o">荧光探针法</td>
+<td>核酸质谱<br>飞行时间质谱 MALDI-TOF</td>
+<td>以分子质量直接判型，不受荧光通道数限制，同孔可并入的位点更多。</td></tr>
+
+<tr><td class="k">胚系风险广筛</td>
+<td class="o">单基因或小 panel</td>
+<td>全外显子测序<br>WES</td>
+<td>一次覆盖约两万个基因的全部蛋白编码区，是胚系评估中覆盖面最广的一档。</td></tr>
+
+<tr><td class="k">甲基化早筛</td>
+<td class="o">逐癌种分别送检</td>
+<td>单癌种：实时荧光定量 PCR<br>多癌种：甲基化测序</td>
+<td>按癌种数量分别选型——单癌种取 qPCR 的灵敏度与稳定性，可在大量背景 DNA 中检出低比例目标序列；多癌种共筛改用测序，一管样本完成，靶点远多于单癌种 PCR。</td></tr>
+
+<tr><td class="k">肠道菌群</td>
+<td class="o">二代短读长测序</td>
+<td>16S rDNA 扩增 ＋<br>纳米孔长读长测序</td>
+<td>长读长可读到更完整的 16S 序列，物种鉴定分辨率更高。</td></tr>
+
+<tr><td class="k">激素 · 蛋白标志物</td>
+<td class="o">酶联免疫（ELISA）<br>放射免疫</td>
+<td>化学发光免疫分析<br>CLIA</td>
+<td>精密度、通量与自动化程度更高，批间稳定，且无放射性废物。</td></tr>
+
+<tr><td class="k">淋巴细胞亚群</td>
+<td class="o">血常规白细胞分类</td>
+<td>流式细胞术</td>
+<td>在单细胞水平判定表型，一管同时给出各亚群的百分比与绝对计数；亚群构成无等效替代方法。</td></tr>
+</table>
+
+<p class="note"><b>本册涉及的方法学</b>　液相色谱串联质谱（LC-MS/MS）、电感耦合等离子体质谱（ICP-MS）、核酸质谱与飞行时间质谱、实时荧光定量 PCR、高通量测序（全外显子测序、甲基化测序、16S rDNA 扩增子测序）、化学发光免疫分析、酶联免疫吸附（ELISA）、免疫印迹、流式细胞术。个别尚无自动化平台的单一标志物采用经临床验证的成熟 ELISA 试剂，同批带标准曲线与质控；部分项目的检验报告未载明方法学，本页不作推断。</p>
+
+<div class="foot"><b>本资料仅供医疗卫生专业人士参考。</b>本册项目的用途为<b>功能医学与健康管理评估</b>，用于健康体检、风险筛查与状态监测，<b>不得用于任何临床诊断</b>，不作为疾病诊断、治疗或用药的依据；结果异常应由具备相应资质的医疗机构按临床路径评估确诊。检测由第三方医学检验实验室完成，方法学、参考区间与判读阈值溯源至各该实验室，参考区间原则上依据同一类行业标准（如 WS/T 402-2012）；上述参数可能因研究证据更新或主检实验室变更而调整，<b>以实际检验报告载明为准</b>。
+<div style="margin-top:1.4mm">© 2026 苏州万之丰医疗有限公司（Suzhou Wanzhifeng Medical Co., Ltd.）　保留所有权利。未经书面许可，不得复制、转载或用于其他商业用途。</div></div></div>
