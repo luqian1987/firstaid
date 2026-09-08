@@ -11,10 +11,13 @@
     out/项目速览_XXX.html   屏幕版（浏览器打开，有裁切线）
     out/送印_XXX.pdf        送印版 A4
 
-关键校验: 每份项目说明必须正好 2 页。脚本会逐份单独渲染计算页数，
+关键校验: 每份项目说明的实际页数必须与它自己 .mast 上印的「共 N 页」一致。
+默认 2 页；细则太长装不下的（如分子筛查 02 权益卡）可以写成 4 页，
+改 .mast 与各个 .pbreak 上的「共 N 页」即可，脚本按稿子自己的声明校验。
+脚本会逐份单独渲染计算页数，
 超出的会明确报出来——不要靠肉眼看，直接看脚本报错。
 """
-import sys, asyncio, subprocess, tempfile, shutil
+import re, sys, asyncio, subprocess, tempfile, shutil
 from pathlib import Path
 
 ROOT = Path(__file__).parent
@@ -85,19 +88,32 @@ def page_count(pdf: Path) -> int:
     return -1
 
 
+def declared_pages(text: str) -> int:
+    """稿子自己声明的页数——.mast 上印的「共 N 页」。
+
+    页数写在稿子里而不是另设一张登记表：这个数本来就要印在页眉上、
+    而且必须是对的，让它同时当校验基准，就不会出现表和稿对不上的情况。
+    """
+    m = re.search(r"共\s*(\d+)\s*页", text)
+    return int(m.group(1)) if m else 2
+
+
 def check_each(names) -> bool:
-    """逐份渲染，确认每份正好 2 页。"""
+    """逐份渲染，确认实际页数与稿子自己声明的一致。"""
     ok = True
     tmp = Path(tempfile.mkdtemp())
     for n in names:
+        src = (SHEETS / n).read_text(encoding="utf-8")
+        want = declared_pages(src)
         h = tmp / (n + ".html")
-        h.write_text(wrap((SHEETS / n).read_text(encoding="utf-8")), encoding="utf-8")
+        h.write_text(wrap(src), encoding="utf-8")
         pdf = tmp / (n + ".pdf")
         asyncio.run(render(h, pdf))
         c = page_count(pdf)
-        flag = "OK " if c == 2 else "!! "
-        print(f"  {flag}{c} 页  {n}")
-        if c != 2:
+        flag = "OK " if c == want else "!! "
+        note = "" if c == want else f"（声明 {want} 页）"
+        print(f"  {flag}{c} 页  {n}{note}")
+        if c != want:
             ok = False
     shutil.rmtree(tmp, ignore_errors=True)
     if not ok:
@@ -105,7 +121,9 @@ def check_each(names) -> bool:
         print("   1. 适合人群 12 项 → 9 项")
         print("   2. 科学依据里最长那条删掉一个从句")
         print("   3. 可以做什么 的 <i> 段删掉一个短句")
-        print("   注意: 不要改字号或行距，全套 19 份必须保持一致。")
+        print("   注意: 不要改字号或行距，全套必须保持一致。")
+        print("   细则确实装不下的，可以把稿子写成 4 页——改 .mast 与各 .pbreak 上的")
+        print("   「共 N 页」，脚本按稿子自己的声明校验。")
     return ok
 
 
@@ -119,7 +137,7 @@ def main():
     if check_only:
         sys.exit(0 if ok else 1)
     if not ok:
-        sys.exit("\n有项目不是 2 页，先修好再出稿。")
+        sys.exit("\n有项目的实际页数与声明不符，先修好再出稿。")
 
     OUT.mkdir(exist_ok=True)
     tag = "全部" if not args else "_".join(args)
@@ -130,7 +148,8 @@ def main():
     asyncio.run(render(html, pdf))
 
     total = page_count(pdf)
-    assert total == 2 * len(names), f"合并后 {total} 页，应为 {2*len(names)} 页"
+    want = sum(declared_pages((SHEETS / n).read_text(encoding="utf-8")) for n in names)
+    assert total == want, f"合并后 {total} 页，应为 {want} 页"
     print(f"\n完成: {html.name} / {pdf.name}  共 {total} 页")
 
 

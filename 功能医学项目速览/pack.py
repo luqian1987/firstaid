@@ -32,7 +32,12 @@ CFG = ROOT / "pack.toml"
 
 def load():
     with CFG.open("rb") as f:
-        return tomllib.load(f)["item"]
+        items = tomllib.load(f)["item"]
+    # 页数不写在 pack.toml 里，读稿子 .mast 上印的「共 N 页」——
+    # 那个数本来就要印对，让它当唯一事实来源，表和稿就不会打架。
+    for it in items:
+        it["n"] = build.declared_pages((ROOT / "sheets" / it["file"]).read_text(encoding="utf-8"))
+    return items
 
 
 # ── 目录页 ───────────────────────────────────────────────────────────────
@@ -77,24 +82,24 @@ def toc_html(items, start_page):
             n = sum(1 for x in items if x["sec"] == cur)
             rows.append(f'<tr class="grp"><td colspan="4"><b>{cur}</b>'
                         f'<span>{n} 份</span></td></tr>')
+        extra = f'<span style="color:#9AA6B0"> · {it["n"]} 页</span>' if it["n"] != 2 else ""
         rows.append(
             f'<tr><td class="nn">{it["nn"]}</td>'
-            f'<td class="nm"><b>{it["code"]}</b>　{it["name"]}</td>'
+            f'<td class="nm"><b>{it["code"]}</b>　{it["name"]}{extra}</td>'
             f'<td class="pr">¥{it["price"]}</td>'
             f'<td class="pg">{pg}</td></tr>')
-        pg += 2
+        pg += it["n"]
     n_pdf = sum(1 for i in items if i["kind"] == "pdf")
     return (
         f'<style>{TOC_CSS}</style>\n<div class="toc">'
         f'<h1>功能医学检测项目速览</h1>'
-        f'<div class="sub">共 {len(items)} 份 · 每份 2 页 A4 · 版本 2026-08</div>'
+        f'<div class="sub">共 {len(items)} 份 · {sum(i["n"] for i in items)} 页 A4 · 版本 2026-08</div>'
         f'<div class="rule"></div>'
         f'<table>{COLS}{"".join(rows)}</table>'
         f'<div class="foot">'
         f'名称与收费以《心理睡眠体检检测项目协议》附件 1 为准。'
         f'本册为检测项目说明，不构成医疗建议；检测结果需由医师结合临床综合判断。<br>'
-        f'其中 <b>{n_pdf} 份</b>由既有 PDF 成稿直接并入，'
-        f'<b>{len(items)-n_pdf} 份</b>由本工程 HTML 源码渲染。'
+        f'除分子筛查 02 权益卡为 <b>4 页</b>外，其余各份均为 2 页。'
         f'</div></div>')
 
 
@@ -112,7 +117,8 @@ def render_sheets(sheets, tmp) -> Path:
     dst = tmp / "_原生稿全部.pdf"
     asyncio.run(build.render(h, dst))
     n = build.page_count(dst)
-    assert n == 2 * len(sheets), f"原生稿合渲得 {n} 页，应为 {2 * len(sheets)} 页"
+    want = sum(i["n"] for i in sheets)
+    assert n == want, f"原生稿合渲得 {n} 页，应为 {want} 页"
     return dst
 
 
@@ -142,12 +148,8 @@ def assemble(items, toc_pdf: Path, sheets_pdf: Path, dst: Path) -> int:
     order = list(range(1, build.page_count(toc_pdf) + 1))
     cur = base["__sheets__"]
     for it in items:
-        if it["kind"] == "sheet":
-            order += [cur, cur + 1]
-            cur += 2
-        else:
-            b = base[it["file"]]
-            order += [b + it["page"] - 1, b + it["page"]]
+        order += list(range(cur, cur + it["n"]))
+        cur += it["n"]
     assert cur == base["__sheets__"] + build.page_count(sheets_pdf), "原生稿有页没用掉"
 
     subprocess.run(["mutool", "merge", "-o", str(dst), str(tmp_all),
@@ -161,11 +163,12 @@ def verify(pdf: Path, items, n_toc: int):
     合渲之后单份页数不再单独可见，这是替代的分页校验。"""
     txt = subprocess.run(["pdftotext", "-layout", str(pdf), "-"],
                          check=True, capture_output=True, text=True).stdout.split("\f")
-    bad = []
-    for i, it in enumerate(items):
-        page = re.sub(r"\s", "", txt[n_toc + 2 * i])
+    bad, k = [], n_toc
+    for it in items:
+        page = re.sub(r"\s", "", txt[k])
         if re.sub(r"\s", "", it["code"]) not in page:
             bad.append((it["nn"], it["code"], it["name"]))
+        k += it["n"]
     if bad:
         sys.exit(f"页序错位，这些份的第 1 页找不到自己的编号：{bad}")
     print(f"  页序核对  {len(items)} 份全部对上")
@@ -195,7 +198,7 @@ def main():
     pdf = OUT / "总包_全册.pdf"
     n_toc = build.page_count(toc_pdf)
     total = assemble(items, toc_pdf, sheets_pdf, pdf)
-    expect = n_toc + 2 * len(items)
+    expect = n_toc + sum(i["n"] for i in items)
     assert total == build.page_count(pdf) == expect, f"合并后 {total} 页，应为 {expect} 页"
     verify(pdf, items, n_toc)
 
@@ -209,7 +212,7 @@ def main():
     ns = sum(1 for i in items if i["kind"] == "sheet")
     print(f"\n完成")
     mb = pdf.stat().st_size / 1024 / 1024
-    print(f"  {pdf.name}   {total} 页（目录 {build.page_count(toc_pdf)} + {len(items)} 份 × 2）"
+    print(f"  {pdf.name}   {total} 页（目录 {n_toc} + {len(items)} 份共 {total - n_toc} 页）"
           f"　{mb:.1f} MB{'' if mb < 30 else '　!! 超 30MB，发不出去'}")
     print(f"  {html.name}  目录 + {ns} 份原生 HTML（另 {len(items)-ns} 份仅 PDF，无源码）")
 
@@ -227,11 +230,11 @@ def split_by_section(items, pdf: Path, n_toc: int):
         f.unlink()
     secs, pg = {}, n_toc + 1
     for it in items:
-        secs.setdefault(it["sec"], []).append((pg, pg + 1))
-        pg += 2
+        secs.setdefault(it["sec"], []).extend(range(pg, pg + it["n"]))
+        pg += it["n"]
     print("\n分册")
     for i, (sec, pages) in enumerate(secs.items(), 1):
-        rng = ",".join(f"{a},{b}" for a, b in pages)
+        rng = ",".join(map(str, pages))
         dst = out / f"{i:02d}_{sec}.pdf"
         subprocess.run(["mutool", "merge", "-o", str(dst), str(pdf), rng],
                        check=True, capture_output=True)
@@ -240,7 +243,7 @@ def split_by_section(items, pdf: Path, n_toc: int):
         subprocess.run(["mutool", "clean", "-ggggz", str(dst), str(tmp)],
                        check=True, capture_output=True)
         tmp.replace(dst)
-        print(f"  {dst.name}　{len(pages)} 份 {build.page_count(dst)} 页"
+        print(f"  {dst.name}　{build.page_count(dst)} 页"
               f"　{dst.stat().st_size / 1024:.0f} KB")
 
 
