@@ -70,13 +70,32 @@ def pick(filters):
     return [n for n in names if n in hit]          # 按 manifest 顺序出稿
 
 
-async def render(html_path: Path, pdf_path: Path):
+FOOTER = (
+    '<div style="font-size:7.5pt;color:#8A98A3;width:100%;padding:0 13mm;'
+    "font-family:'Microsoft YaHei','Noto Sans CJK SC',sans-serif;"
+    'display:flex;justify-content:space-between;">'
+    '<span>功能医学检测项目速览　·　版本 2026-08</span>'
+    '<span>第 <span class="pageNumber"></span> 页 / 共 <span class="totalPages"></span> 页</span>'
+    "</div>")
+
+
+async def render(html_path: Path, pdf_path: Path, footer: bool = False):
+    """footer=True 时在页脚打全册连续页码。
+
+    页码由 Chromium 的 pageNumber 占位符生成，**只有整册一次渲染时才是对的**——
+    分开渲每份都会从 1 开始。所以 pack.py 是把目录和 44 份 + 附录拼成一个 HTML
+    一次渲完，不再切页重排。页脚落在 12mm 下页边距里，不占正文高度，分页不受影响。
+    """
     from playwright.async_api import async_playwright
+    opt = dict(path=str(pdf_path), format="A4", print_background=True, margin=PDF_MARGIN)
+    if footer:
+        opt |= dict(display_header_footer=True, header_template="<div></div>",
+                    footer_template=FOOTER)
     async with async_playwright() as p:
         b = await p.chromium.launch()
         pg = await b.new_page()
         await pg.goto("file://" + str(html_path.resolve()), wait_until="networkidle")
-        await pg.pdf(path=str(pdf_path), format="A4", print_background=True, margin=PDF_MARGIN)
+        await pg.pdf(**opt)
         await b.close()
 
 

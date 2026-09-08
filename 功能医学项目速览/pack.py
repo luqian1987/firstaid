@@ -44,7 +44,10 @@ def load():
 TOC_CSS = """
 .toc{ width:210mm; margin:10mm auto; background:#fff; padding:14mm 13mm 12mm;
       box-shadow:0 2px 16px rgba(20,40,70,.14); }
-@media print{ .toc{ width:auto; margin:0; padding:0; box-shadow:none; } }
+/* break-after 不能少：base.css 里的分页规则是 .doc + .doc，管不到
+   「目录 → 第一份」这个交界，缺了它第一份的页眉会掉到目录末页底部。 */
+@media print{ .toc{ width:auto; margin:0; padding:0; box-shadow:none;
+                    break-after:page; } }
 .toc h1{ margin:0; font-size:26pt; color:var(--deep); font-weight:700; letter-spacing:.02em; }
 .toc .sub{ margin-top:2mm; font-size:10.5pt; color:#5B6B78; }
 .toc .rule{ border-bottom:2px solid var(--deep); margin:2.6mm 0 3.4mm; }
@@ -106,59 +109,23 @@ def toc_html(items, start_page):
         f'</div></div>')
 
 
-# ── 组装 ────────────────────────────────────────────────────────────────
-def render_sheets(sheets, tmp) -> Path:
-    """原生稿**一次**渲成一个 PDF。
+# ── 成册 ────────────────────────────────────────────────────────────────
+def build_book(items, toc_html_text: str, tmp: Path, dst: Path) -> None:
+    """目录 + 44 份 + 附录拼成一个 HTML，**一次渲完**。
 
-    逐份渲的话，Chromium 会把中文字体子集完整嵌进每一个 PDF，一份约 600KB，
-    32 份就是 20MB 白搭进去，而且去不掉——每份的子集内容不同，不是重复对象。
-    一次渲完只嵌一份：64 页才 7.3MB。
+    为什么不分开渲再拼：
+    1. 逐份渲，每份都会嵌一整套中文字体子集（约 600KB），45 份白搭 20MB，
+       而且去不掉——各份子集内容不同，不是重复对象。
+    2. 拼好再按页拆开重排（pdfseparate）更糟，字体会拷进每一页，44MB 起。
+    3. 页脚的连续页码只有整册一次渲染才对，分开渲每份都从 1 开始。
+
+    一次渲完 93 页 8MB 上下，也不再需要 pdfunite / mutool merge 那一串。
     """
-    body = [(ROOT / "sheets" / i["file"]).read_text(encoding="utf-8") for i in sheets]
-    h = tmp / "_原生稿全部.html"
+    body = [toc_html_text] + [(ROOT / "sheets" / i["file"]).read_text(encoding="utf-8")
+                              for i in items]
+    h = tmp / "_全册.html"
     h.write_text(build.wrap("\n".join(body)), encoding="utf-8")
-    dst = tmp / "_原生稿全部.pdf"
-    asyncio.run(build.render(h, dst))
-    n = build.page_count(dst)
-    want = sum(i["n"] for i in sheets)
-    assert n == want, f"原生稿合渲得 {n} 页，应为 {want} 页"
-    return dst
-
-
-def assemble(items, toc_pdf: Path, sheets_pdf: Path, dst: Path) -> int:
-    """先整文件拼一次，再在同一个文件里重排页序。
-
-    **不要按页拆了再拼。** pdfseparate 会把整套中文字体拷进每一个单页，
-    64 页拆完再合是 44MB，事后 mutool clean -ggggz 也只压到 37MB，还要跑 4 分钟。
-    整文件 pdfunite 只有 15.7MB（字体各源各一份），再用 mutool merge 在这一个
-    文件内部重排页序，结果 14.6MB、耗时不到 1 秒——页序对了，体积也对了。
-    30MB 是发送上限，这不是可选优化。
-    """
-    srcs = []          # 早先有过 kind="pdf" 的外部成稿，现已全部还原成 HTML；保留这条路
-    for it in items:
-        if it.get("kind") == "pdf" and it["file"] not in srcs:
-            srcs.append(it["file"])
-    whole = [toc_pdf, sheets_pdf] + [ROOT / f for f in srcs]
-    tmp_all = dst.parent / "_全部未排序.pdf"
-    subprocess.run(["pdfunite", *map(str, whole), str(tmp_all)],
-                   check=True, capture_output=True)
-
-    base, off = {}, 1
-    for key, f in zip(["__toc__", "__sheets__"] + srcs, whole):
-        base[key] = off
-        off += build.page_count(f)
-
-    order = list(range(1, build.page_count(toc_pdf) + 1))
-    cur = base["__sheets__"]
-    for it in items:
-        order += list(range(cur, cur + it["n"]))
-        cur += it["n"]
-    assert cur == base["__sheets__"] + build.page_count(sheets_pdf), "原生稿有页没用掉"
-
-    subprocess.run(["mutool", "merge", "-o", str(dst), str(tmp_all),
-                    ",".join(map(str, order))], check=True, capture_output=True)
-    tmp_all.unlink(missing_ok=True)
-    return len(order)
+    asyncio.run(build.render(h, dst, footer=True))
 
 
 def verify(pdf: Path, items, n_toc: int):
@@ -193,23 +160,20 @@ def main():
             break
     print(f"目录 {build.page_count(toc_pdf)} 页")
 
-    sheets_pdf = render_sheets(items, tmp)   # 项目与附录都是原生 HTML，一起渲
-    print(f"  原生稿 {len(items)} 份合渲 {build.page_count(sheets_pdf)} 页"
-          f"　{sheets_pdf.stat().st_size / 1024 / 1024:.1f} MB")
+    n_toc = build.page_count(toc_pdf)
+    toc_body = toc_html(items, n_toc + 1)
 
     pdf = OUT / "总包_全册.pdf"
-    n_toc = build.page_count(toc_pdf)
-    total = assemble(items, toc_pdf, sheets_pdf, pdf)
+    build_book(items, toc_body, tmp, pdf)
+    total = build.page_count(pdf)
     expect = n_toc + sum(i["n"] for i in items)
-    assert total == build.page_count(pdf) == expect, f"合并后 {total} 页，应为 {expect} 页"
+    assert total == expect, f"整册渲出 {total} 页，应为 {expect} 页"
     verify(pdf, items, n_toc)
 
-    # HTML 版：目录 + 有源码的那些
-    body = [toc_html([i for i in items], build.page_count(toc_pdf) + 1)]
-    body += [(ROOT / "sheets" / i["file"]).read_text(encoding="utf-8")
-             for i in items]          # 含附录
     html = OUT / "总包_全册.html"
-    html.write_text(build.wrap("\n".join(body)), encoding="utf-8")
+    html.write_text(build.wrap("\n".join(
+        [toc_body] + [(ROOT / "sheets" / i["file"]).read_text(encoding="utf-8")
+                      for i in items])), encoding="utf-8")
 
     # build.py 出的单份 PDF 不会被 pack.py 覆盖，改完稿子只跑 pack.py 的话
     # 它们就成了过期文件，容易被当成新的发出去——这里直接清掉。
@@ -219,7 +183,7 @@ def main():
     ns = sum(1 for i in items if i["kind"] != "appendix")
     print(f"\n完成")
     mb = pdf.stat().st_size / 1024 / 1024
-    print(f"  {pdf.name}   {total} 页（目录 {n_toc} + {len(items)} 份共 {total - n_toc} 页）"
+    print(f"  {pdf.name}   {total} 页（目录 {n_toc} + {len(items)} 份共 {total - n_toc} 页，页脚打连续页码）"
           f"　{mb:.1f} MB{'' if mb < 30 else '　!! 超 30MB，发不出去'}")
     print(f"  {html.name}  目录 + {ns} 份项目说明 + 附录")
 
