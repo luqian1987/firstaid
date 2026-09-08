@@ -98,7 +98,7 @@ def toc_html(items, start_page):
     return (
         f'<style>{TOC_CSS}</style>\n<div class="toc">'
         f'<h1>功能医学检测项目速览</h1>'
-        f'<div class="sub">共 {n_item} 份 · {sum(i["n"] for i in items)} 页 A4 · 版本 2026-08</div>'
+        f'<div class="sub">共 {n_item} 份 · {sum(i["n"] for i in items)} 页 A4</div>'
         f'<div class="rule"></div>'
         f'<table>{COLS}{"".join(rows)}</table>'
         f'<div class="foot">'

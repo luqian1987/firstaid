@@ -74,7 +74,7 @@ FOOTER = (
     '<div style="font-size:7.5pt;color:#8A98A3;width:100%;padding:0 13mm;'
     "font-family:'Microsoft YaHei','Noto Sans CJK SC',sans-serif;"
     'display:flex;justify-content:space-between;">'
-    '<span>功能医学检测项目速览　·　版本 2026-08</span>'
+    '<span>功能医学检测项目速览</span>'
     '<span>第 <span class="pageNumber"></span> 页 / 共 <span class="totalPages"></span> 页</span>'
     "</div>")
 
