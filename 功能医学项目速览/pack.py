@@ -211,6 +211,11 @@ def main():
     html = OUT / "总包_全册.html"
     html.write_text(build.wrap("\n".join(body)), encoding="utf-8")
 
+    # build.py 出的单份 PDF 不会被 pack.py 覆盖，改完稿子只跑 pack.py 的话
+    # 它们就成了过期文件，容易被当成新的发出去——这里直接清掉。
+    for f in list(OUT.glob("送印_*.pdf")) + list(OUT.glob("项目速览_*.html")):
+        f.unlink()
+
     ns = sum(1 for i in items if i["kind"] != "appendix")
     print(f"\n完成")
     mb = pdf.stat().st_size / 1024 / 1024
