@@ -97,43 +97,77 @@ def toc_html(items, start_page):
         f'</div></div>')
 
 
-# ── 取页 ────────────────────────────────────────────────────────────────
-def slice_pdf(src: Path, first: int, dst: Path):
-    """取 src 的 first、first+1 两页写到 dst。
+# ── 组装 ────────────────────────────────────────────────────────────────
+def render_sheets(sheets, tmp) -> Path:
+    """原生稿**一次**渲成一个 PDF。
 
-    用 poppler 的 pdfseparate + pdfunite，不引 pypdf——本机的 cryptography
-    装坏了（缺 _cffi_backend），pypdf 一 import 就炸。
+    逐份渲的话，Chromium 会把中文字体子集完整嵌进每一个 PDF，一份约 600KB，
+    32 份就是 20MB 白搭进去，而且去不掉——每份的子集内容不同，不是重复对象。
+    一次渲完只嵌一份：64 页才 7.3MB。
     """
-    tmp = dst.parent / f"_sep_{dst.stem}"
-    tmp.mkdir(exist_ok=True)
-    subprocess.run(["pdfseparate", "-f", str(first), "-l", str(first + 1),
-                    str(src), str(tmp / "p-%d.pdf")], check=True, capture_output=True)
-    pages = [tmp / f"p-{first}.pdf", tmp / f"p-{first + 1}.pdf"]
-    subprocess.run(["pdfunite", *map(str, pages), str(dst)], check=True, capture_output=True)
-    for f in pages:
-        f.unlink(missing_ok=True)
-    tmp.rmdir()
+    body = [(ROOT / "sheets" / i["file"]).read_text(encoding="utf-8") for i in sheets]
+    h = tmp / "_原生稿全部.html"
+    h.write_text(build.wrap("\n".join(body)), encoding="utf-8")
+    dst = tmp / "_原生稿全部.pdf"
+    asyncio.run(build.render(h, dst))
+    n = build.page_count(dst)
+    assert n == 2 * len(sheets), f"原生稿合渲得 {n} 页，应为 {2 * len(sheets)} 页"
+    return dst
 
 
-def merge(parts, dst: Path):
-    subprocess.run(["pdfunite", *map(str, parts), str(dst)], check=True, capture_output=True)
-    squeeze(dst)
+def assemble(items, toc_pdf: Path, sheets_pdf: Path, dst: Path) -> int:
+    """先整文件拼一次，再在同一个文件里重排页序。
 
-
-def squeeze(pdf: Path):
-    """去重对象、压缩流。
-
-    pdfseparate 会把整套中文字体原样拷进每一个单页，12 份切页各背一份 2MB 的
-    字体子集，合出来 38MB —— 源文件加起来才 7.9MB。mutool 的 -gggg 把重复对象
-    合掉，-z 压缩流，结果 16MB 左右，页数和 A4 尺寸不变。
-    顺带修掉 pdfunite 留下的 broken xref（clean 会自己 repair，警告可以不管）。
-
-    38MB 那版发不出去：上传/下发都卡 30MB。
+    **不要按页拆了再拼。** pdfseparate 会把整套中文字体拷进每一个单页，
+    64 页拆完再合是 44MB，事后 mutool clean -ggggz 也只压到 37MB，还要跑 4 分钟。
+    整文件 pdfunite 只有 15.7MB（字体各源各一份），再用 mutool merge 在这一个
+    文件内部重排页序，结果 14.6MB、耗时不到 1 秒——页序对了，体积也对了。
+    30MB 是发送上限，这不是可选优化。
     """
-    tmp = pdf.with_suffix(".tmp.pdf")
-    subprocess.run(["mutool", "clean", "-ggggz", str(pdf), str(tmp)],
+    srcs = []
+    for it in items:
+        if it["kind"] == "pdf" and it["file"] not in srcs:
+            srcs.append(it["file"])
+    whole = [toc_pdf, sheets_pdf] + [ROOT / f for f in srcs]
+    tmp_all = dst.parent / "_全部未排序.pdf"
+    subprocess.run(["pdfunite", *map(str, whole), str(tmp_all)],
                    check=True, capture_output=True)
-    tmp.replace(pdf)
+
+    base, off = {}, 1
+    for key, f in zip(["__toc__", "__sheets__"] + srcs, whole):
+        base[key] = off
+        off += build.page_count(f)
+
+    order = list(range(1, build.page_count(toc_pdf) + 1))
+    cur = base["__sheets__"]
+    for it in items:
+        if it["kind"] == "sheet":
+            order += [cur, cur + 1]
+            cur += 2
+        else:
+            b = base[it["file"]]
+            order += [b + it["page"] - 1, b + it["page"]]
+    assert cur == base["__sheets__"] + build.page_count(sheets_pdf), "原生稿有页没用掉"
+
+    subprocess.run(["mutool", "merge", "-o", str(dst), str(tmp_all),
+                    ",".join(map(str, order))], check=True, capture_output=True)
+    tmp_all.unlink(missing_ok=True)
+    return len(order)
+
+
+def verify(pdf: Path, items, n_toc: int):
+    """逐份核对页眉上印的板块编号，确认重排没错位。
+    合渲之后单份页数不再单独可见，这是替代的分页校验。"""
+    txt = subprocess.run(["pdftotext", "-layout", str(pdf), "-"],
+                         check=True, capture_output=True, text=True).stdout.split("\f")
+    bad = []
+    for i, it in enumerate(items):
+        page = re.sub(r"\s", "", txt[n_toc + 2 * i])
+        if re.sub(r"\s", "", it["code"]) not in page:
+            bad.append((it["nn"], it["code"], it["name"]))
+    if bad:
+        sys.exit(f"页序错位，这些份的第 1 页找不到自己的编号：{bad}")
+    print(f"  页序核对  {len(items)} 份全部对上")
 
 
 def main():
@@ -152,30 +186,17 @@ def main():
             break
     print(f"目录 {build.page_count(toc_pdf)} 页")
 
-    parts, bad = [toc_pdf], []
-    for it in items:
-        dst = tmp / f'{it["nn"]}.pdf'
-        if it["kind"] == "sheet":
-            src = ROOT / "sheets" / it["file"]
-            h = tmp / f'{it["nn"]}.html'
-            h.write_text(build.wrap(src.read_text(encoding="utf-8")), encoding="utf-8")
-            asyncio.run(build.render(h, dst))
-        else:
-            slice_pdf(ROOT / it["file"], it["page"], dst)
-        n = build.page_count(dst)
-        if n != 2:
-            bad.append((it["code"], n))
-        print(f'  {"OK " if n == 2 else "!! "}{n} 页  {it["nn"]} {it["code"]} {it["name"]}')
-        parts.append(dst)
-
-    if bad:
-        sys.exit(f"\n这些不是 2 页，先修：{bad}")
+    sheets = [i for i in items if i["kind"] == "sheet"]
+    sheets_pdf = render_sheets(sheets, tmp)
+    print(f"  原生稿 {len(sheets)} 份合渲 {build.page_count(sheets_pdf)} 页"
+          f"　{sheets_pdf.stat().st_size / 1024 / 1024:.1f} MB")
 
     pdf = OUT / "总包_全册.pdf"
-    merge(parts, pdf)
-    total = build.page_count(pdf)
-    expect = build.page_count(toc_pdf) + 2 * len(items)
-    assert total == expect, f"合并后 {total} 页，应为 {expect} 页"
+    n_toc = build.page_count(toc_pdf)
+    total = assemble(items, toc_pdf, sheets_pdf, pdf)
+    expect = n_toc + 2 * len(items)
+    assert total == build.page_count(pdf) == expect, f"合并后 {total} 页，应为 {expect} 页"
+    verify(pdf, items, n_toc)
 
     # HTML 版：目录 + 有源码的那些
     body = [toc_html([i for i in items], build.page_count(toc_pdf) + 1)]

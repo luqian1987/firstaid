@@ -1,5 +1,5 @@
 # 总包成册清单　—— 顺序即 NN，名称与价格以 项目清单.md（协议附件 1）为准
-# price 写成字符串：合并项要标「260 × 4」这种逐项计价，不是一个总价。
+# 2026-08-28：感染 4 项与九癌种甲基化按用户要求拆开，各自成篇；不再有合并项。
 
 [[item]]
 nn = "01"
@@ -250,53 +250,161 @@ file = "26_衰老02_多器官衰老程度检测.html"
 [[item]]
 nn = "27"
 code = "感染 01"
-name = "CT / NG / UU / MG 核酸检测（4 项）"
-price = "260 × 4"
+name = "沙眼衣原体（CT）DNA/RNA"
+price = "260"
 sec = "感染"
 kind = "sheet"
-file = "27_感染01_性传播病原体核酸检测4项.html"
+file = "27_感染01_沙眼衣原体（CT）DNA-RNA.html"
 
 [[item]]
 nn = "28"
+code = "感染 02"
+name = "淋病奈瑟菌（NG）DNA/RNA"
+price = "260"
+sec = "感染"
+kind = "sheet"
+file = "28_感染02_淋病奈瑟菌（NG）DNA-RNA.html"
+
+[[item]]
+nn = "29"
+code = "感染 03"
+name = "解脲脲原体（UU）DNA/RNA"
+price = "260"
+sec = "感染"
+kind = "sheet"
+file = "29_感染03_解脲脲原体（UU）DNA-RNA.html"
+
+[[item]]
+nn = "30"
+code = "感染 04"
+name = "生殖支原体（MG）DNA/RNA"
+price = "260"
+sec = "感染"
+kind = "sheet"
+file = "30_感染04_生殖支原体（MG）DNA-RNA.html"
+
+[[item]]
+nn = "31"
 code = "分子筛查 01"
 name = "高发肿瘤NGS超早期深度评估（男6 / 女8含保险）"
 price = "3880"
 sec = "分子筛查"
 kind = "sheet"
-file = "28_分子筛查01_高发肿瘤NGS超早期深度评估.html"
+file = "31_分子筛查01_高发肿瘤NGS超早期深度评估.html"
 
 [[item]]
-nn = "29"
+nn = "32"
 code = "分子筛查 02"
-name = "九癌种甲基化早筛（9 项合并）"
-price = "900 × 9"
+name = "高发肿瘤NGS超早期筛查复查权益卡(男6 / 女8)"
+price = "298"
 sec = "分子筛查"
 kind = "sheet"
-file = "29_分子筛查02_九癌种甲基化早筛.html"
+file = "32_分子筛查02_高发肿瘤NGS超早期筛查复查权益卡.html"
 
 [[item]]
-nn = "30"
+nn = "33"
 code = "分子筛查 03"
+name = "肠癌甲基化早筛（血浆）"
+price = "900"
+sec = "分子筛查"
+kind = "sheet"
+file = "33_分子筛查03_肠癌甲基化早筛（血浆）.html"
+
+[[item]]
+nn = "34"
+code = "分子筛查 04"
+name = "肺癌甲基化早筛（血浆）"
+price = "900"
+sec = "分子筛查"
+kind = "sheet"
+file = "34_分子筛查04_肺癌甲基化早筛（血浆）.html"
+
+[[item]]
+nn = "35"
+code = "分子筛查 05"
+name = "胃癌甲基化早筛（血浆）"
+price = "900"
+sec = "分子筛查"
+kind = "sheet"
+file = "35_分子筛查05_胃癌甲基化早筛（血浆）.html"
+
+[[item]]
+nn = "36"
+code = "分子筛查 06"
+name = "肝癌甲基化早筛（血浆）"
+price = "900"
+sec = "分子筛查"
+kind = "sheet"
+file = "36_分子筛查06_肝癌甲基化早筛（血浆）.html"
+
+[[item]]
+nn = "37"
+code = "分子筛查 07"
+name = "食道癌甲基化早筛（血浆）"
+price = "900"
+sec = "分子筛查"
+kind = "sheet"
+file = "37_分子筛查07_食道癌甲基化早筛（血浆）.html"
+
+[[item]]
+nn = "38"
+code = "分子筛查 08"
+name = "胰腺甲基化早筛（血浆）"
+price = "900"
+sec = "分子筛查"
+kind = "sheet"
+file = "38_分子筛查08_胰腺甲基化早筛（血浆）.html"
+
+[[item]]
+nn = "39"
+code = "分子筛查 09"
+name = "尿路上皮癌甲基化早筛（尿液）"
+price = "900"
+sec = "分子筛查"
+kind = "sheet"
+file = "39_分子筛查09_尿路上皮癌甲基化早筛（尿液）.html"
+
+[[item]]
+nn = "40"
+code = "分子筛查 10"
+name = "前列腺癌甲基化早筛（尿液）"
+price = "900"
+sec = "分子筛查"
+kind = "sheet"
+file = "40_分子筛查10_前列腺癌甲基化早筛（尿液）.html"
+
+[[item]]
+nn = "41"
+code = "分子筛查 11"
+name = "子宫内膜癌甲基化早筛（宫颈脱落细胞）"
+price = "900"
+sec = "分子筛查"
+kind = "sheet"
+file = "41_分子筛查11_子宫内膜癌甲基化早筛（宫颈脱落细胞）.html"
+
+[[item]]
+nn = "42"
+code = "分子筛查 12"
 name = "肿瘤遗传易感性胚系风险评估"
 price = "680"
 sec = "分子筛查"
 kind = "sheet"
-file = "30_分子筛查03_肿瘤遗传易感性胚系风险评估.html"
+file = "42_分子筛查12_肿瘤遗传易感性胚系风险评估.html"
 
 [[item]]
-nn = "31"
-code = "分子筛查 04"
+nn = "43"
+code = "分子筛查 13"
 name = "胸苷激酶TK1细胞增殖风险评估"
 price = "145"
 sec = "分子筛查"
 kind = "sheet"
-file = "31_分子筛查04_胸苷激酶TK1细胞增殖风险评估.html"
+file = "43_分子筛查13_胸苷激酶TK1细胞增殖风险评估.html"
 
 [[item]]
-nn = "32"
-code = "分子筛查 05"
+nn = "44"
+code = "分子筛查 14"
 name = "全外显子遗传易感性胚系风险评估"
 price = "2980"
 sec = "分子筛查"
 kind = "sheet"
-file = "32_分子筛查05_全外显子遗传易感性胚系风险评估.html"
+file = "44_分子筛查14_全外显子遗传易感性胚系风险评估.html"
