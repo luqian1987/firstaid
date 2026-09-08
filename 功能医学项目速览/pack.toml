@@ -1,5 +1,5 @@
 # 总包成册清单　—— 顺序即 NN，名称与价格以 项目清单.md（协议附件 1）为准
-# 2026-08-28：感染 4 项与九癌种甲基化按用户要求拆开，各自成篇；不再有合并项。
+# 2026-08-28：44 份全部有 HTML 源码，不再有 kind="pdf" 的条目。
 
 [[item]]
 nn = "01"
@@ -7,9 +7,8 @@ code = "内分泌 01"
 name = "褪黑素水平分析"
 price = "507"
 sec = "内分泌"
-kind = "pdf"
-file = "成稿/既有PDF/内分泌6份.pdf"
-page = 1
+kind = "sheet"
+file = "01_内分泌01_褪黑素水平分析.html"
 
 [[item]]
 nn = "02"
@@ -17,9 +16,8 @@ code = "内分泌 02"
 name = "压力与性激素平衡评估-男"
 price = "540"
 sec = "内分泌"
-kind = "pdf"
-file = "成稿/既有PDF/内分泌6份.pdf"
-page = 3
+kind = "sheet"
+file = "02_内分泌02_压力与性激素平衡评估-男.html"
 
 [[item]]
 nn = "03"
@@ -27,9 +25,8 @@ code = "内分泌 03"
 name = "压力与性激素平衡评估-女"
 price = "710"
 sec = "内分泌"
-kind = "pdf"
-file = "成稿/既有PDF/内分泌6份.pdf"
-page = 5
+kind = "sheet"
+file = "03_内分泌03_压力与性激素平衡评估-女.html"
 
 [[item]]
 nn = "04"
@@ -37,9 +34,8 @@ code = "内分泌 04"
 name = "肾上腺皮质压力管理与评估"
 price = "1318"
 sec = "内分泌"
-kind = "pdf"
-file = "成稿/既有PDF/内分泌6份.pdf"
-page = 7
+kind = "sheet"
+file = "04_内分泌04_肾上腺皮质压力管理与评估.html"
 
 [[item]]
 nn = "05"
@@ -47,9 +43,8 @@ code = "内分泌 05"
 name = "全套男性荷尔蒙健康评估"
 price = "2574"
 sec = "内分泌"
-kind = "pdf"
-file = "成稿/既有PDF/内分泌6份.pdf"
-page = 9
+kind = "sheet"
+file = "05_内分泌05_全套男性荷尔蒙健康评估.html"
 
 [[item]]
 nn = "06"
@@ -57,9 +52,8 @@ code = "内分泌 06"
 name = "全套女性荷尔蒙健康评估"
 price = "2574"
 sec = "内分泌"
-kind = "pdf"
-file = "成稿/既有PDF/内分泌6份.pdf"
-page = 11
+kind = "sheet"
+file = "06_内分泌06_全套女性荷尔蒙健康评估.html"
 
 [[item]]
 nn = "07"
@@ -67,9 +61,8 @@ code = "营养 01"
 name = "微量元素谱分析"
 price = "150"
 sec = "营养"
-kind = "pdf"
-file = "成稿/既有PDF/营养4份.pdf"
-page = 1
+kind = "sheet"
+file = "07_营养01_微量元素谱分析.html"
 
 [[item]]
 nn = "08"
@@ -77,9 +70,8 @@ code = "营养 02"
 name = "矿物元素谱分析"
 price = "180"
 sec = "营养"
-kind = "pdf"
-file = "成稿/既有PDF/营养4份.pdf"
-page = 3
+kind = "sheet"
+file = "08_营养02_矿物元素谱分析.html"
 
 [[item]]
 nn = "09"
@@ -87,9 +79,8 @@ code = "营养 03"
 name = "辅酶Q10的精准评估"
 price = "220"
 sec = "营养"
-kind = "pdf"
-file = "成稿/既有PDF/营养4份.pdf"
-page = 5
+kind = "sheet"
+file = "09_营养03_辅酶Q10的精准评估.html"
 
 [[item]]
 nn = "10"
@@ -97,9 +88,8 @@ code = "营养 04"
 name = "维生素B族8项检测"
 price = "540"
 sec = "营养"
-kind = "pdf"
-file = "成稿/既有PDF/营养4份.pdf"
-page = 7
+kind = "sheet"
+file = "10_营养04_维生素B族8项检测.html"
 
 [[item]]
 nn = "11"
@@ -116,9 +106,8 @@ code = "代谢 01"
 name = "心血管与肠道代谢TMAO精准评估"
 price = "480"
 sec = "代谢"
-kind = "pdf"
-file = "成稿/既有PDF/代谢01与环境毒素01.pdf"
-page = 1
+kind = "sheet"
+file = "12_代谢01_心血管与肠道代谢TMAO精准评估.html"
 
 [[item]]
 nn = "13"
@@ -189,9 +178,8 @@ code = "环境毒素 01"
 name = "核酸氧化损伤分析谱"
 price = "468"
 sec = "环境毒素"
-kind = "pdf"
-file = "成稿/既有PDF/代谢01与环境毒素01.pdf"
-page = 3
+kind = "sheet"
+file = "20_环境毒素01_核酸氧化损伤分析谱.html"
 
 [[item]]
 nn = "21"

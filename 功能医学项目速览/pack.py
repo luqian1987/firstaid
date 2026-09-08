@@ -6,7 +6,8 @@
 出不了这 15 份。本脚本按 pack.toml 描述的成册顺序，把两种来源拼在一起。
 
 用法:
-    python pack.py              # 出 out/总包_目录.pdf + out/总包_全册.pdf + out/总包_全册.html
+    python pack.py              # 出总册：out/总包_全册.pdf + out/总包_全册.html
+    python pack.py --split      # 另按板块出 11 本分册到 out/分册/
 
 来源在 pack.toml 里声明，两种：
     kind = "sheet"  → sheets/ 下的 HTML 片段，本脚本渲染
@@ -211,6 +212,36 @@ def main():
     print(f"  {pdf.name}   {total} 页（目录 {build.page_count(toc_pdf)} + {len(items)} 份 × 2）"
           f"　{mb:.1f} MB{'' if mb < 30 else '　!! 超 30MB，发不出去'}")
     print(f"  {html.name}  目录 + {ns} 份原生 HTML（另 {len(items)-ns} 份仅 PDF，无源码）")
+
+    if "--split" in sys.argv:
+        split_by_section(items, pdf, n_toc)
+
+
+def split_by_section(items, pdf: Path, n_toc: int):
+    """按板块切出分册。总册 7.9MB 本来就发得出去，分册是给交付用的——
+    销售只带一个板块时不必抱着 90 页跑，客户也不用在 44 份里翻。
+    直接从已排好序的总册里切页，不重渲。"""
+    out = OUT / "分册"
+    out.mkdir(exist_ok=True)
+    for f in out.glob("*.pdf"):
+        f.unlink()
+    secs, pg = {}, n_toc + 1
+    for it in items:
+        secs.setdefault(it["sec"], []).append((pg, pg + 1))
+        pg += 2
+    print("\n分册")
+    for i, (sec, pages) in enumerate(secs.items(), 1):
+        rng = ",".join(f"{a},{b}" for a, b in pages)
+        dst = out / f"{i:02d}_{sec}.pdf"
+        subprocess.run(["mutool", "merge", "-o", str(dst), str(pdf), rng],
+                       check=True, capture_output=True)
+        # 切页后每本都拖着整册的对象表，去重能省三成多，小文件上不到 1 秒
+        tmp = dst.with_suffix(".tmp.pdf")
+        subprocess.run(["mutool", "clean", "-ggggz", str(dst), str(tmp)],
+                       check=True, capture_output=True)
+        tmp.replace(dst)
+        print(f"  {dst.name}　{len(pages)} 份 {build.page_count(dst)} 页"
+              f"　{dst.stat().st_size / 1024:.0f} KB")
 
 
 if __name__ == "__main__":
