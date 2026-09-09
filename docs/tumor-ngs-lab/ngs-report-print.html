@@ -1,0 +1,156 @@
+<title>肿瘤NGS板块汇报打印稿</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;500;600;700&display=swap">
+<style>
+/* 单一视觉方案：白纸黑字，不随主题变化 —— 这是一份用来打印的文本稿 */
+:root{
+  --paper:#FFFFFF; --desk:#DCDCDC;
+  --ink:#000000; --ink-2:#222222; --ink-3:#555555;
+  --rule:#000000; --rule-thin:#9A9A9A; --rule-hair:#DCDCDC; --band:#F0F0F0;
+  --song:"Noto Serif SC","Source Han Serif SC","SimSun","宋体","Songti SC",serif;
+  --hei:"Noto Sans SC","Source Han Sans SC","SimHei","黑体","Heiti SC",sans-serif;
+}
+*{box-sizing:border-box}
+html{background:var(--desk)}
+body{background:var(--desk); color:var(--ink); font-family:var(--song);
+  font-size:15px; line-height:1.95; margin:0; -webkit-font-smoothing:antialiased;}
+.page{background:var(--paper); max-width:830px; margin:28px auto; padding:58px 66px 64px;
+  box-shadow:0 2px 10px rgba(0,0,0,.18);}
+:focus-visible{outline:2px solid #000; outline-offset:2px}
+
+/* 报头 */
+.org{text-align:center; font-family:var(--hei); font-size:14px; letter-spacing:.4em;
+  color:var(--ink-2); margin-bottom:14px; text-indent:.4em;}
+h1{font-family:var(--song); font-weight:700; font-size:27px; line-height:1.5; text-align:center;
+  letter-spacing:.06em; margin:0 0 6px; text-wrap:balance;}
+.subtitle{text-align:center; font-size:14px; color:var(--ink-3); margin:0 0 20px;}
+.rule2{border:none; border-top:2px solid var(--rule); margin:0 0 3px;}
+.rule1{border:none; border-top:.75px solid var(--rule); margin:0 0 22px;}
+.meta{display:grid; grid-template-columns:auto 1fr auto 1fr; gap:5px 12px; font-size:13.5px;
+  margin:0 0 26px; padding-bottom:18px; border-bottom:.75px solid var(--rule-thin);}
+.meta dt{font-family:var(--hei); color:var(--ink-3); white-space:nowrap;}
+.meta dd{margin:0;}
+
+/* 正文 */
+p{margin:0 0 11px; text-indent:2em; text-align:justify;}
+p.noind{text-indent:0}
+h2{font-family:var(--hei); font-size:17px; font-weight:700; margin:30px 0 12px; letter-spacing:.03em;}
+h3{font-family:var(--hei); font-size:15px; font-weight:700; margin:20px 0 9px; color:var(--ink-2);}
+b,strong{font-weight:700}
+.tnum{font-variant-numeric:tabular-nums}
+
+/* 三线表 */
+.tw{margin:12px 0 8px; overflow-x:auto;}
+table{width:100%; border-collapse:collapse; font-size:12.5px; line-height:1.65;}
+caption{caption-side:top; text-align:left; font-family:var(--hei); font-size:13px;
+  font-weight:700; padding-bottom:7px;}
+thead th{font-family:var(--hei); font-weight:700; text-align:left; padding:7px 9px;
+  border-top:1.5px solid var(--rule); border-bottom:.75px solid var(--rule); white-space:nowrap;}
+tbody td{padding:6px 9px; vertical-align:top; border-bottom:.5px solid var(--rule-hair);}
+tbody tr:last-child td{border-bottom:1.5px solid var(--rule);}
+tbody tr.grp td{background:var(--band); font-family:var(--hei); font-weight:700; font-size:12.5px;
+  border-bottom:.5px solid var(--rule-thin);}
+td.n{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap;}
+td.c{text-align:center; font-variant-numeric:tabular-nums; white-space:nowrap;}
+td.nw{white-space:nowrap}
+.tnote{font-size:12.5px; color:var(--ink-2); text-indent:2em; margin:6px 0 0; text-align:justify;}
+
+/* 落款 */
+.sign{margin-top:34px; text-align:right; line-height:2.1; font-size:15px;}
+.sign .u{font-family:var(--hei); font-weight:700;}
+.close{margin-top:26px}
+
+@media print{
+  html,body{background:#FFF}
+  .page{max-width:none; margin:0; padding:0; box-shadow:none;}
+  @page{size:A4 portrait; margin:20mm 18mm;}
+  body{font-size:10.8pt; line-height:1.85;}
+  table{font-size:9pt}
+  h1{font-size:19pt} h2{font-size:12.5pt} h3{font-size:11pt}
+  thead{display:table-header-group}
+  tr{break-inside:avoid; page-break-inside:avoid;}
+  tr.grp{break-after:avoid; page-break-after:avoid;}
+  h2,h3,caption{break-after:avoid; page-break-after:avoid;}
+  .sign,.meta{break-inside:avoid;}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="page">
+
+<div class="org">苏州市立医院分子诊断中心</div>
+<h1>肿瘤 NGS 板块方案阶段性汇报</h1>
+<p class="subtitle">现阶段调研方向：太湖总院病理科现有 PCR 多分区实验室</p>
+<hr class="rule2"><hr class="rule1">
+
+<dl class="meta">
+  <dt>汇 报 方</dt><dd>华大基因</dd>
+  <dt>汇报对象</dt><dd>苏州市立医院各上级职能部门</dd>
+  <dt>场　　地</dt><dd>太湖总院病理科现有 PCR 多分区实验室</dd>
+  <dt>日　　期</dt><dd class="tnum">2026 年 9 月 8 日</dd>
+</dl>
+
+<p>根据前期多部门沟通意见与现场实地考察情况，现就分子诊断中心肿瘤 NGS 板块的分区落位、设备配置及可开展检测项目形成阶段性汇报如下，请各位领导及相关职能部门审阅并给予指导意见。</p>
+
+<h2>一、场地与分区情况</h2>
+<h3>（一）总体情况</h3>
+<p>本次调研场地为太湖总院病理科现有 PCR 多分区实验室。经现场勘察，该实验室共六个功能间，沿同一条走廊一字排开，每间均设独立缓冲间，人员经缓冲间进出。房间的物理顺序与肿瘤 NGS 检测的工艺流程方向完全一致，具备单向流条件。<b>六间房及各自缓冲间均已建成，本次不涉及新建与装修改造，仅作功能分配与设备进场。</b></p>
+<p>工艺流程自上游至下游依次为：试剂准备区（试剂准备间）→ 标本与文库制备区（PCR2）→ 血浆文库制备区（PCR3）→ 杂交捕获区（PCR4）→ 文库扩增与检测区（PCR5）→ 测序区（PCR8）。标本与文库沿此方向单向传递，人员不逆向返回上游。其中 PCR5 与 PCR8 之间尚有 PCR6、PCR7 两间，本次不予占用。</p>
+
+<h3>（二）各功能间职能与现有条件</h3>
+<div class="tw"><table>
+  <caption>表 1　六个功能间的职能划分与现有条件核验</caption>
+  <thead><tr><th style="width:2.2em">序号</th><th>功能分区（房间）</th><th>主要工作内容</th><th>现有条件核验</th><th style="width:4.2em">设备</th></tr></thead>
+  <tbody><tr><td class="c">1</td><td>试剂准备区<br>（试剂准备间）</td><td>配制与分装 PCR 反应体系，储存与分装试剂。全流程最洁净的一间，只出不进，样本与文库不得进入。</td><td>独立成间并设缓冲间，位于分区最上游，与所有含样本的房间物理隔开。满足要求。</td><td class="c">13 项</td></tr><tr><td class="c">2</td><td>标本与文库制备区<br>（PCR2）</td><td>石蜡切片、组织样本的核酸提取与文库构建，配 A2 型生物安全柜，为全流程唯一开放操作生物样本的环节。</td><td>独立成间并设缓冲间，与试剂准备区完全分开，符合标本制备区的隔离要求。满足要求。</td><td class="c">20 项</td></tr><tr><td class="c">3</td><td>血浆文库制备区<br>（PCR3）</td><td>血浆游离 DNA（cfDNA）的文库构建。单独设间是因为组织样本的 DNA 浓度远高于血浆中的 ctDNA，同室操作会淹没低丰度突变。</td><td>与 PCR2 相邻但完全分室，两间设备各自独立配置、不共用器具。满足要求。</td><td class="c">20 项</td></tr><tr><td class="c">4</td><td>杂交捕获区<br>（PCR4）</td><td>探针杂交、磁珠捕获与洗脱，将目标基因区域从全基因组文库中富集出来。</td><td>全部为台面器械，无大型落地设备，房间尺寸满足器械摆放需要。满足要求。</td><td class="c">21 项</td></tr><tr><td class="c">5</td><td>文库扩增与检测区<br>（PCR5）</td><td>捕获后文库扩增，以及上机前质检：毛细管电泳检测片段分布、荧光定量检测浓度，两项合格方可上机。</td><td>位于分区下游、独立成间，与上游建库各间物理分离。自本间起有大量扩增产物，人员与物品不得返回上游。满足要求。</td><td class="c">14 项</td></tr><tr><td class="c">6</td><td>测序区<br>（PCR8）</td><td>上机测序，并由分析解读一体机完成数据分析与报告解读，为全流程终点。</td><td>位于流程末端，与建库各间物理分离，扩增产物不会反向污染上游。满足要求。</td><td class="c">3 项</td></tr></tbody>
+</table></div>
+<p class="tnote">注：表中「设备」为该功能间应配置的设备与器具项数，明细见第二部分。</p>
+
+<h2>二、设备配置清单</h2>
+<h3>（一）配置原则</h3>
+<p>本清单按六个功能分区列明设备与器具配置，作为配置比对与补齐的依据。<b>实验室现有设备经核验符合参数要求的予以沿用，缺配部分按本清单补齐</b>；在满足参数要求的前提下，具体品牌与型号可结合实验室现行使用习惯另行商定，不以本清单所列型号为限。</p>
+<p>本清单共 91 项，为设备与器具配置，试剂耗材清单另行出具。清单中同型号移液器已按功能间合并列示，产品编码完整保留；另有物料编码（EQP 及 1000 系列）在原始清单中一一对应，采购时可一并提供。</p>
+
+<h3>（二）分区配置明细</h3>
+<div class="tw"><table>
+  <caption>表 2　设备与器具配置明细（按功能间分组，共 91 项）</caption>
+  <thead><tr><th style="width:8.6em">产品编码</th><th>产品名称</th><th style="width:9em">设备名称</th><th style="width:9em">参数要求</th><th style="width:3.2em">数量</th></tr></thead>
+  <tbody><tr class="grp"><td colspan="5">试剂准备间　试剂准备区　（13 项 / 13 台件）</td></tr><tr><td class="nw">MA0051</td><td>澳柯玛超净工作台</td><td>超净工作台</td><td>ACB-1300V/双人;垂直单流向</td><td class="c">1</td></tr><tr><td class="nw">MA0242</td><td>锐思捷 UNIQ-G1 纯水仪</td><td>纯水仪</td><td>电导率18.2MΩ</td><td class="c">1</td></tr><tr><td class="nw">MA0086</td><td>澳柯玛 YCD-265T 冷藏冷冻箱</td><td>冷藏冷冻箱</td><td>2-8℃&amp;-20℃</td><td class="c">1</td></tr><tr><td class="nw">MA0060</td><td>得力计时器</td><td>计时器</td><td>—</td><td class="c">1</td></tr><tr><td class="nw">MA0240</td><td>雨花泽 YHZ-90191 温湿度计</td><td>温湿度计</td><td>—</td><td class="c">1</td></tr><tr><td class="nw">MA0446</td><td>BGI Top-Mix 多管桌面混匀仪</td><td>漩涡振荡器</td><td>—</td><td class="c">1</td></tr><tr><td class="nw">MA0447</td><td>BGI Top-Spin 复合转子离心机</td><td>掌式离心机</td><td>—</td><td class="c">1</td></tr><tr><td>MA0893 / MA0894 / MA0895 / MA0896 / MA0897 / MA0898</td><td>TIANGEN 单道移液器（0.1-2.0µl；0.5-10µl；2-20µl；10-100µl；20-200µl；100-1000µl）</td><td>单道移液器</td><td>—</td><td class="c">6</td></tr><tr class="grp"><td colspan="5">PCR2　标本与文库制备区　（20 项 / 20 台件）</td></tr><tr><td class="nw">MA0086</td><td>澳柯玛 YCD-265T 冷藏冷冻箱</td><td>冷藏冷冻箱</td><td>2-8℃&amp;-20℃</td><td class="c">1</td></tr><tr><td class="nw">MA0060</td><td>得力计时器</td><td>计时器</td><td>—</td><td class="c">1</td></tr><tr><td class="nw">MA0240</td><td>雨花泽 YHZ-90191 温湿度计</td><td>温湿度计</td><td>—</td><td class="c">1</td></tr><tr><td class="nw">MA0446</td><td>BGI Top-Mix 多管桌面混匀仪</td><td>漩涡振荡器</td><td>—</td><td class="c">1</td></tr><tr><td class="nw">MA0447</td><td>BGI Top-Spin 复合转子离心机</td><td>掌式离心机</td><td>—</td><td class="c">1</td></tr><tr><td class="nw">MA0369</td><td>东胜龙 ETC-821M 基因扩增仪</td><td>PCR扩增仪</td><td>必需品</td><td class="c">1</td></tr><tr><td class="nw">MA0059</td><td>湘仪 HT165R 离心机</td><td>高速离心机</td><td>1.5ml转子</td><td class="c">1</td></tr><tr><td class="nw">MA0573</td><td>碳环智造Mag-16W 1.5mL离心管磁力架</td><td>磁力架</td><td>16头；16孔(凹）;离心管用</td><td class="c">1</td></tr><tr><td class="nw">MA0449</td><td>碳环智造Mag-96A 96孔磁力架（八排管）</td><td>96孔磁力架（八排管）</td><td>八排管</td><td class="c">1</td></tr><tr><td class="nw">MA0070</td><td>苏净安泰 BSC-1304ⅡA2 生物安全柜</td><td>生物安全柜（A2型）</td><td>二级，1500*815*2270mm</td><td class="c">1</td></tr><tr><td class="nw">MA0673</td><td>恒温混匀仪-瑞诚仪器</td><td>恒温混匀仪</td><td>96孔+1.5模块</td><td class="c">1</td></tr><tr><td>MA0893 / MA0894 / MA0895 / MA0896 / MA0897 / MA0898</td><td>TIANGEN 单道移液器（0.1-2.0µl；0.5-10µl；2-20µl；10-100µl；20-200µl；100-1000µl）</td><td>单道移液器</td><td>—</td><td class="c">6</td></tr><tr><td>MA0914 / MA0892 / MA0915</td><td>TIANGEN 八道移液器（0.5-10 µl；5-50 µl；30-300 µl）</td><td>八道移液器</td><td>—</td><td class="c">3</td></tr><tr class="grp"><td colspan="5">PCR3　血浆文库制备区　（20 项 / 20 台件）</td></tr><tr><td class="nw">MA0086</td><td>澳柯玛 YCD-265T 冷藏冷冻箱</td><td>冷藏冷冻箱</td><td>2-8℃&amp;-20℃</td><td class="c">1</td></tr><tr><td class="nw">MA0060</td><td>得力计时器</td><td>计时器</td><td>—</td><td class="c">1</td></tr><tr><td class="nw">MA0240</td><td>雨花泽 YHZ-90191 温湿度计</td><td>温湿度计</td><td>—</td><td class="c">1</td></tr><tr><td class="nw">MA0446</td><td>BGI Top-Mix 多管桌面混匀仪</td><td>漩涡振荡器</td><td>—</td><td class="c">1</td></tr><tr><td class="nw">MA0447</td><td>BGI Top-Spin 复合转子离心机</td><td>掌式离心机</td><td>—</td><td class="c">1</td></tr><tr><td class="nw">MA0369</td><td>东胜龙 ETC-821M 基因扩增仪</td><td>PCR扩增仪</td><td>必需品</td><td class="c">1</td></tr><tr><td class="nw">MA0059</td><td>湘仪 HT165R 离心机</td><td>高速离心机</td><td>1.5ml转子</td><td class="c">1</td></tr><tr><td class="nw">MA0573</td><td>碳环智造Mag-16W 1.5mL离心管磁力架</td><td>磁力架</td><td>16头；16孔(凹）;离心管用</td><td class="c">1</td></tr><tr><td class="nw">MA0449</td><td>碳环智造Mag-96A 96孔磁力架（八排管）</td><td>96孔磁力架（八排管）</td><td>八排管</td><td class="c">1</td></tr><tr><td class="nw">MA0070</td><td>苏净安泰 BSC-1304ⅡA2 生物安全柜</td><td>生物安全柜（A2型）</td><td>二级，1500*815*2270mm</td><td class="c">1</td></tr><tr><td class="nw">MA0673</td><td>恒温混匀仪-瑞诚仪器</td><td>恒温混匀仪</td><td>96孔+1.5模块</td><td class="c">1</td></tr><tr><td>MA0893 / MA0894 / MA0895 / MA0896 / MA0897 / MA0898</td><td>TIANGEN 单道移液器（0.1-2.0µl；0.5-10µl；2-20µl；10-100µl；20-200µl；100-1000µl）</td><td>单道移液器</td><td>—</td><td class="c">6</td></tr><tr><td>MA0914 / MA0892 / MA0915</td><td>TIANGEN 八道移液器（0.5-10 µl；5-50 µl；30-300 µl）</td><td>八道移液器</td><td>—</td><td class="c">3</td></tr><tr class="grp"><td colspan="5">PCR4　杂交捕获区　（21 项 / 21 台件）</td></tr><tr><td class="nw">MA0086</td><td>澳柯玛 YCD-265T 冷藏冷冻箱</td><td>冷藏冷冻箱</td><td>2-8℃&amp;-20℃</td><td class="c">1</td></tr><tr><td class="nw">MA0060</td><td>得力计时器</td><td>计时器</td><td>—</td><td class="c">1</td></tr><tr><td class="nw">MA0240</td><td>雨花泽 YHZ-90191 温湿度计</td><td>温湿度计</td><td>—</td><td class="c">1</td></tr><tr><td class="nw">MA0446</td><td>BGI Top-Mix 多管桌面混匀仪</td><td>漩涡振荡器</td><td>—</td><td class="c">1</td></tr><tr><td class="nw">MA0447</td><td>BGI Top-Spin 复合转子离心机</td><td>掌式离心机</td><td>—</td><td class="c">1</td></tr><tr><td class="nw">MA0369</td><td>东胜龙 ETC-821M 基因扩增仪</td><td>PCR扩增仪</td><td>必需品</td><td class="c">1</td></tr><tr><td class="nw">MA0570</td><td>拓赫HS-3垂直混匀仪</td><td>垂直混匀仪</td><td>—</td><td class="c">1</td></tr><tr><td class="nw">MA0059</td><td>湘仪 HT165R 离心机</td><td>高速离心机</td><td>1.5ml转子</td><td class="c">1</td></tr><tr><td class="nw">MA0573</td><td>碳环智造Mag-16W 1.5mL离心管磁力架</td><td>磁力架</td><td>16头；16孔(凹）;离心管用</td><td class="c">1</td></tr><tr><td class="nw">MA0449</td><td>碳环智造Mag-96A 96孔磁力架（八排管）</td><td>96孔磁力架（八排管）</td><td>八排管</td><td class="c">1</td></tr><tr><td class="nw">MA0673</td><td>恒温混匀仪-瑞诚仪器</td><td>恒温混匀仪</td><td>96孔+1.5模块</td><td class="c">1</td></tr><tr><td class="nw">MA0670</td><td>荧光计/杭州奥盛/Fluo-200</td><td>荧光定量仪</td><td>—</td><td class="c">1</td></tr><tr><td>MA0893 / MA0894 / MA0895 / MA0896 / MA0897 / MA0898</td><td>TIANGEN 单道移液器（0.1-2.0µl；0.5-10µl；2-20µl；10-100µl；20-200µl；100-1000µl）</td><td>单道移液器</td><td>—</td><td class="c">6</td></tr><tr><td>MA0914 / MA0892 / MA0915</td><td>TIANGEN 八道移液器（0.5-10 µl；5-50 µl；30-300 µl）</td><td>八道移液器</td><td>—</td><td class="c">3</td></tr><tr class="grp"><td colspan="5">PCR5　文库扩增与检测区　（14 项 / 14 台件）</td></tr><tr><td class="nw">MA0086</td><td>澳柯玛 YCD-265T 冷藏冷冻箱</td><td>冷藏冷冻箱</td><td>2-8℃&amp;-20℃</td><td class="c">1</td></tr><tr><td class="nw">MA0060</td><td>得力计时器</td><td>计时器</td><td>—</td><td class="c">1</td></tr><tr><td class="nw">MA0240</td><td>雨花泽 YHZ-90191 温湿度计</td><td>温湿度计</td><td>—</td><td class="c">1</td></tr><tr><td class="nw">MA0446</td><td>BGI Top-Mix 多管桌面混匀仪</td><td>漩涡振荡器</td><td>—</td><td class="c">1</td></tr><tr><td class="nw">MA0447</td><td>BGI Top-Spin 复合转子离心机</td><td>掌式离心机</td><td>—</td><td class="c">1</td></tr><tr><td class="nw">MA0369</td><td>东胜龙 ETC-821M 基因扩增仪</td><td>PCR扩增仪</td><td>必需品</td><td class="c">1</td></tr><tr><td class="nw">MA0670</td><td>荧光计/杭州奥盛/Fluo-200</td><td>荧光定量仪</td><td>—</td><td class="c">1</td></tr><tr><td class="nw">MA0245</td><td>全自动毛细管电泳仪/浙江光鼎/规格&amp;Qsep1</td><td>全自动毛细管电泳仪</td><td>—</td><td class="c">1</td></tr><tr><td>MA0893 / MA0894 / MA0895 / MA0896 / MA0897 / MA0898</td><td>TIANGEN 单道移液器（0.1-2.0µl；0.5-10µl；2-20µl；10-100µl；20-200µl；100-1000µl）</td><td>单道移液器</td><td>—</td><td class="c">6</td></tr><tr class="grp"><td colspan="5">PCR8　测序区　（3 项 / 3 台件）</td></tr><tr><td class="nw">MA0238</td><td>欧井 OJ-501E 抽湿机</td><td>抽湿机</td><td>根据实验室实际情况来进行配置</td><td class="c">1</td></tr><tr><td class="nw">MA0168</td><td>MGISEQ-2000 基因测序仪</td><td>MGISEQ-2000 基因组测序仪</td><td>MGISEQ-2000测序仪</td><td class="c">1</td></tr><tr><td class="nw">MA0453</td><td>Halos 肿瘤基因检测数据分析解读 一体机</td><td>分析解读一体机</td><td>—</td><td class="c">1</td></tr></tbody>
+</table></div>
+
+<h2>三、可开展检测项目与收费</h2>
+<h3>（一）已明确物价的检测项目</h3>
+<p>下列五个试剂盒均已取得国家药品监督管理局第三类医疗器械注册证，属已注册体外诊断试剂路径，非实验室自建项目（LDT），报批与合规风险相对较低。五项共用收费编码 <span class="tnum">012100000200000</span>「高通量测序法检测费（病理样本）」，价格已在物价目录内。</p>
+<div class="tw"><table>
+  <caption>表 3　已明确物价的可开展检测项目</caption>
+  <thead><tr><th style="width:2.2em">序号</th><th>试剂盒名称 / 生产厂家</th><th style="width:9.4em">注册证编号</th><th style="width:5em">注册适用范围</th><th>可拓展适用范围</th><th style="width:5.2em">物价收费</th></tr></thead>
+  <tbody><tr><td class="c">1</td><td>EGFR/KRAS/ALK基因突变联合检测试剂盒（联合探针锚定聚合测序法）<br>华大生物科技（武汉）有限公司</td><td class="nw">国械注准20193400621</td><td>肺癌</td><td>结直肠癌，胃癌，肝癌，胃肠道间质瘤，乳腺癌</td><td class="n">4,500 元</td></tr><tr><td class="c">2</td><td>人KRAS/BRAF/PIK3CA基因突变检测试剂盒（可逆末端终止测序法）<br>上海思路迪生物医学科技有限公司</td><td class="nw">国械注准20223400638</td><td>结直肠癌</td><td>消化道肿瘤（胰腺癌除外）、肺癌、子宫内膜癌</td><td class="n">4,500 元</td></tr><tr><td class="c">3</td><td>NTRK1/NTRK2/NTRK3基因融合检测试剂盒(可逆末端终止测序法)<br>南京世和医疗器械有限公司</td><td class="nw">国械注准20253402191</td><td>实体瘤</td><td>实体瘤</td><td class="n">4,500 元</td></tr><tr><td class="c">4</td><td>EGFR/ALK/ROS1/BRAF/KRAS/HER2基因突变检测试剂盒(可逆末端终止测序法)<br>南京世和医疗器械有限公司</td><td class="nw">国械注准20183400408</td><td>肺癌</td><td>—</td><td class="n">7,000 元</td></tr><tr><td class="c">5</td><td>非小细胞肺癌组织TMB检测试剂盒（可逆末端终止测序法）<br>南京世和医疗器械有限公司</td><td class="nw">国械注准20233401452</td><td>肺癌TMB</td><td>全实体瘤如肠癌、胃癌乳腺癌、泌尿系统肿瘤、子宫内膜癌、卵巢癌、甲状腺癌、肝胆胰系统肿瘤、黑色素瘤等、胃肠道间质瘤等</td><td class="n">9,900 元</td></tr></tbody>
+</table></div>
+<p class="tnote">注：「可拓展适用范围」指注册证适应证之外、临床有实际需求的瘤种，开展前需按院内规定完成新增项目论证与备案。</p>
+
+<h3>（二）其他已注册可选试剂盒（参考）</h3>
+<p>上表之外，国内已取得第三类注册证的同类产品尚有多个，可在同一平台上按临床需求扩充项目菜单。下列两项为 PARP 抑制剂的伴随诊断试剂，覆盖卵巢癌、乳腺癌与前列腺癌，<b>与上表以肺癌、结直肠癌为主的项目菜单互补，不重复</b>。</p>
+<div class="tw"><table>
+  <caption>表 4　其他已注册可选试剂盒</caption>
+  <thead><tr><th style="width:9.4em">注册证编号</th><th style="width:13em">试剂盒名称 / 生产厂家</th><th style="width:5em">注册适用范围</th><th>说明</th></tr></thead>
+  <tbody><tr><td class="nw">国械注准20193400099</td><td>人类BRCA1基因和BRCA2基因突变检测试剂盒（可逆末端终止测序法）<br>厦门艾德生物医药科技股份有限公司</td><td>卵巢癌、乳腺癌</td><td>检测 BRCA1 / BRCA2 编码区、外显子-内含子连接区、UTR 区与启动子区的点突变、插入缺失及纯合缺失；用于帕米帕利等 PARP 抑制剂的用药指导</td></tr><tr><td class="nw">国械注准20253402685</td><td>人BRCA1/BRCA2基因突变检测试剂盒（可逆末端终止测序法）<br>厦门艾德生物医药科技股份有限公司</td><td>前列腺癌</td><td>用于携带胚系和／或体系 BRCA 基因突变的转移性去势抵抗性前列腺癌（mCRPC）；泽倍珂®（尼拉帕利阿比特龙片）的伴随诊断</td></tr></tbody>
+</table></div>
+<p class="tnote">注：上列产品名称、适用范围与伴随诊断药物已比对厂家公开信息，注册证编号建议以最新《医疗器械注册证》原件为准。此类产品的收费执行口径需另行确认，未包含在已明确物价的五项之内；实际引入前应完成新增项目论证与物价备案。</p>
+
+<h2>四、NGS 临床应用方向</h2>
+<p>本次项目落在实体瘤伴随诊断这一类。从平台角度看，实验室建成后所承载的能力不止于此。现按大类梳理国内 NGS 临床应用的主要方向，供分子诊断中心中长期规划参考。各方向的监管成熟度并不相同：<b>标注「已有注册产品」的可直接选用注册试剂盒开展，标注「多以 LDT 路径开展」的则需按自建项目管理</b>。</p>
+<div class="tw"><table>
+  <caption>表 5　国内 NGS 临床应用方向（大类）</caption>
+  <thead><tr><th style="width:2.2em">序号</th><th style="width:11em">应用方向</th><th>主要内容</th><th style="width:8.4em">开展路径</th></tr></thead>
+  <tbody><tr><td class="c">1</td><td>实体瘤精准诊疗</td><td>靶向与免疫治疗的伴随诊断：驱动基因突变、基因融合、肿瘤突变负荷（TMB）、微卫星不稳定（MSI）与同源重组缺陷（HRD）。国内已注册产品最多的方向，本次项目即属此类。</td><td>已有注册产品</td></tr><tr><td class="c">2</td><td>遗传性肿瘤易感基因</td><td>BRCA1／BRCA2 等胚系突变筛查，用于高危人群管理、亲属级联筛查与 PARP 抑制剂用药指导。表 4 所列两项即属此类。</td><td>已有注册产品</td></tr><tr><td class="c">3</td><td>血液系统肿瘤分子分型</td><td>白血病、淋巴瘤、骨髓增生异常综合征的融合基因与突变谱检测，用于分型、危险度分层与疗效监测。微小残留病（MRD）监测目前多以自建项目开展。</td><td>部分已有注册产品</td></tr><tr><td class="c">4</td><td>生殖健康与出生缺陷防控</td><td>无创产前筛查（NIPT）、染色体拷贝数变异检测（CNV-seq）、胚胎植入前遗传学检测（PGT）。NIPT 是国内最早获批的 NGS 临床应用方向。</td><td>已有注册产品</td></tr><tr><td class="c">5</td><td>单基因遗传病与携带者筛查</td><td>地中海贫血、遗传性耳聋等常见单基因病已有注册试剂盒；更广的多基因 panel 与全外显子组测序目前多以自建项目路径开展。</td><td>部分已有注册产品</td></tr><tr><td class="c">6</td><td>感染性疾病病原检测</td><td>宏基因组测序（mNGS）与靶向测序（tNGS），用于疑难危重感染的病原快速识别。测序平台已取得三类注册证，国内已发布多部临床应用专家共识。</td><td>多以 LDT 路径开展</td></tr></tbody>
+</table></div>
+<p class="tnote">注：以上为应用方向的大类梳理，不构成项目承诺。各方向开展前均需完成新增项目论证、试剂盒选型与物价备案；跨方向共用同一测序平台时，还需确认各试剂盒注册证载明的适用机型。</p>
+
+<p class="close">以上汇报，请各位领导及相关职能部门审阅，并就分区落位方案、设备配置口径及项目开展次序给予进一步指导意见。</p>
+
+<div class="sign">
+  <div class="u">华大基因</div>
+  <div>二〇二六年九月八日</div>
+</div>
+
+</div>
