@@ -48,14 +48,14 @@ depth:
           两件事合起来才构成本次的主线。
     modifiers:
       present:
-        - {name: 脂蛋白(a) 显著升高, codes: [LPA], note: 遗传决定，不可改变}
-        - {name: 已有影像落点, codes: [MRA_MCA_M1], note: 本次唯一的器质性发现}
+        - {name: 脂蛋白(a) 显著升高, codes: [LPA], note: 遗传决定，不可改变, relation: stage}
+        - {name: 已有影像落点, codes: [MRA_MCA_M1], note: 本次唯一的器质性发现, relation: stage}
       absent:
-        - {name: 高血压, codes: [SBP, DBP]}
-        - {name: 糖代谢异常, codes: [HBA1C, GLU_FASTING]}
-        - {name: 常规血脂异常, codes: [LDL_C, TC, TG, SDLDL_C]}
-        - {name: 颈动脉粥样硬化, codes: [CAROTID_US], note: 内膜连续良好，腔内干净}
-        - {name: 已发生的脑缺血事件, codes: [BRAIN_MRI_PLAIN], note: 平扫与 DWI 均未见异常信号}
+        - {name: 高血压, codes: [SBP, DBP], relation: driver}
+        - {name: 糖代谢异常, codes: [HBA1C, GLU_FASTING], relation: driver}
+        - {name: 常规血脂异常, codes: [LDL_C, TC, TG, SDLDL_C], relation: driver}
+        - {name: 颈动脉粥样硬化, codes: [CAROTID_US], note: 内膜连续良好，腔内干净, relation: downstream}
+        - {name: 已发生的脑缺血事件, codes: [BRAIN_MRI_PLAIN], note: 平扫与 DWI 均未见异常信号, relation: downstream}
       unknown:
         - {name: 吸烟史, why: 与 Lp(a) 叠加时风险分层完全不同，本次报告空白}
         - {name: 家族早发心脑血管病史, why: 男性 55 岁前 / 女性 65 岁前。Lp(a) 由基因决定，家族史直接相关}

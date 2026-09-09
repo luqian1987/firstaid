@@ -22,8 +22,8 @@ depth:
     modifiers:
       present: []
       absent:
-        - {name: 胃底腺萎缩, codes: [PG1, PG_RATIO]}
-        - {name: 全身炎症背景, codes: [ESR, HSCRP]}
+        - {name: 胃底腺萎缩, codes: [PG1, PG_RATIO], relation: stage}
+        - {name: 全身炎症背景, codes: [ESR, HSCRP], relation: competing}
       unknown:
         - {name: 幽门螺杆菌状态, why: 病例 1 未检测；它是萎缩方向的主要驱动因素}
         - {name: 反流症状（烧心 / 反酸 / 夜间呛咳）, why: 决定这条要不要按反流处理}

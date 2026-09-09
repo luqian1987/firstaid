@@ -10,7 +10,8 @@ from .original import (
 )
 from .depth import (
     KIND_LABELS, STAGE_LABELS, Depth, Intervention, InterventionKind, Mechanism,
-    Modifier, Modifiers, PathwayStage, PathwayTrack, StageState, Topology, Upstream,
+    MODIFIER_RELATIONS, Modifier, Modifiers, ON_CHART_RELATIONS,
+    PathwayStage, PathwayTrack, StageState, Topology, Upstream,
 )
 from .subject import Encounter, Subject, Timeline
 from .derived import AdvisoryCutoff, DerivedDef, DerivedRegistry

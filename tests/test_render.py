@@ -68,3 +68,20 @@ def test_advisory_cutoff_is_labelled_as_such(tmp_path, zhang, knowledge):
     """本系统补的常用切点必须标明，不许看起来像原报告给的区间。"""
     _, h = _html(tmp_path, zhang, knowledge)
     assert "参考切点" in h
+
+
+def test_every_css_variable_is_defined():
+    """用到的 CSS 变量必须在 :root 里定义过。
+
+    --calm / --calm-bg 从来没有定义过，于是"可以放下"那一档的几处绿色
+    一直在静默回退到继承值——渲染不报错，颜色只是"看起来有点怪"。
+    与规则层的静默失效同一族：能变成断言的就变成断言。
+    """
+    import re
+    from pathlib import Path
+    tpl = (Path(__file__).resolve().parents[1] / "src" / "firstaid" / "render"
+           / "templates" / "report.html.j2").read_text(encoding="utf-8")
+    root = tpl[tpl.index(":root{"):tpl.index("}", tpl.index(":root{"))]
+    defined = set(re.findall(r"(--[a-z0-9-]+)\s*:", root))
+    used = set(re.findall(r"var\((--[a-z0-9-]+)\)", tpl))
+    assert used <= defined, f"这些变量没有定义: {sorted(used - defined)}"

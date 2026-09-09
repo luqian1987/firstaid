@@ -11,8 +11,9 @@ from pathlib import Path
 import yaml
 
 from ..model import (
-    Depth, Encounter, Intervention, InterventionKind, Mechanism, Modifier, Modifiers,
-    Observation, Ontology, PathwayStage, PathwayTrack, StageState, Topology, Upstream,
+    Depth, Encounter, Intervention, InterventionKind, Mechanism, MODIFIER_RELATIONS,
+    Modifier, Modifiers, ON_CHART_RELATIONS, Observation, Ontology, PathwayStage,
+    PathwayTrack, StageState, Topology, Upstream,
 )
 from ..patterns.context import RuleContext
 from ..patterns.expr import evaluate
@@ -166,8 +167,8 @@ class DepthEngine:
             if c.id in has:
                 continue
             if c.id in why:
-                excluded.append({"title": c.title, "why": why[c.id],
-                                 "band": band_of(c.tag)})
+                excluded.append({"chain": c.id, "title": c.title,
+                                 "why": why[c.id], "band": band_of(c.tag)})
             elif band_of(c.tag) in (Band.ACT, Band.CLARIFY):
                 errs.append(
                     f"{c.id}（{band_of(c.tag).value} 档）既没有通路，"
@@ -175,6 +176,64 @@ class DepthEngine:
         return excluded, errs
 
     # ---------------- 机制 / 修饰 / 干预 ----------------
+    @staticmethod
+    def chart_codes(topo: Topology | None, chain_id: str) -> set[str]:
+        """这条判读的进展图上已经画出来的指标（各关 + 上游）。"""
+        out: set[str] = set()
+        for t in (topo.tracks if topo else ()):
+            if t.chain_id != chain_id:
+                continue
+            for st in t.stages:
+                out |= set(st.judged_by)
+            up = next((u for u in (topo.upstreams if topo else ())
+                       if u.id == t.upstream_id), None)
+            if up:
+                out |= {o.code for o in up.evidence}
+        return out
+
+    def check_modifier_relations(self, chains, topo: Topology | None) -> list[str]:
+        """修饰因素必须声明它与这条主线的关系，而且声明要与图对得上。
+
+        以前这一栏是凭感觉挑的，于是宽严不一：甲状腺那条把"贫血"列进已排除，
+        可在甲功正常的阶段，贫血不是这条判读的竞争解释，只是同一次抽血里
+        另一组正常值。声明 + 机械校验，把"凭感觉"换成可援引的标准。
+        """
+        errs: list[str] = []
+        ids = {c.id for c in chains}
+        for cid, block in (self.spec.get("depth") or {}).items():
+            if cid not in ids:
+                continue
+            on_chart = self.chart_codes(topo, cid)
+            has_chart = bool(on_chart)
+            for key in ("present", "absent"):
+                for m in ((block.get("modifiers") or {}).get(key) or []):
+                    codes = set(m.get("codes", []))
+                    rel = m.get("relation")
+                    if not codes:
+                        continue          # 没有指标的条目属于"未知"那一类，不需要声明
+                    if rel not in MODIFIER_RELATIONS:
+                        errs.append(
+                            f"{cid}: 修饰因素「{m['name']}」没有声明它与主线的关系。"
+                            f"必须是 {'/'.join(MODIFIER_RELATIONS)} 之一——"
+                            "说不出关系的因素不该进这一栏")
+                        continue
+                    if not has_chart:
+                        if rel in ON_CHART_RELATIONS:
+                            errs.append(
+                                f"{cid}: 修饰因素「{m['name']}」声明为 {rel}，"
+                                "但这条判读没有进展图，图上不存在这一关")
+                        continue
+                    if rel in ON_CHART_RELATIONS and not (codes & on_chart):
+                        errs.append(
+                            f"{cid}: 修饰因素「{m['name']}」声明为 {rel}，"
+                            f"但它引用的指标 {'、'.join(sorted(codes))} 在进展图上没有出现")
+                    if rel not in ON_CHART_RELATIONS and (codes & on_chart):
+                        errs.append(
+                            f"{cid}: 修饰因素「{m['name']}」声明为 {rel}，"
+                            f"但它引用的 {'、'.join(sorted(codes & on_chart))} 进展图上已经画了。"
+                            "图旁边再列一遍就是同一件事讲两遍——改成 stage/upstream")
+        return errs
+
     def check_absent_modifiers(self, enc: Encounter, chains) -> list[str]:
         """说"这个因素不在场"，那它引用的指标就不能是异常的。
 
@@ -223,7 +282,8 @@ class DepthEngine:
         def grp(key):
             return tuple(Modifier(
                 name=m["name"], note=fill(m.get("note", "")), why=m.get("why", ""),
-                codes=tuple(m.get("codes", [])), evidence=_pick(ctx, m.get("codes", [])))
+                codes=tuple(m.get("codes", [])), relation=m.get("relation"),
+                evidence=_pick(ctx, m.get("codes", [])))
                 for m in (mod.get(key) or []))
 
         ivs = []

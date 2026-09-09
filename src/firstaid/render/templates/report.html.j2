@@ -65,29 +65,36 @@ h2.sec{font-family:var(--serif);font-size:23px;font-weight:600;margin:56px 0 6px
 .gap{grid-column:1/-1;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;
   text-transform:uppercase;color:var(--muted);padding:16px 0 2px;border-bottom:0}
 
-/* ---- 拓扑 ---- */
-.topo{background:var(--card);border:1px solid var(--rule);border-radius:6px;
-  padding:24px 26px;margin:18px 0 0}
-.topo .vp{overflow-x:auto;background:#FCFDFD;border:1px solid var(--rule-2);
-  border-radius:5px;padding:10px 6px;margin-top:16px}
-.topo .tails{margin-top:16px;display:grid;gap:9px}
-.topo .tail{font-size:12.6px;color:var(--muted);line-height:1.62;padding-left:13px;
+/* ---- 进展图：拆在每一组多联自己那一段里 ---- */
+.ctopo{margin:20px 0 0;padding-top:16px;border-top:1px solid var(--rule-2)}
+.ct-cap{font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+.ctopo .vp{overflow-x:auto;background:#FCFDFD;border:1px solid var(--rule-2);
+  border-radius:5px;padding:8px 6px}
+.ctopo .tails{margin-top:13px;display:grid;gap:9px}
+.ctopo .tail{font-size:12.6px;color:var(--muted);line-height:1.62;padding-left:13px;
   border-left:2px solid var(--rule-2)}
-.topo .tail b{color:var(--ink-2);font-weight:600}
+.ctopo .tail b{color:var(--ink-2);font-weight:600}
+.ctopo.noprog{background:#FBFCFD;border:1px solid var(--rule-2);border-radius:5px;
+  padding:13px 16px;margin-top:20px}
+.ctopo.noprog .ct-cap{margin-bottom:4px}
+.npw{font-size:12.8px;line-height:1.68;color:var(--ink-2);margin:0;max-width:76ch}
 .gates{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;
-  margin-top:18px;padding-top:16px;border-top:1px solid var(--rule-2)}
+  margin-top:16px}
 .gate .gn{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:3px}
 .gate .gd{font-size:12.7px;line-height:1.62;color:var(--ink-2)}
 .gtag{display:inline-block;font-family:var(--mono);font-size:9.5px;padding:1px 6px;
   border-radius:3px;margin-right:6px;vertical-align:1px}
-.gtag.recheck{background:var(--calm-bg);color:var(--calm)}
+.gtag.recheck{background:var(--settle-bg);color:var(--settle)}
 .gtag.specialist{background:var(--act-bg);color:var(--act)}
-.scope{margin-top:16px;padding-top:15px;border-top:1px solid var(--rule-2)}
-.scope > b{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+.tlegend{display:flex;flex-wrap:wrap;gap:18px;align-items:center;
+  font-size:12.3px;color:var(--muted);margin:10px 0 0}
+.tlegend i{font-style:normal;display:inline-flex;align-items:center;gap:6px}
+.tlegend .dot{width:11px;height:11px;border-radius:50%;display:inline-block}
+.tlegend .d1{background:var(--act)}
+.tlegend .d2{background:#FFF;border:2px solid var(--settle)}
+.tlegend .d3{background:var(--rule-2);border:1px dashed var(--muted)}
   color:var(--muted);display:block;margin-bottom:9px}
-.scope ul{margin:0;padding:0;list-style:none;display:grid;gap:7px}
-.scope li{font-size:12.5px;line-height:1.6;color:var(--muted)}
-.scope li span{color:var(--ink-2);font-weight:600;margin-right:8px}
 .nosay{margin-top:16px;background:#FDFCF8;border:1px solid #E5DCC2;border-radius:5px;
   padding:14px 16px;font-size:12.7px;line-height:1.7;color:var(--ink-2)}
 .nosay b{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
@@ -102,7 +109,7 @@ h2.sec{font-family:var(--serif);font-size:23px;font-weight:600;margin:56px 0 6px
 .mech .lvl{display:inline-block;font-family:var(--mono);font-size:9.5px;letter-spacing:.07em;
   background:#EAEEF0;color:var(--ink-2);padding:2px 7px;border-radius:2px;margin-bottom:6px}
 .mech p{margin:0 0 8px;font-size:13.6px;line-height:1.72;max-width:72ch}
-.mech .ro{font-size:12.4px;color:var(--calm);margin:0 0 7px}
+.mech .ro{font-size:12.4px;color:var(--settle);margin:0 0 7px}
 .mech .ro b{font-family:var(--mono);font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;
   color:var(--muted);font-weight:500;margin-right:6px}
 .cites{display:flex;flex-wrap:wrap;gap:5px}
@@ -111,11 +118,11 @@ h2.sec{font-family:var(--serif);font-size:23px;font-weight:600;margin:56px 0 6px
 .mods{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 .mods > div{border-radius:4px;padding:13px 14px;border:1px solid}
 .mods .mp{background:var(--act-bg);border-color:#E8D5CC}
-.mods .ma{background:var(--calm-bg);border-color:#CDE0DA}
+.mods .ma{background:var(--settle-bg);border-color:#CDE0DA}
 .mods .mu{background:#F5F0E3;border-color:#E5DCC2}
 .mods h5{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;
   margin:0 0 9px;font-weight:500}
-.mods .mp h5{color:var(--act)} .mods .ma h5{color:var(--calm)} .mods .mu h5{color:#8A6B18}
+.mods .mp h5{color:var(--act)} .mods .ma h5{color:var(--settle)} .mods .mu h5{color:#8A6B18}
 .mods ul{margin:0;padding:0;list-style:none}
 .mods li{margin-bottom:10px;font-size:12.6px;line-height:1.55}
 .mods li:last-child{margin-bottom:0}
@@ -130,7 +137,7 @@ h2.sec{font-family:var(--serif);font-size:23px;font-weight:600;margin:56px 0 6px
 .iv .kd{display:inline-block;font-family:var(--mono);font-size:9.5px;letter-spacing:.07em;
   padding:2px 7px;border-radius:2px;margin-bottom:6px}
 .iv.measurement .kd{background:#E7EDF2;color:#3A5F8A}
-.iv.lifestyle .kd{background:var(--calm-bg);color:var(--calm)}
+.iv.lifestyle .kd{background:var(--settle-bg);color:var(--settle)}
 .iv.clinical .kd{background:#F5F0E3;color:#8A6B18}
 .iv .ia{font-size:14px;font-weight:600;margin:0 0 5px;line-height:1.5}
 .iv .ir{font-size:12.9px;color:var(--ink-2);margin:0 0 9px;line-height:1.65;max-width:72ch}
@@ -185,13 +192,7 @@ h2.sec{font-family:var(--serif);font-size:23px;font-weight:600;margin:56px 0 6px
 .reading p{margin:0;font-size:13.6px;line-height:1.7}
 .reading .single p{color:var(--ink-2)}
 
-.tloc{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 16px;margin:0 0 18px;
-  padding:9px 13px;background:#F7F8F9;border-radius:4px;font-size:12.6px;color:var(--ink-2)}
-.tloc .tl b{font-family:var(--mono);font-size:11px;color:var(--muted);margin-right:6px;
   font-weight:600}
-.tloc a{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--muted);
-  text-decoration:none;border-bottom:1px solid var(--rule);white-space:nowrap}
-.tloc a:hover{color:var(--ink);border-color:var(--ink)}
 .verdict{display:grid;grid-template-columns:1fr 1fr;gap:0 24px;padding:16px 0 0;
   border-top:1px solid var(--rule-2)}
 .verdict>div{padding:5px 0}
@@ -286,6 +287,30 @@ footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--rule);
   <p class="chip-note">另有 <span class="chip confirm">◇ 与医生确认</span> 标记 {{ confirms|length }} 条——
      它不是第四种颜色，是叠加在上面三种之上的一个提醒：这几条原建议按组合看有疑问，
      执行前值得和医生确认一句。理由折叠在文末，不必先读。</p>
+
+  {% if n_tracks %}
+  <details class="fold" style="margin-top:20px">
+    <summary>关于进展图（{{ n_tracks }} 条判读带图，读之前先看这一段）</summary>
+    <div class="inner">
+      <p>有进展结构的判读，图画在它自己那一段里，不集中在一处——
+         你在读哪一条，就在哪一条旁边看它走到哪一关。</p>
+      <p>横轴是进展方向，<b>不是时间轴</b>。每一关的状态都由指标判定，判不了就画成判不了；
+         只画到本次有指标能判定的那一关，再往后不展开。</p>
+      <div class="tlegend">
+        <i><span class="dot d1"></span>本次已见</i>
+        <i><span class="dot d2"></span>本次未见（有指标判定）</i>
+        <i><span class="dot d3"></span>判不了（缺指标）</i>
+      </div>
+      <div class="nosay" style="margin-top:16px">
+        <b>这些图不说什么</b>
+        不说"多久会到下一关"——那需要队列数据来校准，我们没有，写年数是编造。<br>
+        不画本次没有数据的阶段，也不出现那些阶段的病名。最远端恰恰是证据最弱的地方，
+        用它来传递紧迫感是不诚实的。<br>
+        不把"未见"说成"不会发生"。它只表示：以本次这几个指标看，它还没有发生。
+      </div>
+    </div>
+  </details>
+  {% endif %}
 </header>
 
 {% if n_orig %}
@@ -328,47 +353,6 @@ footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--rule);
   {% endif %}
 {% endfor %}
 </div>
-
-{% if topo_svg %}
-<h2 class="sec" id="topo">有进展结构的 {{ topo.tracks|length }} 条，你现在在哪一关</h2>
-<p class="sub">横轴是进展方向，不是时间轴——本图不含任何时间预测。每一关的状态都由指标判定；
-   判不了就画成判不了。只画到本次有指标能判定的那一关，再往后不展开。<br>
-   这张图只画"会沿着某个方向往前走"的发现。其余 {{ topo_excluded|length }} 条不是被略过，
-   是它们本来就没有进展结构——下面逐条写明。</p>
-<div class="topo">
-  <div class="vp">{{ topo_svg }}</div>
-  <div class="tails">
-    {% for t in topo.tracks %}
-    <p class="tail"><b>{{ t.label }}</b>　{{ t.tail }}</p>
-    {% endfor %}
-  </div>
-  <div class="gates">
-    {% for t in topo.tracks %}
-    <div class="gate">
-      <p class="gn">{{ t.label }} · 下一关由什么决定</p>
-      <p class="gd"><span class="gtag {{ t.gate_kind }}">{% if t.gate_kind == 'specialist' %}需专科面诊{% else %}下次复查可得{% endif %}</span>{{ t.next_gate }}</p>
-    </div>
-    {% endfor %}
-  </div>
-  {% if topo_excluded %}
-  <div class="scope">
-    <b>为什么另外 {{ topo_excluded|length }} 条不在图上</b>
-    <ul>
-    {% for x in topo_excluded %}
-      <li><span>{{ x.title }}</span>{{ x.why }}</li>
-    {% endfor %}
-    </ul>
-  </div>
-  {% endif %}
-  <div class="nosay">
-    <b>这张图不说什么</b>
-    不说"多久会到下一关"——那需要队列数据来校准，我们没有，写年数是编造。<br>
-    不画本次没有数据的阶段，也不出现那些阶段的病名。最远端恰恰是证据最弱的地方，
-    用它来传递紧迫感是不诚实的。<br>
-    不把"未见"说成"不会发生"。它只表示：以本次这几个指标看，它还没有发生。
-  </div>
-</div>
-{% endif %}
 
 {% for b in bands %}
 <div class="section-band" id="s-{{ b.key }}" style="border-top-color:{{ b.color }}">
@@ -414,19 +398,28 @@ footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--rule);
     <div class="joint"><h4>放在一起看得到</h4><p>{{ c.joint_read }}</p></div>
   </div>
 
-  {% if g.tracks %}
-  <div class="tloc">
-    {% for t in g.tracks %}
-    <span class="tl">
-      <b>{{ t.label }}</b>
-      {% if t.here %}
-        现在在「{{ t.here }}」{% if t.ahead %}　·　下一关「{{ t.ahead }}」{{ t.ahead_state }}{% else %}，后面不展开{% endif %}
-      {% else %}
-        第一关「{{ t.ahead }}」{{ t.ahead_state }}
-      {% endif %}
-    </span>
-    {% endfor %}
-    <a href="#topo">在进展图上看 →</a>
+  {% if g.topo.svg %}
+  <div class="ctopo">
+    <p class="ct-cap">这一条走到哪一关</p>
+    <div class="vp">{{ g.topo.svg }}</div>
+    <div class="tails">
+      {% for t in g.topo.tracks %}
+      <p class="tail">{% if g.topo.multi %}<b>{{ t.label }}</b>　{% endif %}{{ t.tail }}</p>
+      {% endfor %}
+    </div>
+    <div class="gates">
+      {% for t in g.topo.tracks %}
+      <div class="gate">
+        <p class="gn">{% if g.topo.multi %}{{ t.label }} · {% endif %}下一关由什么决定</p>
+        <p class="gd"><span class="gtag {{ t.gate_kind }}">{% if t.gate_kind == 'specialist' %}需专科面诊{% else %}下次复查可得{% endif %}</span>{{ t.next_gate }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% elif g.topo.why %}
+  <div class="ctopo noprog">
+    <p class="ct-cap">这一条没有进展结构</p>
+    <p class="npw">{{ g.topo.why }}</p>
   </div>
   {% endif %}
 
@@ -460,24 +453,26 @@ footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--rule);
     {% endfor %}
   </div>
   {% endif %}
-  {% if d.modifiers and d.modifiers.any() %}
+  {% if g.mods and g.mods.any() %}
   <div class="dblk">
-    <h4>影响力有多大：看有哪些因素在场</h4>
+    <h4>影响力有多大：图上没有的那几件事</h4>
     <p class="dw">同一个异常在不同背景下分量完全不同。这里不给权重系数——
-       给一张可以逐条核对的清单，你自己能掂量。</p>
+       给一张可以逐条核对的清单，你自己能掂量。<br>
+       进展图上已经画过的因素不在这里重复；每一条都必须说得出它与主线的关系
+       （另一个推手 / 竞争解释 / 下游后果），说不出的不进这张表。</p>
     <div class="mods">
-      <div class="mp"><h5>加重因素 · 在场</h5><ul>
-        {% for m in d.modifiers.present %}<li><b>{{ m.name }}</b>
+      <div class="mp"><h5>其他推手 · 在场</h5><ul>
+        {% for m in g.mods.present %}<li><b>{{ m.name }}</b>
           {% if m.note %}<em>{{ m.note }}</em>{% endif %}
           <div class="cites">{% for o in m.evidence %}<span>{{ o.raw_name }} {{ o|disp }}{{ o.unit or '' }}</span>{% endfor %}</div></li>
-        {% else %}<li><em>本次没有发现</em></li>{% endfor %}</ul></div>
-      <div class="ma"><h5>加重因素 · 已排除</h5><ul>
-        {% for m in d.modifiers.absent %}<li><b>{{ m.name }}</b>
+        {% else %}<li><em>图外没有别的推手</em></li>{% endfor %}</ul></div>
+      <div class="ma"><h5>竞争解释 · 已排除</h5><ul>
+        {% for m in g.mods.absent %}<li><b>{{ m.name }}</b>
           {% if m.note %}<em>{{ m.note }}</em>{% endif %}
           <div class="cites">{% for o in m.evidence %}<span>{{ o.raw_name }} {{ o|disp }}{{ o.unit or '' }}</span>{% endfor %}</div></li>
         {% else %}<li><em>—</em></li>{% endfor %}</ul></div>
       <div class="mu"><h5>未知 · 会改变判断</h5><ul>
-        {% for m in d.modifiers.unknown %}<li><b>{{ m.name }}</b><em>{{ m.why }}</em></li>
+        {% for m in g.mods.unknown %}<li><b>{{ m.name }}</b><em>{{ m.why }}</em></li>
         {% else %}<li><em>—</em></li>{% endfor %}</ul></div>
     </div>
   </div>

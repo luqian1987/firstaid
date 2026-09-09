@@ -73,21 +73,19 @@ depth:
           这也是本例最容易被漏掉的地方：这个人站在体重秤上不会觉得自己需要减重。
     modifiers:
       present:
-        - {name: 颈动脉斑块已形成, codes: [CAROTID_PLAQUE], note: 本次唯一的直接形态学证据}
-        - {name: 内膜毛糙增厚, codes: [CAROTID_IMT], note: 双侧}
-        - {name: 脂蛋白(a) 升高, codes: [LPA], note: 遗传决定，不可改变}
-        - {name: 小而密低密度脂蛋白升高, codes: [SDLDL_C]}
-        - {name: 高密度脂蛋白偏低, codes: [HDL_C]}
-        - {name: 空腹血糖偏高, codes: [GLU_FASTING], note: 单点，未做糖化血红蛋白}
-        - {name: 中心性脂肪分布, codes: [WHR, WAIST], note: 体重指数正常，被掩盖}
+        - {name: 颈动脉斑块已形成, codes: [CAROTID_PLAQUE], note: 本次唯一的直接形态学证据, relation: stage}
+        - {name: 内膜毛糙增厚, codes: [CAROTID_IMT], note: 双侧, relation: stage}
+        - {name: 脂蛋白(a) 升高, codes: [LPA], note: 遗传决定，不可改变, relation: stage}
+        - {name: 小而密低密度脂蛋白升高, codes: [SDLDL_C], relation: stage}
+        - {name: 高密度脂蛋白偏低, codes: [HDL_C], relation: stage}
+        - {name: 空腹血糖偏高, codes: [GLU_FASTING], note: 单点，未做糖化血红蛋白, relation: stage}
+        - {name: 中心性脂肪分布, codes: [WHR, WAIST], note: 体重指数正常，被掩盖, relation: upstream}
         - {name: 脑白质高信号 Fazekas 1 级, codes: [WM_HYPERINTENSITY],
-           note: 同一过程的另一个部位；这一级在此年龄常见，DWI 未见弥散受限}
+           note: 同一过程的另一个部位；这一级在此年龄常见，DWI 未见弥散受限, relation: downstream}
       absent:
-        - {name: 高血压, codes: [SBP, DBP], note: 115/73}
-        - {name: 常规血脂异常, codes: [LDL_C, TC, TG], note: 三项全在区间内}
-        - {name: 颅内动脉狭窄, codes: [BRAIN_MRI_PLAIN], note: MRA 主干及主要分支未见狭窄}
-        - {name: 肝功能异常, codes: [ALT, AST, GGT]}
-        - {name: 肾功能异常, codes: [CREATININE, UREA, UA]}
+        - {name: 高血压, codes: [SBP, DBP], note: 115/73, relation: driver}
+        - {name: 常规血脂异常, codes: [LDL_C, TC, TG], note: 三项全在区间内, relation: driver}
+        - {name: 颅内动脉狭窄, codes: [BRAIN_MRI_PLAIN], note: MRA 主干及主要分支未见狭窄, relation: downstream}
       unknown:
         - {name: 吸烟史, why: 与斑块同时在场时风险分层完全不同，本次报告空白}
         - {name: 家族早发心脑血管病史, why: 男性 55 岁前 / 女性 65 岁前发病。与脂蛋白(a) 直接相关}

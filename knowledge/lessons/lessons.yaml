@@ -399,3 +399,77 @@ lessons:
     note: >-
       真正的泛化解法是按状态语义分栏而不是按索引分栏，这一条还没做。
       在多阶段通路变多之前，先记在这里
+
+  # ---- 以下四条来自一次排版评审。前两条是被数据推翻的设计决定，
+  #      后两条是同一族的静默失效。----
+
+  - id: L029
+    phase: design
+    symptom: >-
+      进展图集中在报告顶部一张汇总大图，每一组多联那一段里只有一行文字定位
+      和一个"在进展图上看→"的锚点。读者要读某一条，得跳到别处再跳回来
+    root_cause: >-
+      当初写死的理由是"汇总图的价值在于跨路径比较、谁共享上游，拆成单条就没了"。
+      那句话在只有一份报告时无法证伪
+    layer: knowledge
+    fix: >-
+      攒到三份真实报告之后查了一遍：没有任何一个上游被两条不同的多联共用。
+      理由不成立，图拆回它自己那一组多联旁边。
+      一条多联自己带两条路径时（脂肪肝那条同时走肝脏与糖代谢），
+      两条仍画在同一张图里——那种共享是真的
+    guarded_by:
+      - tests/test_depth.py::test_diagram_lives_with_its_own_chain
+      - tests/test_depth.py::test_chains_without_a_pathway_say_why_in_their_own_block
+    note: >-
+      写进代码注释的设计理由也会过期。凡是"因为 X 所以这样设计"的注释，
+      X 一旦变成可查的事实就要回去查一次
+
+  - id: L030
+    phase: design
+    symptom: >-
+      图挪到每一组多联旁边之后才看出来：「加重因素·在场」那一栏基本就是
+      图上已跨过的关，「已排除」里有一部分是图上未跨过的关——同一件事讲两遍
+    root_cause: >-
+      这张清单是在图放得很远的时候设计的。那时重复不明显，
+      于是"哪些该进这一栏"一直是凭感觉挑的，宽严不一：
+      甲状腺那条把"贫血"列进已排除，可在甲功正常的阶段，
+      贫血不是这条判读的竞争解释，只是同一次抽血里另一组正常值
+    layer: criterion
+    fix: >-
+      带指标的修饰因素必须声明它与主线的关系：
+      stage / upstream（图上已画）、driver（图上没画的另一个推手）、
+      competing（竞争解释）、downstream（下游后果）。
+      前两类渲染时不再列一遍；声明与图对不上就构建失败
+      （说是 stage 却不在图上、说是 competing 却正是图上那一关，都报错）。
+      按这条判据重过一遍，五条说不出关系的条目被删掉
+    guarded_by:
+      - tests/test_depth.py::test_every_modifier_with_indicators_declares_its_relation
+      - tests/test_depth.py::test_modifiers_never_repeat_what_the_diagram_already_shows
+    note: >-
+      与"进拓扑图的三条判据"（L002）同一个做法：删不是靠感觉删，
+      是先写出可援引的标准，再让标准去删
+
+  - id: L031
+    phase: design
+    symptom: >-
+      报告里有三处颜色一直不对：档位标签、机制的"它排除了"、修饰因素的绿框
+    root_cause: >-
+      样式里用了 var(--calm) 与 var(--calm-bg)，而 :root 里从来没有定义过它们
+      （定义的是 --settle）。CSS 变量未定义时不报错，颜色静默回退到继承值
+    layer: invariant
+    fix: 用到的 CSS 变量必须在 :root 里定义过，否则测试失败
+    guarded_by:
+      - tests/test_render.py::test_every_css_variable_is_defined
+    note: 与 L016/L020 同一族——渲染层也有静默失效，同样能变成断言
+
+  - id: L032
+    phase: design
+    symptom: >-
+      同一张 SVG 里的 marker id 在拆成多张内嵌图之后会互相覆盖，
+      箭头颜色随机取到别的图的定义
+    root_cause: marker id 是写死的常量，一页只有一张图时不会暴露
+    layer: invariant
+    fix: marker id 按多联 id 生成并洗掉非法字符；渲染函数统一走一个入口
+    guarded_by:
+      - tests/test_depth.py::test_diagram_lives_with_its_own_chain
+      - tests/test_render.py::test_no_unrendered_template_markers

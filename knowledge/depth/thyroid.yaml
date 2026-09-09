@@ -59,13 +59,12 @@ depth:
           这就是为什么"有桥本"和"要吃药"是两件不同的事。
     modifiers:
       present:
-        - {name: 抗过氧化物酶抗体显著升高, codes: [TPO_AB], note: 诊断依据，不是严重程度指标}
-        - {name: 抗甲状腺球蛋白抗体升高, codes: [TG_AB]}
-        - {name: 超声弥漫性改变, codes: [THYROID_DIFFUSE]}
+        - {name: 抗过氧化物酶抗体显著升高, codes: [TPO_AB], note: 诊断依据，不是严重程度指标, relation: stage}
+        - {name: 抗甲状腺球蛋白抗体升高, codes: [TG_AB], relation: stage}
+        - {name: 超声弥漫性改变, codes: [THYROID_DIFFUSE], relation: stage}
       absent:
-        - {name: 甲状腺功能异常, codes: [TSH, FT4, FT3, TT3, TT4], note: 五项全部在区间内}
-        - {name: 甲状腺结节, codes: [THYROID_NODULE], note: 本次超声未见}
-        - {name: 贫血, codes: [HGB, MCV], note: 血红蛋白在下限，形态正常}
+        - {name: 甲状腺功能异常, codes: [TSH, FT4, FT3, TT3, TT4], note: 五项全部在区间内, relation: stage}
+        - {name: 甲状腺结节, codes: [THYROID_NODULE], note: 本次超声未见, relation: competing}
       unknown:
         - {name: 家族甲状腺病与自身免疫病史, why: 桥本有明显家族聚集性，而本报告完全空白}
         - {name: 怕冷、便秘、乏力、月经变化等症状, why: 功能开始变化时症状常早于指标，本报告没有问诊记录}

@@ -24,12 +24,12 @@ depth:
           凝血酶时间会最先延长，而本次 TT {TT} 秒正常。这两条是并列的，不是因果。
     modifiers:
       present:
-        - {name: 牙结石, codes: [DENTAL_CALCULUS], note: 局部刺激源，可直接去除}
-        - {name: 牙龈退缩, codes: [GINGIVAL_RECESSION], note: 已发生的部分不可逆}
+        - {name: 牙结石, codes: [DENTAL_CALCULUS], note: 局部刺激源，可直接去除, relation: upstream}
+        - {name: 牙龈退缩, codes: [GINGIVAL_RECESSION], note: 已发生的部分不可逆, relation: stage}
       absent:
-        - {name: 血小板数量或功能异常, codes: [PLT, MAR_ADP]}
-        - {name: 凝血途径异常, codes: [PT, APTT, INR, TT]}
-        - {name: 纤溶亢进, codes: [DDIMER, FDP]}
+        - {name: 血小板数量或功能异常, codes: [PLT, MAR_ADP], relation: competing}
+        - {name: 凝血途径异常, codes: [PT, APTT, INR, TT], relation: competing}
+        - {name: 纤溶亢进, codes: [DDIMER, FDP], relation: competing}
       unknown:
         - {name: 日常清洁方式与频次, why: 决定洁牙之后出血会不会复发}
         - {name: 是否在服抗血小板或抗凝药物, why: 这类药物会改变对牙龈出血的解释}
@@ -70,11 +70,10 @@ depth:
           AST {AST}、总胆红素 {TBIL}、碱性磷酸酶 {ALP} 全部正常，不支持这条路径。
     modifiers:
       present:
-        - {name: 维生素A 单项超出上限, codes: [VIT_A]}
       absent:
-        - {name: 其余脂溶性维生素异常, codes: [VIT_E, VIT_K1, VITD_25OH]}
-        - {name: 胆汁淤积, codes: [TBIL, DBIL, ALP]}
-        - {name: 肝细胞损伤, codes: [ALT, AST]}
+        - {name: 其余脂溶性维生素异常, codes: [VIT_E, VIT_K1, VITD_25OH], relation: competing}
+        - {name: 胆汁淤积, codes: [TBIL, DBIL, ALP], relation: competing}
+        - {name: 肝细胞损伤, codes: [ALT, AST], relation: competing}
       unknown:
         - {name: 在服补充剂清单, why: 含复合维生素、鱼肝油、蛋白粉与功能饮料。本条在等的就是它}
         - {name: 近期饮食（动物肝脏摄入）, why: 单次血清维生素A 受近期摄入影响明显}

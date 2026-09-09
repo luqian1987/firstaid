@@ -20,10 +20,9 @@ depth:
           但按其质量估算只够补上缺口的一小部分。
     modifiers:
       present:
-        - {name: 两组配对同向背离, codes: [APOB_MGDL, NONHDL_C_MGDL, APOA1_MGDL, HDL_C_MGDL]}
       absent:
-        - {name: 常规血脂异常, codes: [TC, TG, LDL_C, SDLDL_C], note: 四项全部在区间内}
-        - {name: 肝脏合成功能异常, codes: [ALB, TP, CHE], note: 载脂蛋白由肝脏合成}
+        - {name: 常规血脂异常, codes: [TC, TG, LDL_C, SDLDL_C], note: 四项全部在区间内, relation: competing}
+        - {name: 肝脏合成功能异常, codes: [ALB, TP, CHE], note: 载脂蛋白由肝脏合成, relation: competing}
       unknown:
         - {name: 采血是否空腹、前一晚饮食与饮酒, why: 影响脂蛋白测定，复测时两次口径必须一致}
         - {name: 该批次的检测方法学与定标记录, why: 纸面数据分不出是方法学、定标还是样本状态}

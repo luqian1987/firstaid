@@ -23,6 +23,11 @@ ZONES = [((200, 520), "现在所在", "本次有直接证据"),
 ROW_H, TOP = 112, 100
 
 
+def _safe(s: str) -> str:
+    """SVG id 里不能出现点号一类的字符，多联 id 形如 lipid.lpa_… 要先洗一遍。"""
+    return "".join(ch if (ch.isalnum() or ch == "_") else "-" for ch in s)
+
+
 def _t(x, y, s, size=12, fill=None, weight=400, anchor="middle"):
     return (f'<text x="{x}" y="{y}" font-family="{FONT}" font-size="{size}" '
             f'font-weight="{weight}" fill="{fill or C["ink"]}" '
@@ -95,30 +100,63 @@ def _node(x, y, st):
     return "".join(o) + "</g>"
 
 
+def render_chain_topology(topo: Topology, chain_id: str) -> str:
+    """一组多联自己的进展图：只画属于它的路径，画布压到刚好。
+
+    以前是报告顶部一张汇总大图。当时写的理由是"汇总图的价值在于跨路径比较、
+    谁共享上游"——攒到三份真实报告之后可以查了：没有任何一个上游被两条
+    不同的多联共用。理由不成立，所以拆开，放到读者正在读的那一条旁边。
+    一条多联自己带两条路径时（脂肪肝那条同时走肝脏与糖代谢），
+    两条仍然画在同一张图里——那种共享是真的。
+    """
+    tracks = [t for t in topo.tracks if t.chain_id == chain_id]
+    if not tracks:
+        return ""
+    sub = Topology(
+        upstreams=tuple(u for u in topo.upstreams
+                        if u.id in {t.upstream_id for t in tracks}),
+        tracks=tuple(tracks))
+    return _render(sub, uid=chain_id, compact=True)
+
+
 def render_topology(topo: Topology) -> str:
+    return _render(topo, uid="all", compact=False)
+
+
+def _render(topo: Topology, uid: str = "all", compact: bool = False) -> str:
     if not topo.tracks:
         return ""
-    ty = {t.id: TOP + i * ROW_H for i, t in enumerate(topo.tracks)}
-    height = TOP + len(topo.tracks) * ROW_H + 30
+    multi = len(topo.tracks) > 1
+    # 内嵌版不重复画图例（整份报告只给一次），所以上下都能收紧
+    top = (86 if multi else 62) if compact else TOP
+    ty = {t.id: top + i * ROW_H for i, t in enumerate(topo.tracks)}
+    height = top + len(topo.tracks) * ROW_H + (-26 if compact else 30)
+    uid = _safe(uid)
     s = [f'<svg viewBox="0 0 980 {height}" width="100%" role="img" '
          f'aria-label="疾病演变拓扑图" '
          f'style="display:block;max-width:980px;margin:0 auto;height:auto">',
-         f'<defs><marker id="tar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" '
-         f'markerHeight="5" orient="auto-start-reverse">'
+         f'<defs><marker id="tar{uid}" viewBox="0 0 10 10" refX="9" refY="5" '
+         f'markerWidth="5" markerHeight="5" orient="auto-start-reverse">'
          f'<path d="M0 0 L10 5 L0 10 z" fill="{C["rule"]}"/></marker>'
-         f'<marker id="tarA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" '
-         f'markerHeight="5" orient="auto-start-reverse">'
+         f'<marker id="tarA{uid}" viewBox="0 0 10 10" refX="9" refY="5" '
+         f'markerWidth="5" markerHeight="5" orient="auto-start-reverse">'
          f'<path d="M0 0 L10 5 L0 10 z" fill="{C["act"]}"/></marker></defs>']
 
+    y_top, y_bot = (26, height - 14) if compact else (34, height - 30)
     for i, ((x0, x1), lab, hint) in enumerate(ZONES):
         if i == 2:
-            s.append(f'<rect x="{x0}" y="34" width="{x1-x0}" height="{height-64}" '
-                     f'fill="{C["faint"]}" opacity=".55"/>')
+            s.append(f'<rect x="{x0}" y="{y_top}" width="{x1-x0}" '
+                     f'height="{y_bot-y_top}" fill="{C["faint"]}" opacity=".55"/>')
         if i:
-            s.append(f'<line x1="{x0}" y1="34" x2="{x0}" y2="{height-30}" '
+            s.append(f'<line x1="{x0}" y1="{y_top}" x2="{x0}" y2="{y_bot}" '
                      f'stroke="{C["rule"]}" stroke-dasharray="4 4"/>')
         cx = (x0 + x1) / 2
-        s += [_t(cx, 20, lab, 11.5, C["ink2"], 700), _t(cx, 33, hint, 10, C["muted"])]
+        if compact:
+            # 分栏标题保留（没有它那些点就没有意义），副标题省掉——整份报告说一次就够
+            s.append(_t(cx, 18, lab, 10.5, C["muted"], 600))
+        else:
+            s += [_t(cx, 20, lab, 11.5, C["ink2"], 700),
+                  _t(cx, 33, hint, 10, C["muted"])]
 
     cols = {t.id: [st.col if st.col is not None else i
                    for i, st in enumerate(t.stages)] for t in topo.tracks}
@@ -147,11 +185,11 @@ def render_topology(topo: Topology) -> str:
             y1, x1 = ty[t.id], COL_X[cols[t.id][0]] - 26
             if abs(y1 - uy) < 3:
                 s.append(f'<line x1="196" y1="{uy}" x2="{x1}" y2="{y1}" stroke="{col}" '
-                         f'stroke-width="1.4" marker-end="url(#tar)"{dash}/>')
+                         f'stroke-width="1.4" marker-end="url(#tar{uid})"{dash}/>')
             else:
                 s.append(f'<path d="M 196 {uy} C 251 {uy}, {x1-55} {y1}, {x1} {y1}" '
                          f'fill="none" stroke="{col}" stroke-width="1.4" '
-                         f'marker-end="url(#tar)"{dash}/>')
+                         f'marker-end="url(#tar{uid})"{dash}/>')
 
     for t in topo.tracks:
         if t.upstream_id is None:
@@ -166,7 +204,8 @@ def render_topology(topo: Topology) -> str:
 
     for t in topo.tracks:
         y, cs = ty[t.id], cols[t.id]
-        s.append(_t(COL_X[cs[0]], y - 40, t.label, 10, C["muted"], 700))
+        if multi or not compact:
+            s.append(_t(COL_X[cs[0]], y - 42, t.label, 10, C["muted"], 700))
         for i, st in enumerate(t.stages):
             x = COL_X[cs[i]]
             if i:
@@ -178,7 +217,7 @@ def render_topology(topo: Topology) -> str:
                          f'stroke="{C["act"] if on else C["rule"]}" '
                          f'stroke-width="{1.8 if on else 1.2}" '
                          f'stroke-dasharray="{"" if on else "4 4"}" '
-                         f'marker-end="url({"#tarA" if on else "#tar"})"/>')
+                         f'marker-end="url({"#tarA"+uid if on else "#tar"+uid})"/>')
                 if st.edge:
                     s.append(_t((a + b) / 2, y - 8, st.edge, 9.5,
                                 C["act"] if on else C["muted"], 600))
@@ -188,6 +227,9 @@ def render_topology(topo: Topology) -> str:
               f'stroke-dasharray="2 4"/>',
               _t(lx + 68, y + 4, "…", 17, C["rule"], 700),
               _t(lx + 68, y + 22, "不展开", 9, C["muted"])]
+
+    if compact:
+        return "".join(s) + "</svg>"
 
     ly, x = height - 14, 214
     for st, lb in ((StageState.CROSSED, "本次已见"),

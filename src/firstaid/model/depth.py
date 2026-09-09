@@ -104,12 +104,31 @@ class Mechanism(Frozen):
 # --------------------------------------------------------------------------
 # 修饰因素：权重的可核对表达，不是黑箱系数
 # --------------------------------------------------------------------------
+# 修饰因素与这条主线的关系。带指标的每一项都必须声明，声明不了就不许进——
+# 与"进拓扑图的三条判据"同一个做法：靠可援引的标准，不靠感觉。
+#
+#   stage      它就是这条链上的一关（进展图上已经画了）
+#   upstream   它是进展图上画着的那个上游
+#   driver     这个过程的另一个推手，图上没画（高血压之于动脉粥样硬化）
+#   competing  竞争解释：如果不是主线说的这个原因，那可能是它
+#   downstream 这条主线的下游后果，或同一过程在别处的落点
+#
+# 前两类图上有，渲染时不再列一遍；后三类图上没有，是这一栏真正的信息。
+MODIFIER_RELATIONS = ("stage", "upstream", "driver", "competing", "downstream")
+ON_CHART_RELATIONS = ("stage", "upstream")
+
+
 class Modifier(Frozen):
     name: str
     note: str = ""
     why: str = ""                     # 未知项专用：它为什么会改变判断
     codes: tuple[str, ...] = ()
+    relation: str | None = None       # 见 MODIFIER_RELATIONS；带指标的必填
     evidence: tuple[Observation, ...] = ()
+
+    @property
+    def on_chart(self) -> bool:
+        return self.relation in ON_CHART_RELATIONS
 
 
 class Modifiers(Frozen):
@@ -119,6 +138,18 @@ class Modifiers(Frozen):
 
     def any(self) -> bool:
         return bool(self.present or self.absent or self.unknown)
+
+    def off_chart(self) -> "Modifiers":
+        """去掉进展图上已经画过的那些。
+
+        图挪到这一段旁边之后，"在场"基本就是图上已跨过的关，
+        "已排除"里有一部分是图上未跨过的关——同一件事讲两遍。
+        剩下的才是图上没有的信息：竞争解释、下游后果、以及全部未知项。
+        """
+        return Modifiers(
+            present=tuple(m for m in self.present if not m.on_chart),
+            absent=tuple(m for m in self.absent if not m.on_chart),
+            unknown=self.unknown)
 
 
 # --------------------------------------------------------------------------

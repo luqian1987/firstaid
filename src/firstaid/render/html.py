@@ -20,7 +20,7 @@ from ..model import (
     BAND_COLOR, BAND_META, KIND_LABELS, Band, Disposition, InterventionKind,
     Observation, ObservationKind, RangeStatus,
 )
-from .topology import render_topology
+from .topology import render_chain_topology
 from ..pipeline import Analysis
 
 TEMPLATES = Path(__file__).parent / "templates"
@@ -69,32 +69,20 @@ def _rows(refs) -> list[dict]:
             for e in refs]
 
 
-def _track_summaries(a: Analysis, chain_id: str) -> list[dict]:
-    """这条判读在进展图上落在哪。
+def _chain_topology(a: Analysis, chain_id: str) -> dict:
+    """这一组多联自己的进展图，以及"为什么没有图"的说明。
 
-    刻意只给一行定位 + 锚点，不在每章重画一张图：
-    报告级那张图的价值在于跨路径比较（谁共享上游、哪条已落印），
-    拆成单条就全没了；重画一遍还会变成同一件事讲两遍。
+    以前是报告顶部一张汇总图 + 每章一行文字定位。拆开的依据是数据：
+    攒到三份真实报告，没有任何一个上游被两条不同的多联共用，
+    所以汇总图并没有在做跨路径比较，只是把图放远了。
     """
-    from ..model import StageState
-    out = []
-    for t in (a.topology.tracks if a.topology else ()):
-        if t.chain_id != chain_id:
-            continue
-        crossed = [st for st in t.stages if st.state is StageState.CROSSED]
-        ahead = next((st for st in t.stages
-                      if st.state is not StageState.CROSSED), None)
-        out.append({
-            "label": t.label,
-            "here": crossed[-1].name if crossed else None,
-            "n_crossed": len(crossed),
-            "n_total": len(t.stages),
-            "ahead": ahead.name if ahead else None,
-            "ahead_state": ({StageState.CLEAR: "本次未见",
-                             StageState.UNKNOWN: "判不了"}.get(ahead.state)
-                            if ahead else None),
-        })
-    return out
+    svg = render_chain_topology(a.topology, chain_id) if a.topology else ""
+    why = next((x["why"] for x in (a.topo_excluded or [])
+                if x["chain"] == chain_id), None)
+    tracks = [t for t in (a.topology.tracks if a.topology else ())
+              if t.chain_id == chain_id]
+    return {"svg": Markup(svg) if svg else None, "why": why, "tracks": tracks,
+            "multi": len(tracks) > 1}
 
 
 def build_context(a: Analysis) -> dict:
@@ -112,9 +100,13 @@ def build_context(a: Analysis) -> dict:
                 continue          # 纠正统一收进「与医生确认」区，不在色带里重复
             c = chains.get(r.chain_id)
             if c:
+                d = a.depth.get(c.id)
                 detail.append({"c": c, "rows": _rows(c.inputs), "recon": r,
-                               "depth": a.depth.get(c.id),
-                               "tracks": _track_summaries(a, c.id)})
+                               "depth": d,
+                               # 图上已经画过的修饰因素不再列一遍
+                               "mods": (d.modifiers.off_chart()
+                                        if d and d.modifiers else None),
+                               "topo": _chain_topology(a, c.id)})
         label, desc = BAND_META[b]
         color, bg = BAND_COLOR[b]
         bands.append({"key": b.value, "label": label, "desc": desc,
@@ -138,11 +130,8 @@ def build_context(a: Analysis) -> dict:
         by_src.setdefault(o.provenance.source_label or "其他", []).append(o)
 
     n_orig = len([f for f in enc.original_findings if not f.pending])
-    topo = a.topology
     return {
-        "topo_svg": Markup(render_topology(topo)) if topo and topo.tracks else None,
-        "topo": topo,
-        "topo_excluded": a.topo_excluded,
+        "n_tracks": len(a.topology.tracks) if a.topology else 0,
         "kind_labels": {k.value: v for k, v in KIND_LABELS.items()},
         "subject_id": enc.subject_id.upper(),
         "age": a.timeline.subject.age_on(enc.anchor_date),

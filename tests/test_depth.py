@@ -196,9 +196,62 @@ def test_tracks_without_upstream_explain_why_per_track(real):
         assert n in svg
 
 
-def test_no_per_chapter_duplicate_diagram(real, tmp_path):
-    """每章只给一行定位 + 锚点，不重画图。整份报告只有一个 svg。"""
+def test_diagram_lives_with_its_own_chain(real, tmp_path):
+    """图画在它自己那一组多联旁边，一组一张，没有汇总大图。
+
+    原来是顶部一张汇总图 + 每章一行文字定位，理由写的是"汇总图的价值在于
+    跨路径比较、谁共享上游"。攒到三份真实报告之后这句话可以查了：
+    没有任何一个上游被两条不同的多联共用。理由不成立，所以拆开。
+    """
     from firstaid.render.html import render
     h = render(real, tmp_path / "r.html").read_text(encoding="utf-8")
-    assert h.count("<svg") == 1
-    assert h.count('class="tloc"') == len({t.chain_id for t in real.topology.tracks})
+    owners = {t.chain_id for t in real.topology.tracks}
+    assert h.count("<svg") == len(owners), (h.count("<svg"), owners)
+    # 一条多联自己带两条路径时，两条仍在同一张图里
+    assert len(real.topology.tracks) > len(owners)
+    assert 'id="topo"' not in h
+
+
+def test_chains_without_a_pathway_say_why_in_their_own_block(real, tmp_path):
+    """没有进展结构的多联，理由写在它自己那一段，不再集中堆在报告末尾。"""
+    from firstaid.render.html import render
+    h = render(real, tmp_path / "r.html").read_text(encoding="utf-8")
+    assert real.topo_excluded, "本例应当有若干条被排除"
+    for x in real.topo_excluded:
+        assert x["why"][:24] in h, x["chain"]
+    assert h.count("ctopo noprog") == len(real.topo_excluded)
+
+
+def test_modifiers_never_repeat_what_the_diagram_already_shows(real):
+    """图挪到旁边之后，与图重复的修饰因素必须消失。
+
+    "在场"那一栏基本就是图上已跨过的关，"已排除"里有一部分是图上未跨过的关。
+    图放得远的时候看不出来，放到旁边就是同一件事讲两遍。
+    """
+    from firstaid.assemble.depth import DepthEngine
+    for c in real.chains:
+        d = real.depth.get(c.id)
+        if not d or not d.modifiers:
+            continue
+        on_chart = DepthEngine.chart_codes(real.topology, c.id)
+        left = d.modifiers.off_chart()
+        for m in list(left.present) + list(left.absent):
+            assert not (set(m.codes) & on_chart), (c.id, m.name)
+
+
+def test_every_modifier_with_indicators_declares_its_relation(knowledge):
+    """带指标的修饰因素必须说得出它与主线的关系，否则不许进这一栏。
+
+    以前是凭感觉挑的，于是宽严不一：甲状腺那条把"贫血"列进已排除，
+    可在甲功正常的阶段，贫血不是这条判读的竞争解释。
+    """
+    from firstaid.model import MODIFIER_RELATIONS
+    from firstaid.pipeline import KNOWLEDGE_DEPTH, load_depth_spec
+    spec = load_depth_spec(KNOWLEDGE_DEPTH)
+    bad = []
+    for cid, block in (spec.get("depth") or {}).items():
+        for key in ("present", "absent"):
+            for m in ((block.get("modifiers") or {}).get(key) or []):
+                if m.get("codes") and m.get("relation") not in MODIFIER_RELATIONS:
+                    bad.append((cid, m["name"], m.get("relation")))
+    assert bad == [], bad
