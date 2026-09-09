@@ -2,6 +2,8 @@ const fs = require('fs');
 const { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType,
         AlignmentType, BorderStyle, ShadingType, Footer, PageNumber, VerticalAlign,
         PageOrientation } = require('docx');
+// 数据每次由 build_tender.py 现导，避免 Word 版落后于 HTML 版
+require('child_process').execSync('python3 export_docx_data.py', { stdio: 'inherit' });
 const D = JSON.parse(fs.readFileSync('tender_docx_data.json', 'utf8'));
 
 const SONG = { ascii: 'Times New Roman', eastAsia: '宋体', hAnsi: 'Times New Roman' };
@@ -147,11 +149,11 @@ k.push(H2('附件二　拟开展检测项目'));
 k.push(P('本平台首批拟开展下列癌种的检测项目。每一癌种可包含多个检测项目及多个试剂盒，具体清单由投标人在投标文件中逐项列明，并须符合正文第四部分的注册合规与性能验证要求。'));
 k.push(CAP('附表 2　首批拟开展检测项目'));
 const W4 = [700, 2000, 7160];
-k.push(table(W4, [ head(['序号', '癌种', '主要检测内容'], W4),
+k.push(table(W4, [ head(['序号', '癌种', '核心检测基因与变异类型（最低要求）'], W4),
   ...D.proj.map(([t, d], i) => { const b = i === D.proj.length - 1 ? THICK : HAIR;
     return new TableRow({ children: [cell(String(i + 1), W4[0], { center: true, bottom: b }),
       cell(t, W4[1], { bottom: b }), cell(d, W4[2], { bottom: b })] }); }) ]));
-k.push(new Paragraph({ children: runs('注：上述检测项目适用收费编码 012100000200000「高通量测序法检测费（病理样本）」。检测项目的最终开展范围，以院方完成新增项目论证与物价备案后的结果为准。', { size: 19 }),
+k.push(new Paragraph({ children: runs('注：上列为各癌种的**核心检测基因，属最低检测范围要求**。投标产品的检测范围可宽于上列内容，**覆盖更多靶点的产品不因此受限**；投标人应在投标文件中列明所投产品的完整检测范围。上述检测项目适用收费编码 012100000200000「高通量测序法检测费（病理样本）」。检测项目的最终开展范围，以院方完成新增项目论证与物价备案后的结果为准。', { size: 19 }),
   spacing: { before: 90, after: 120, line: 320 }, indent: { firstLine: 380 }, alignment: AlignmentType.BOTH }));
 
 k.push(new Paragraph({ children: [run('苏州市立医院分子诊断中心', { hei: true, bold: true })],

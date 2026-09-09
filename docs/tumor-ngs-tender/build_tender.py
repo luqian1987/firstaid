@@ -18,9 +18,9 @@ TECH=[
 tech="".join(f'<tr><td class="c">{i}</td><td>{E(t)}</td><td>{fill(d)}</td></tr>' for i,(t,d) in enumerate(TECH,1))
 
 PROJ=[
- ("非小细胞肺癌","EGFR、ALK、ROS1、KRAS、BRAF、HER2、MET、RET、NTRK 等驱动基因的点突变、插入缺失、基因融合与拷贝数变异；靶向及免疫治疗相关标志物。"),
- ("结直肠癌","KRAS、NRAS、BRAF、PIK3CA 等基因突变；微卫星不稳定（MSI）／错配修复相关检测。"),
- ("乳腺癌","HER2、PIK3CA、BRCA1／BRCA2 等基因的点突变、插入缺失与拷贝数变异。"),
+ ("非小细胞肺癌","EGFR、ALK、ROS1 等基因的点突变、插入缺失与基因融合。"),
+ ("结直肠癌","KRAS、NRAS、BRAF 等基因的点突变与插入缺失。"),
+ ("乳腺癌","BRCA1／BRCA2、PIK3CA 等基因的点突变与插入缺失。"),
 ]
 proj="".join(f'<tr><td class="c">{i}</td><td>{E(t)}</td><td>{E(d)}</td></tr>' for i,(t,d) in enumerate(PROJ,1))
 
@@ -55,7 +55,8 @@ assert not _col, f"出现彩色：{_col}"
 for banned in ("华大","MGISEQ","MGI","Halos","TIANGEN","病理科","八楼","一票否决",
                "金域","迪安","金匙","意向公司","科研支持","项目推广",
                "人员待遇","PCR2","PCR3","PCR4","PCR5","PCR8","郭博","翟主任",
-               "予以沿用","缺配清单","院方自备设备"):
+               "予以沿用","缺配清单","院方自备设备",
+               "微卫星不稳定","MSI","错配修复","dMMR","TMB"):   # 方法学或注册状态与本平台不符，勿写入
     assert banned not in t, f"对外文件中出现不应展示的内容：{banned}"
 # 「折扣率」是本文件的正当用语，只禁止单独出现的「扣率」（参照文本中的供应商报价扣率）
 assert not re.search(r"(?<!折)扣率", t), "出现参照文本式的「扣率」表述"
