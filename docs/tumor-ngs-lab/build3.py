@@ -118,10 +118,44 @@ refrows="".join(
 REFTBL=('<thead><tr><th>注册证编号</th><th>试剂盒 / 生产厂家</th><th>注册适用范围</th><th>说明</th></tr></thead>'
         '<tbody>'+refrows+'</tbody>')
 
+
+# ---------- NGS 临床应用方向（大类） ----------
+DIRS=[
+ dict(t="实体瘤精准诊疗", now=True, st=("ok","已有注册产品"),
+  d="靶向与免疫治疗的伴随诊断：驱动基因突变、基因融合、肿瘤突变负荷（TMB）、微卫星不稳定（MSI）与同源重组缺陷（HRD）。国内已注册产品最多的方向。"),
+ dict(t="遗传性肿瘤易感基因", now=False, st=("ok","已有注册产品"),
+  d="BRCA1 / BRCA2 等胚系突变筛查，用于高危人群管理、亲属级联筛查与 PARP 抑制剂用药指导。第三节参考表所列两项即属此类。"),
+ dict(t="血液系统肿瘤分子分型", now=False, st=("part","部分已有注册产品"),
+  d="白血病、淋巴瘤、骨髓增生异常综合征的融合基因与突变谱检测，用于分型、危险度分层与疗效监测。微小残留病（MRD）监测目前多以自建项目开展。"),
+ dict(t="生殖健康与出生缺陷防控", now=False, st=("ok","已有注册产品"),
+  d="无创产前筛查（NIPT）、染色体拷贝数变异检测（CNV-seq）、胚胎植入前遗传学检测（PGT）。NIPT 是国内最早获批的 NGS 临床应用方向。"),
+ dict(t="单基因遗传病与携带者筛查", now=False, st=("part","部分已有注册产品"),
+  d="地中海贫血、遗传性耳聋等常见单基因病已有注册试剂盒；更广的多基因 panel 与全外显子组测序目前多以自建项目路径开展。"),
+ dict(t="感染性疾病病原检测", now=False, st=("ldt","多以 LDT 路径开展"),
+  d="宏基因组测序（mNGS）与靶向测序（tNGS），用于疑难危重感染的病原快速识别。测序平台已取得三类注册证，国内已发布多部临床应用专家共识。"),
+]
+TAG = '<span class="dtag">本次项目</span>'
+def _dir(x):
+    tag = TAG if x["now"] else ""
+    cls = " now" if x["now"] else ""
+    return (f'<div class="dir{cls}"><div class="dtop"><h4>{E(x["t"])}</h4>{tag}</div>'
+            f'<p>{E(x["d"])}</p>'
+            f'<span class="dpill {x["st"][0]}">{E(x["st"][1])}</span></div>')
+DIRHTML="".join(_dir(x) for x in DIRS)
+
 t=open("tpl3.html",encoding="utf-8").read()
-for k,v in (("__FLOW__",FLOW),("__EQUIP__","\n".join(rows)),("__KITS__",kits),("__REF__",REFTBL)):
+for k,v in (("__FLOW__",FLOW),("__EQUIP__","\n".join(rows)),("__KITS__",kits),("__REF__",REFTBL),("__DIRS__",DIRHTML)):
     assert k in t, k
     t=t.replace(k,v)
+
+# 变量守卫：页面里用到的每个 CSS 变量，都必须在裸 :root 块里定义过
+_root = re.search(r":root\{(.*?)\}", t, re.S).group(1)
+_defined = set(re.findall(r"(--[a-z0-9-]+)\s*:", _root))
+_used = set(re.findall(r"var\((--[a-z0-9-]+)\)", t))
+_inline = {"--zc","--zs"}          # 由节点 style 属性就地赋值，不进 :root
+_missing = sorted(_used - _defined - _inline)
+assert not _missing, f"CSS 变量未在 :root 定义：{_missing}"
+
 for banned in ("现场门牌","落位要点","非按比例平面图","我方","院方"):
     assert banned not in t, f"残留措辞：{banned}"
 open("ngs-lab.html","w",encoding="utf-8").write(t)

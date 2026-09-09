@@ -9,6 +9,7 @@
   --line:#D3DCDF; --line-2:#B6C4C8;
   --accent:#0B6E7F; --accent-soft:#DEEDF0;
   --ok:#2C6E52; --ok-soft:#DFEDE5;
+  --warn:#8E5E10; --warn-soft:#F6EAD2;
   --z1:#2F7D5F; --z2:#2E6FA3; --z3:#4A5FA8; --z4:#7A56A6; --z5:#B0661C; --z6:#A3313E;
   --z1s:#E0EEE7; --z2s:#DFEAF3; --z3s:#E3E6F4; --z4s:#EDE4F3; --z5s:#F6E9D8; --z6s:#F7E1E3;
   --badge-ink:#FFFFFF;
@@ -20,6 +21,7 @@
   --line:#26363B; --line-2:#3A4E54;
   --accent:#5CBECD; --accent-soft:#10313A;
   --ok:#7ECBA4; --ok-soft:#122E20;
+  --warn:#DFAC5C; --warn-soft:#302512;
   --z1:#6FC79F; --z2:#72AFDD; --z3:#8E9BE1; --z4:#BB90DC; --z5:#E0A055; --z6:#E4808C;
   --z1s:#12291F; --z2s:#12232F; --z3s:#1A1D33; --z4s:#241A2F; --z5s:#2E2211; --z6s:#301619;
   --badge-ink:#0D1518;
@@ -31,6 +33,7 @@
   --line:#26363B; --line-2:#3A4E54;
   --accent:#5CBECD; --accent-soft:#10313A;
   --ok:#7ECBA4; --ok-soft:#122E20;
+  --warn:#DFAC5C; --warn-soft:#302512;
   --z1:#6FC79F; --z2:#72AFDD; --z3:#8E9BE1; --z4:#BB90DC; --z5:#E0A055; --z6:#E4808C;
   --z1s:#12291F; --z2s:#12232F; --z3s:#1A1D33; --z4s:#241A2F; --z5s:#2E2211; --z6s:#301619;
   --badge-ink:#0D1518;
@@ -114,6 +117,22 @@ section{margin-top:56px;}
   .node.arw::before,.node.arw::after,.gaplab{display:none;}
   .wrapline{display:none;}
 }
+
+/* ===== 应用方向 ===== */
+.dirs{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+@media (max-width:920px){ .dirs{grid-template-columns:1fr} }
+.dir{border:1px solid var(--line); border-left:3px solid var(--line-2); background:var(--surface);
+  padding:15px 17px 16px; display:flex; flex-direction:column; gap:9px;}
+.dir.now{border-left-color:var(--accent); background:var(--accent-soft);}
+.dtop{display:flex; align-items:baseline; gap:9px;}
+.dir h4{margin:0; font-family:"Noto Serif SC",serif; font-size:15.5px; font-weight:700; line-height:1.35;}
+.dtag{font-size:10px; letter-spacing:.1em; color:var(--accent); font-weight:700; white-space:nowrap; margin-left:auto;}
+.dir p{margin:0; font-size:13px; line-height:1.72; color:var(--ink-2);}
+.dpill{align-self:flex-start; margin-top:auto; font-size:10.5px; letter-spacing:.03em;
+  padding:2px 9px; border-radius:2px;}
+.dpill.ok{background:var(--ok-soft); color:var(--ok); border:1px solid var(--ok);}
+.dpill.part{background:var(--warn-soft); color:var(--warn); border:1px solid var(--warn);}
+.dpill.ldt{background:var(--surface-2); color:var(--muted); border:1px solid var(--line-2);}
 
 /* ===== 表 ===== */
 .tablewrap{border:1px solid var(--line); background:var(--surface); overflow:auto; max-height:560px;}
@@ -248,6 +267,14 @@ footer{margin-top:60px; padding-top:20px; border-top:2px solid var(--ink); font-
   <p class="lead" style="margin-bottom:16px">上表之外，国内已取得 NMPA 三类注册证的同类产品尚有多个，可在同一平台上按临床需求扩充项目菜单。以下两项为 PARP 抑制剂的伴随诊断试剂，覆盖卵巢癌、乳腺癌与前列腺癌，<b>与上表以肺癌、结直肠癌为主的项目菜单互补，不重复</b>。</p>
   <div class="flat"><table><thead><tr><th>注册证编号</th><th>试剂盒 / 生产厂家</th><th>注册适用范围</th><th>说明</th></tr></thead><tbody><tr><td class="code">国械注准20193400099</td><td class="w"><b>人类BRCA1基因和BRCA2基因突变检测试剂盒（可逆末端终止测序法）</b><br><span style="font-size:12px;color:var(--muted)">厦门艾德生物医药科技股份有限公司</span></td><td style="min-width:7em">卵巢癌、乳腺癌</td><td class="w" style="font-size:12.5px;color:var(--ink-2)">检测 BRCA1 / BRCA2 编码区、外显子-内含子连接区、UTR 区与启动子区的点突变、插入缺失及纯合缺失；用于帕米帕利等 PARP 抑制剂的用药指导</td></tr><tr><td class="code">国械注准20253402685</td><td class="w"><b>人BRCA1/BRCA2基因突变检测试剂盒（可逆末端终止测序法）</b><br><span style="font-size:12px;color:var(--muted)">厦门艾德生物医药科技股份有限公司</span></td><td style="min-width:7em">前列腺癌</td><td class="w" style="font-size:12.5px;color:var(--ink-2)">用于携带胚系和 / 或体系 BRCA 基因突变的转移性去势抵抗性前列腺癌（mCRPC）；泽倍珂®（尼拉帕利阿比特龙片）的伴随诊断</td></tr></tbody></table></div>
   <p class="tabnote">以上产品名称、适用范围与伴随诊断药物已比对厂家公开信息，注册证编号建议以最新《医疗器械注册证》原件为准。<b>此类产品的收费执行口径需另行确认</b>，未包含在上表已明确物价的五项之内；实际引入前应完成新增项目论证与物价备案。</p>
+</section>
+
+<section>
+  <div class="sechead"><span class="secnum">四</span><h2>NGS 临床应用方向</h2><span class="hint">国内已开展的大类 · 中长期规划参考</span></div>
+  <p class="lead">本次项目落在实体瘤伴随诊断这一类。但从平台角度看，实验室建成后所承载的能力不止于此 —— 以下为国内 NGS 临床应用的主要方向，供分子诊断中心中长期规划参考。
+  各方向的成熟度并不相同：<b>标注「已有注册产品」的可直接选用注册试剂盒开展，标注「多以 LDT 路径开展」的则需按自建项目管理</b>。</p>
+  <div class="dirs"><div class="dir now"><div class="dtop"><h4>实体瘤精准诊疗</h4><span class="dtag">本次项目</span></div><p>靶向与免疫治疗的伴随诊断：驱动基因突变、基因融合、肿瘤突变负荷（TMB）、微卫星不稳定（MSI）与同源重组缺陷（HRD）。国内已注册产品最多的方向。</p><span class="dpill ok">已有注册产品</span></div><div class="dir"><div class="dtop"><h4>遗传性肿瘤易感基因</h4></div><p>BRCA1 / BRCA2 等胚系突变筛查，用于高危人群管理、亲属级联筛查与 PARP 抑制剂用药指导。第三节参考表所列两项即属此类。</p><span class="dpill ok">已有注册产品</span></div><div class="dir"><div class="dtop"><h4>血液系统肿瘤分子分型</h4></div><p>白血病、淋巴瘤、骨髓增生异常综合征的融合基因与突变谱检测，用于分型、危险度分层与疗效监测。微小残留病（MRD）监测目前多以自建项目开展。</p><span class="dpill part">部分已有注册产品</span></div><div class="dir"><div class="dtop"><h4>生殖健康与出生缺陷防控</h4></div><p>无创产前筛查（NIPT）、染色体拷贝数变异检测（CNV-seq）、胚胎植入前遗传学检测（PGT）。NIPT 是国内最早获批的 NGS 临床应用方向。</p><span class="dpill ok">已有注册产品</span></div><div class="dir"><div class="dtop"><h4>单基因遗传病与携带者筛查</h4></div><p>地中海贫血、遗传性耳聋等常见单基因病已有注册试剂盒；更广的多基因 panel 与全外显子组测序目前多以自建项目路径开展。</p><span class="dpill part">部分已有注册产品</span></div><div class="dir"><div class="dtop"><h4>感染性疾病病原检测</h4></div><p>宏基因组测序（mNGS）与靶向测序（tNGS），用于疑难危重感染的病原快速识别。测序平台已取得三类注册证，国内已发布多部临床应用专家共识。</p><span class="dpill ldt">多以 LDT 路径开展</span></div></div>
+  <p class="tabnote">以上为应用方向的大类梳理，不构成项目承诺。各方向开展前均需完成新增项目论证、试剂盒选型与物价备案；<b>跨方向共用同一测序平台时，还需确认各试剂盒注册证载明的适用机型</b>。</p>
 </section>
 
 <footer>
