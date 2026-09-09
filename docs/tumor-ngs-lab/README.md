@@ -16,6 +16,8 @@
 | `tpl3.html` / `build3.py` | 投屏版的模板与生成脚本 |
 | `ngs-report-print.html` | **打印稿**：黑白 A4 竖版院内交流报告，宋体正文黑体标题、三线表、首行缩进 |
 | `tpl_print.html` / `build_print.py` | 打印稿的模板与生成脚本 |
+| `苏州市立医院-肿瘤NGS板块方案阶段性汇报.docx` | 打印稿的 Word 版，供院内传阅批注 |
+| `build_docx.js` | Word 版生成脚本（docx-js），数据经 `report_data.json` 与打印稿同源 |
 
 打印稿刻意只有一套白纸黑字的配色，不随观看者主题切换 —— 它是拿来打印的。
 `build_print.py` 带两道守卫：CSS 变量必须定义，且样式表里不得出现非灰阶的
@@ -30,6 +32,7 @@
 pip install openpyxl
 python3 build3.py      # 投屏版
 python3 build_print.py # 打印稿
+node build_docx.js     # Word 版（先由 build_print.py 导出 report_data.json）
 ```
 
 `build3.py` 内置断言：每间「另含 N 项」由清单条数减去已列出的主要设备算得，
