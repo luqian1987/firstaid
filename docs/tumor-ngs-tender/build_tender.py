@@ -60,5 +60,16 @@ for banned in ("华大","MGISEQ","MGI","Halos","TIANGEN","病理科","八楼","�
     assert banned not in t, f"对外文件中出现不应展示的内容：{banned}"
 # 「折扣率」是本文件的正当用语，只禁止单独出现的「扣率」（参照文本中的供应商报价扣率）
 assert not re.search(r"(?<!折)扣率", t), "出现参照文本式的「扣率」表述"
+
+# 需求文件的边界：以下属招标文件的合同章节或采购部门通用模板，不在采购需求内
+for pat, what in ((r"日历天", "交货日历天数"),
+                  (r"质量保证金", "质量保证金比例"),
+                  (r"支付\s*(?:<span|＿＿)\s*％", "付款比例分档"),
+                  (r"近\s*(?:<span|＿＿)\s*年", "业绩年限要求"),
+                  (r"本地化服务能力", "本地化服务能力"),
+                  (r"失信被执行人|严重违法失信|商业贿赂不良记录", "失信名单资格条款"),
+                  (r"不超过\s*(?:<span|＿＿)\s*小时", "响应与到场时限"),
+                  (r"违约与退出", "违约与退出条款")):
+    assert not re.search(pat, t), f"需求文件中出现应留给合同的内容：{what}"
 open("ngs-tender.html","w",encoding="utf-8").write(t)
 print(f"written {len(t)} bytes · 测序仪要求 {len(TECH)} 项 · 拟开展癌种 {len(PROJ)} 个 · 配套清单 {total} 行")
