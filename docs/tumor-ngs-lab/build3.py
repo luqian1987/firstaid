@@ -104,6 +104,7 @@ t=open("tpl3.html",encoding="utf-8").read()
 for k,v in (("__FLOW__",FLOW),("__EQUIP__","\n".join(rows)),("__KITS__",kits)):
     assert k in t, k
     t=t.replace(k,v)
-assert "现场门牌" not in t and "落位要点" not in t and "非按比例平面图" not in t
+for banned in ("现场门牌","落位要点","非按比例平面图","我方","院方"):
+    assert banned not in t, f"残留措辞：{banned}"
 open("ngs-lab.html","w",encoding="utf-8").write(t)
 print("written", len(t), "bytes")
