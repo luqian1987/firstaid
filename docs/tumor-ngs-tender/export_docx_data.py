@@ -8,5 +8,6 @@ rooms=[]; total=0
 for R in m.D["rooms"]:
     rows=[[dev, m.GENERIC.get(dev,sp), qty] for dev,sp,ref,qty in R["rows"] if dev not in m.SEQ]
     if rows: rooms.append(dict(zone=R["zone"], rows=rows)); total+=len(rows)
-json.dump(dict(tech=m.TECH, proj=m.PROJ, rooms=rooms, total=total),
+tech=[(t, d.replace('<b>','**').replace('</b>','**')) for t,d in m.TECH]
+json.dump(dict(tech=tech, proj=m.PROJ, rooms=rooms, total=total),
           open("tender_docx_data.json","w"), ensure_ascii=False, indent=1)
