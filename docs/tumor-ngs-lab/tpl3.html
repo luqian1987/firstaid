@@ -9,9 +9,9 @@
   --line:#D3DCDF; --line-2:#B6C4C8;
   --accent:#0B6E7F; --accent-soft:#DEEDF0;
   --ok:#2C6E52; --ok-soft:#DFEDE5;
-  --warn:#8E5E10; --warn-soft:#F6EAD2;
   --z1:#2F7D5F; --z2:#2E6FA3; --z3:#4A5FA8; --z4:#7A56A6; --z5:#B0661C; --z6:#A3313E;
   --z1s:#E0EEE7; --z2s:#DFEAF3; --z3s:#E3E6F4; --z4s:#EDE4F3; --z5s:#F6E9D8; --z6s:#F7E1E3;
+  --badge-ink:#FFFFFF;
   --shadow:0 1px 2px rgba(20,33,38,.05), 0 8px 24px -12px rgba(20,33,38,.16);
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
@@ -20,9 +20,9 @@
   --line:#26363B; --line-2:#3A4E54;
   --accent:#5CBECD; --accent-soft:#10313A;
   --ok:#7ECBA4; --ok-soft:#122E20;
-  --warn:#DFAC5C; --warn-soft:#302512;
   --z1:#6FC79F; --z2:#72AFDD; --z3:#8E9BE1; --z4:#BB90DC; --z5:#E0A055; --z6:#E4808C;
   --z1s:#12291F; --z2s:#12232F; --z3s:#1A1D33; --z4s:#241A2F; --z5s:#2E2211; --z6s:#301619;
+  --badge-ink:#0D1518;
   --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.6);
 }}
 :root[data-theme="dark"]{
@@ -31,9 +31,9 @@
   --line:#26363B; --line-2:#3A4E54;
   --accent:#5CBECD; --accent-soft:#10313A;
   --ok:#7ECBA4; --ok-soft:#122E20;
-  --warn:#DFAC5C; --warn-soft:#302512;
   --z1:#6FC79F; --z2:#72AFDD; --z3:#8E9BE1; --z4:#BB90DC; --z5:#E0A055; --z6:#E4808C;
   --z1s:#12291F; --z2s:#12232F; --z3s:#1A1D33; --z4s:#241A2F; --z5s:#2E2211; --z6s:#301619;
+  --badge-ink:#0D1518;
   --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.6);
 }
 *{box-sizing:border-box}
@@ -67,38 +67,55 @@ section{margin-top:56px;}
 .sechead h2{font-size:24px; font-weight:700;}
 .sechead .hint{margin-left:auto; font-size:12.5px; color:var(--faint); white-space:nowrap;}
 @media (max-width:760px){ .sechead .hint{display:none} }
-.lead{font-size:15.5px; color:var(--ink-2); max-width:62em; margin:0 0 22px;}
+.lead{font-size:15.5px; color:var(--ink-2); max-width:62em; margin:0 0 26px;}
 
-/* 平面草图 */
-figure.plan{margin:0; border:1px solid var(--line); background:var(--surface); padding:18px 18px 14px; box-shadow:var(--shadow);}
-figure.plan svg{display:block; width:100%; height:auto; overflow:visible;}
-figure.plan figcaption{margin-top:14px; padding-top:12px; border-top:1px solid var(--line);
-  font-size:12.5px; color:var(--muted); line-height:1.65;}
-figure.plan figcaption b{color:var(--ink-2)}
-
-/* 房间卡 */
-.cards{display:grid; grid-template-columns:repeat(2,1fr); gap:16px;}
-@media (max-width:880px){ .cards{grid-template-columns:1fr} }
-.card{border:1px solid var(--line); background:var(--surface); display:flex; flex-direction:column;}
-.chead{display:flex; align-items:center; gap:10px; padding:11px 16px; background:var(--zs); border-bottom:1px solid var(--line);}
-.chead .cno{font-family:"IBM Plex Mono",monospace; font-size:11.5px; font-weight:500; color:#fff;
+/* ===== 分区流程图 ===== */
+.flow{display:grid; grid-template-columns:repeat(3,1fr); column-gap:84px; row-gap:0;}
+.node{position:relative; border:1px solid var(--line); border-top:4px solid var(--zc);
+  background:var(--surface); display:flex; flex-direction:column; box-shadow:var(--shadow);}
+.node.arw::before{content:""; position:absolute; top:50%; left:calc(100% + 8px); width:56px; height:2px;
+  background:var(--accent); margin-top:-1px;}
+.node.arw::after{content:""; position:absolute; top:50%; left:calc(100% + 64px); width:0; height:0;
+  border-left:11px solid var(--accent); border-top:7px solid transparent; border-bottom:7px solid transparent;
+  margin-top:-7px;}
+.node.skip::before{background:none; height:0; border-top:2px dashed var(--muted);}
+.node.skip::after{border-left-color:var(--muted);}
+.gaplab{position:absolute; top:50%; left:calc(100% + 6px); width:72px; margin-top:-48px; text-align:center;
+  font-size:10px; line-height:1.45; color:var(--muted);}
+.gaplab em{display:block; font-style:normal; font-family:"IBM Plex Mono",monospace; font-size:9.5px; letter-spacing:-.02em;}
+.wrapline{grid-column:1/-1; position:relative; height:62px;}
+.wrapline::before{content:""; position:absolute; left:26px; right:26px; top:6px; height:26px;
+  border-right:2px solid var(--accent); border-bottom:2px solid var(--accent);
+  border-bottom-left-radius:12px; border-bottom-right-radius:12px;}
+.wrapline::after{content:""; position:absolute; left:26px; top:32px; height:16px; border-left:2px solid var(--accent);}
+.wtip{position:absolute; left:20px; top:48px; width:0; height:0;
+  border-top:10px solid var(--accent); border-left:7px solid transparent; border-right:7px solid transparent;}
+.wlab{position:absolute; left:50%; transform:translateX(-50%); top:22px; background:var(--ground);
+  padding:0 14px; font-size:11px; letter-spacing:.1em; color:var(--accent);}
+.nhead{display:flex; align-items:center; gap:9px; padding:11px 15px; background:var(--zs); border-bottom:1px solid var(--line);}
+.nno{font-family:"IBM Plex Mono",monospace; font-size:11px; font-weight:500; color:var(--badge-ink);
   background:var(--zc); padding:2px 8px; border-radius:2px; white-space:nowrap;}
-:root[data-theme="dark"] .chead .cno, :root:not([data-theme="light"]) .chead .cno{color:#0D1518}
-.chead h3{font-size:16.5px; font-weight:700;}
-.chead .sign{margin-left:auto; font-size:11.5px; color:var(--ink-2); white-space:nowrap;}
-.chead .sign em{font-style:normal; color:var(--faint);}
-.cbody{padding:15px 16px 16px; display:flex; flex-direction:column; gap:12px; flex:1;}
-.cbody h4{margin:0 0 3px; font-family:"Noto Sans SC",sans-serif; font-size:11.5px; letter-spacing:.14em;
-  color:var(--faint); font-weight:500;}
-.cbody p{margin:0; font-size:13.5px; color:var(--ink-2); line-height:1.72;}
-.cond{display:flex; gap:10px; align-items:flex-start; background:var(--ok-soft); padding:10px 13px;
-  border-left:3px solid var(--ok);}
-.cond .pill{font-size:11.5px; font-weight:700; color:var(--ok); white-space:nowrap; padding-top:1px;}
-.cond p{font-size:13px; color:var(--ink-2);}
-.note{font-size:12.5px; color:var(--ink-2); border-left:3px solid var(--line-2); padding:2px 0 2px 12px; line-height:1.7;}
-.note b{color:var(--warn)}
+.nhead h3{font-size:16px; font-weight:700; line-height:1.3;}
+.ncount{margin-left:auto; font-size:11px; color:var(--muted); white-space:nowrap;}
+.nbody{padding:14px 15px 15px; display:flex; flex-direction:column; gap:12px; flex:1;}
+.what{margin:0; font-size:13px; line-height:1.72; color:var(--ink-2);}
+.cond{display:flex; gap:9px; background:var(--ok-soft); border-left:3px solid var(--ok); padding:9px 12px;}
+.cond .ck{color:var(--ok); font-weight:700; font-size:12px; line-height:1.6;}
+.cond p{margin:0; font-size:12.5px; line-height:1.65; color:var(--ink-2);}
+.gear{margin-top:auto;}
+.glab{display:block; font-size:10.5px; letter-spacing:.14em; color:var(--faint); margin-bottom:7px;}
+.chips{display:flex; flex-wrap:wrap; gap:5px;}
+.chip{font-size:11.5px; line-height:1.55; padding:2px 8px; border-radius:3px;
+  background:var(--surface-2); border:1px solid var(--line); color:var(--ink-2);}
+.chip.hi{background:var(--zs); border-color:var(--zc); color:var(--zc); font-weight:500;}
+.chip.more{background:none; border-style:dashed; color:var(--muted);}
+@media (max-width:920px){
+  .flow{grid-template-columns:1fr; row-gap:34px;}
+  .node.arw::before,.node.arw::after,.gaplab{display:none;}
+  .wrapline{display:none;}
+}
 
-/* 表 */
+/* ===== 表 ===== */
 .tablewrap{border:1px solid var(--line); background:var(--surface); overflow:auto; max-height:560px;}
 table{border-collapse:collapse; width:100%; font-size:13px;}
 th,td{text-align:left; padding:8px 12px; border-bottom:1px solid var(--line); vertical-align:top;}
@@ -123,7 +140,7 @@ footer{margin-top:60px; padding-top:20px; border-top:2px solid var(--ink); font-
 <header class="cover">
   <div class="eyebrow">项目洽谈总结会 · 汇报材料</div>
   <h1>肿瘤 NGS 实验室落位方案</h1>
-  <p class="sub">在病理科现有 PCR 多分区实验室内落位 —— 房间、缓冲、分区都是现成的，本次不新建、不改造，只做功能重新分配与设备进场。</p>
+  <p class="sub">在病理科现有 PCR 多分区实验室内落位 —— 房间、缓冲、分区都是现成的，本次不新建、不改造，只做功能分配与设备进场。</p>
   <div class="metarow">
     <div><dt>汇报方</dt><dd><span class="fill">&nbsp;</span> ・华大基因授权经销商</dd></div>
     <div><dt>场地</dt><dd>病理科现有空闲 PCR 多分区实验室</dd></div>
@@ -137,30 +154,25 @@ footer{margin-top:60px; padding-top:20px; border-top:2px solid var(--ink); font-
 </header>
 
 <section>
-  <div class="sechead"><span class="secnum">一</span><h2>实验室平面草图</h2><span class="hint">依据设备摆放示意图重绘</span></div>
-  <p class="lead">六间房沿同一条走廊一字排开，每间各有独立缓冲间，人员经缓冲进出。工艺流程自左向右推进，与房间的物理顺序完全一致 —— 这是这块场地最合适做 NGS 的原因：<b>分区是现成的，流向也是顺的</b>。</p>
-  __PLAN__
+  <div class="sechead"><span class="secnum">一</span><h2>实验室分区与工艺流程</h2><span class="hint">每间做什么 · 现有条件是否满足</span></div>
+  <p class="lead">六间房沿同一条走廊一字排开，每间各有独立缓冲间。工艺流程自左向右推进，与房间的物理顺序完全一致 —— 这是这块场地最合适做 NGS 的原因：<b>分区是现成的，流向也是顺的</b>。下图为便于阅读折成两行，现场实际是一条直线。</p>
+  __FLOW__
 </section>
 
 <section>
-  <div class="sechead"><span class="secnum">二</span><h2>六个功能间逐间说明</h2><span class="hint">每间做什么 · 现有条件是否满足</span></div>
-  <div class="cards">__CARDS__</div>
-</section>
-
-<section>
-  <div class="sechead"><span class="secnum">三</span><h2>设备配置清单</h2><span class="hint">按功能间分组 · 可滚动查看全部 91 项</span></div>
-  <p class="lead">华大方已备妥的设备与器具配置，均已明确到品牌型号与产品编码，可直接进入院内采购比选流程。同型号移液器已按间合并为一行显示，编码完整保留。</p>
+  <div class="sechead"><span class="secnum">二</span><h2>设备配置清单</h2><span class="hint">按功能间分组 · 可滚动查看全部 91 项</span></div>
+  <p class="lead">这是我方给出的设备清单。<b>院方已有的设备直接沿用，缺的部分由我方补齐</b>；具体型号也会参考院方用得顺手的意见来定，不必拘泥于本表选型。</p>
   <div class="tablewrap">
     <table>
       <thead><tr><th>产品编码</th><th>产品名称</th><th>设备名称</th><th>参数要求</th><th style="text-align:right">数量</th></tr></thead>
       __EQUIP__
     </table>
   </div>
-  <p class="tabnote">另有物料编码（EQP / 1000 系列）已在原始清单中一一对应，采购时可一并提供。本清单为设备与器具，试剂耗材清单另行出具。</p>
+  <p class="tabnote">同型号移液器已按间合并为一行显示，编码完整保留。另有物料编码（EQP / 1000 系列）在原始清单中一一对应，采购时可一并提供。本清单为设备与器具，试剂耗材清单另行出具。</p>
 </section>
 
 <section>
-  <div class="sechead"><span class="secnum">四</span><h2>可开展检测项目与收费</h2><span class="hint">5 个已注册试剂盒 · 同一收费编码</span></div>
+  <div class="sechead"><span class="secnum">三</span><h2>可开展检测项目与收费</h2><span class="hint">5 个已注册试剂盒 · 同一收费编码</span></div>
   <p class="lead">五个试剂盒均取得 NMPA 三类医疗器械注册证，走的是已注册 IVD 路径而非 LDT，报批与合规风险显著低于自建方法。收费侧同样已经打通：五项共用收费编码 <span class="mono">012100000200000</span>「高通量测序法检测费（病理样本）」，价格已在物价目录内。</p>
   <div class="flat"><table>__KITS__</table></div>
   <p class="tabnote">注：「可拓展适用范围」指注册证适应证之外、临床有实际需求的瘤种，开展前需按院内规定完成新增项目论证与备案。</p>
