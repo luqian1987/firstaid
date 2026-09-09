@@ -1,0 +1,88 @@
+<title>肿瘤NGS板块汇报打印稿</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;500;600;700&display=swap">
+<style>
+/* 单一视觉方案：白纸黑字，不随主题变化 —— 这是一份用来打印的文本稿 */
+:root{
+  --paper:#FFFFFF; --desk:#DCDCDC;
+  --ink:#000000; --ink-2:#222222; --ink-3:#555555;
+  --rule:#000000; --rule-thin:#9A9A9A; --rule-hair:#DCDCDC; --band:#F0F0F0;
+  --song:"Noto Serif SC","Source Han Serif SC","SimSun","宋体","Songti SC",serif;
+  --hei:"Noto Sans SC","Source Han Sans SC","SimHei","黑体","Heiti SC",sans-serif;
+}
+*{box-sizing:border-box}
+html{background:var(--desk)}
+body{background:var(--desk); color:var(--ink); font-family:var(--song);
+  font-size:15px; line-height:1.95; margin:0; -webkit-font-smoothing:antialiased;}
+.page{background:var(--paper); max-width:830px; margin:28px auto; padding:58px 66px 64px;
+  box-shadow:0 2px 10px rgba(0,0,0,.18);}
+:focus-visible{outline:2px solid #000; outline-offset:2px}
+
+/* 报头 */
+.org{text-align:center; font-family:var(--hei); font-size:14px; letter-spacing:.4em;
+  color:var(--ink-2); margin-bottom:14px; text-indent:.4em;}
+h1{font-family:var(--song); font-weight:700; font-size:27px; line-height:1.5; text-align:center;
+  letter-spacing:.06em; margin:0 0 6px; text-wrap:balance;}
+.subtitle{text-align:center; font-size:14px; color:var(--ink-3); margin:0 0 20px;}
+.rule2{border:none; border-top:2px solid var(--rule); margin:0 0 3px;}
+.rule1{border:none; border-top:.75px solid var(--rule); margin:0 0 22px;}
+.meta{display:grid; grid-template-columns:auto 1fr auto 1fr; gap:5px 12px; font-size:13.5px;
+  margin:0 0 26px; padding-bottom:18px; border-bottom:.75px solid var(--rule-thin);}
+.meta dt{font-family:var(--hei); color:var(--ink-3); white-space:nowrap;}
+.meta dd{margin:0;}
+
+/* 正文 */
+p{margin:0 0 11px; text-indent:2em; text-align:justify;}
+p.noind{text-indent:0}
+h2{font-family:var(--hei); font-size:17px; font-weight:700; margin:30px 0 12px; letter-spacing:.03em;}
+h3{font-family:var(--hei); font-size:15px; font-weight:700; margin:20px 0 9px; color:var(--ink-2);}
+b,strong{font-weight:700}
+.tnum{font-variant-numeric:tabular-nums}
+
+/* 三线表 */
+.tw{margin:12px 0 8px; overflow-x:auto;}
+table{width:100%; border-collapse:collapse; font-size:12.5px; line-height:1.65;}
+caption{caption-side:top; text-align:left; font-family:var(--hei); font-size:13px;
+  font-weight:700; padding-bottom:7px;}
+thead th{font-family:var(--hei); font-weight:700; text-align:left; padding:7px 9px;
+  border-top:1.5px solid var(--rule); border-bottom:.75px solid var(--rule); white-space:nowrap;}
+tbody td{padding:6px 9px; vertical-align:top; border-bottom:.5px solid var(--rule-hair);}
+tbody tr:last-child td{border-bottom:1.5px solid var(--rule);}
+tbody tr.grp td{background:var(--band); font-family:var(--hei); font-weight:700; font-size:12.5px;
+  border-bottom:.5px solid var(--rule-thin);}
+td.n{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap;}
+td.c{text-align:center; font-variant-numeric:tabular-nums; white-space:nowrap;}
+td.nw{white-space:nowrap}
+.tnote{font-size:12.5px; color:var(--ink-2); text-indent:2em; margin:6px 0 0; text-align:justify;}
+
+
+/* 拟稿说明：发文前需整体删除 */
+.dn{border-left:3px solid #9A9A9A; background:#F4F4F4; padding:9px 14px; margin:10px 0 14px;
+  font-size:12.5px; line-height:1.75; color:#333333; text-indent:0;}
+.dn b{color:#000000}
+.warn{border:1px solid #000000; padding:12px 16px; margin:14px 0; font-size:13px; line-height:1.8; text-indent:0;}
+ol.cl{margin:6px 0 10px; padding-left:2.4em;}
+ol.cl li{margin-bottom:5px; text-align:justify;}
+.blank{border-bottom:1px solid #000000; display:inline-block; min-width:3.2em;}
+
+/* 落款 */
+.sign{margin-top:34px; text-align:right; line-height:2.1; font-size:15px;}
+.sign .u{font-family:var(--hei); font-weight:700;}
+.close{margin-top:26px}
+
+@media print{
+  html,body{background:#FFF}
+  .page{max-width:none; margin:0; padding:0; box-shadow:none;}
+  @page{size:A4 portrait; margin:20mm 18mm;}
+  body{font-size:10.8pt; line-height:1.85;}
+  table{font-size:9pt}
+  h1{font-size:19pt} h2{font-size:12.5pt} h3{font-size:11pt}
+  thead{display:table-header-group}
+  tr{break-inside:avoid; page-break-inside:avoid;}
+  tr.grp{break-after:avoid; page-break-after:avoid;}
+  h2,h3,caption{break-after:avoid; page-break-after:avoid;}
+  .sign,.meta{break-inside:avoid;}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>

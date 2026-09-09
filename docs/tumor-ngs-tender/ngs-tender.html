@@ -1,0 +1,217 @@
+<title>肿瘤NGS平台招标需求</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;500;600;700&display=swap">
+<style>
+/* 单一视觉方案：白纸黑字，不随主题变化 —— 这是一份用来打印的文本稿 */
+:root{
+  --paper:#FFFFFF; --desk:#DCDCDC;
+  --ink:#000000; --ink-2:#222222; --ink-3:#555555;
+  --rule:#000000; --rule-thin:#9A9A9A; --rule-hair:#DCDCDC; --band:#F0F0F0;
+  --song:"Noto Serif SC","Source Han Serif SC","SimSun","宋体","Songti SC",serif;
+  --hei:"Noto Sans SC","Source Han Sans SC","SimHei","黑体","Heiti SC",sans-serif;
+}
+*{box-sizing:border-box}
+html{background:var(--desk)}
+body{background:var(--desk); color:var(--ink); font-family:var(--song);
+  font-size:15px; line-height:1.95; margin:0; -webkit-font-smoothing:antialiased;}
+.page{background:var(--paper); max-width:830px; margin:28px auto; padding:58px 66px 64px;
+  box-shadow:0 2px 10px rgba(0,0,0,.18);}
+:focus-visible{outline:2px solid #000; outline-offset:2px}
+
+/* 报头 */
+.org{text-align:center; font-family:var(--hei); font-size:14px; letter-spacing:.4em;
+  color:var(--ink-2); margin-bottom:14px; text-indent:.4em;}
+h1{font-family:var(--song); font-weight:700; font-size:27px; line-height:1.5; text-align:center;
+  letter-spacing:.06em; margin:0 0 6px; text-wrap:balance;}
+.subtitle{text-align:center; font-size:14px; color:var(--ink-3); margin:0 0 20px;}
+.rule2{border:none; border-top:2px solid var(--rule); margin:0 0 3px;}
+.rule1{border:none; border-top:.75px solid var(--rule); margin:0 0 22px;}
+.meta{display:grid; grid-template-columns:auto 1fr auto 1fr; gap:5px 12px; font-size:13.5px;
+  margin:0 0 26px; padding-bottom:18px; border-bottom:.75px solid var(--rule-thin);}
+.meta dt{font-family:var(--hei); color:var(--ink-3); white-space:nowrap;}
+.meta dd{margin:0;}
+
+/* 正文 */
+p{margin:0 0 11px; text-indent:2em; text-align:justify;}
+p.noind{text-indent:0}
+h2{font-family:var(--hei); font-size:17px; font-weight:700; margin:30px 0 12px; letter-spacing:.03em;}
+h3{font-family:var(--hei); font-size:15px; font-weight:700; margin:20px 0 9px; color:var(--ink-2);}
+b,strong{font-weight:700}
+.tnum{font-variant-numeric:tabular-nums}
+
+/* 三线表 */
+.tw{margin:12px 0 8px; overflow-x:auto;}
+table{width:100%; border-collapse:collapse; font-size:12.5px; line-height:1.65;}
+caption{caption-side:top; text-align:left; font-family:var(--hei); font-size:13px;
+  font-weight:700; padding-bottom:7px;}
+thead th{font-family:var(--hei); font-weight:700; text-align:left; padding:7px 9px;
+  border-top:1.5px solid var(--rule); border-bottom:.75px solid var(--rule); white-space:nowrap;}
+tbody td{padding:6px 9px; vertical-align:top; border-bottom:.5px solid var(--rule-hair);}
+tbody tr:last-child td{border-bottom:1.5px solid var(--rule);}
+tbody tr.grp td{background:var(--band); font-family:var(--hei); font-weight:700; font-size:12.5px;
+  border-bottom:.5px solid var(--rule-thin);}
+td.n{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap;}
+td.c{text-align:center; font-variant-numeric:tabular-nums; white-space:nowrap;}
+td.nw{white-space:nowrap}
+.tnote{font-size:12.5px; color:var(--ink-2); text-indent:2em; margin:6px 0 0; text-align:justify;}
+
+
+/* 拟稿说明：发文前需整体删除 */
+.dn{border-left:3px solid #9A9A9A; background:#F4F4F4; padding:9px 14px; margin:10px 0 14px;
+  font-size:12.5px; line-height:1.75; color:#333333; text-indent:0;}
+.dn b{color:#000000}
+.warn{border:1px solid #000000; padding:12px 16px; margin:14px 0; font-size:13px; line-height:1.8; text-indent:0;}
+ol.cl{margin:6px 0 10px; padding-left:2.4em;}
+ol.cl li{margin-bottom:5px; text-align:justify;}
+.blank{border-bottom:1px solid #000000; display:inline-block; min-width:3.2em;}
+
+/* 落款 */
+.sign{margin-top:34px; text-align:right; line-height:2.1; font-size:15px;}
+.sign .u{font-family:var(--hei); font-weight:700;}
+.close{margin-top:26px}
+
+@media print{
+  html,body{background:#FFF}
+  .page{max-width:none; margin:0; padding:0; box-shadow:none;}
+  @page{size:A4 portrait; margin:20mm 18mm;}
+  body{font-size:10.8pt; line-height:1.85;}
+  table{font-size:9pt}
+  h1{font-size:19pt} h2{font-size:12.5pt} h3{font-size:11pt}
+  thead{display:table-header-group}
+  tr{break-inside:avoid; page-break-inside:avoid;}
+  tr.grp{break-after:avoid; page-break-after:avoid;}
+  h2,h3,caption{break-after:avoid; page-break-after:avoid;}
+  .sign,.meta{break-inside:avoid;}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+<div class="page">
+
+<div class="org">苏州市立医院分子诊断中心</div>
+<h1>肿瘤 NGS 平台招标需求</h1>
+<p class="subtitle">建设地点：太湖新城总院区病理科现有 PCR 多分区实验室</p>
+<hr class="rule2"><hr class="rule1">
+
+<div class="warn"><b>拟稿说明（发文前请整体删除本框及全文各处「拟稿说明」段落）</b><br>
+本文件为招标需求征求意见稿。文中以 <span class="blank">&nbsp;</span> 标示的数值、期限与比例，需由院方按实际标本量、预算与内控要求填定；
+各处「拟稿说明」为起草依据与风险提示，供院内讨论使用，不属于招标文件正文。</div>
+
+<h2>一、项目概况</h2>
+<p>（一）<b>项目名称</b>：苏州市立医院分子诊断中心肿瘤 NGS 平台设备采购。</p>
+<p>（二）<b>建设地点</b>：太湖新城总院区病理科现有 PCR 多分区实验室。</p>
+<p>（三）<b>建设方式</b>：依托现有六间 PCR 功能分区实验室及其配套缓冲间，<b>不涉及新建与装修改造，仅作功能分配与设备进场</b>。六间功能分区自上游至下游依次为：试剂准备区（试剂准备间）、标本与文库制备区（PCR2）、血浆文库制备区（PCR3）、杂交捕获区（PCR4）、文库扩增与检测区（PCR5）、测序区（PCR8）。</p>
+<p>（四）<b>采购范围</b>：测序平台及配套设备的供应、运输、安装、调试、培训与售后服务。<b>检测试剂与耗材不在本次采购范围内，另行组织采购</b>，相关要求见第七部分第（六）项。</p>
+<p>（五）<b>服务期限</b>：自合同签订之日起 <span class="blank">&nbsp;</span> 年。</p>
+
+<div class="dn"><b>拟稿说明｜关于建设方式。</b>原参照文本中列有「负责实验室场地设计、装修」一项。本项目场地为病理科现有已建成的 PCR 多分区实验室，无新建与装修改造需求，故不设该项，相应费用亦不计入本次采购。</div>
+
+<h2>二、测序平台技术要求</h2>
+<p>本部分以技术参数与性能指标描述采购需求，<b>不指定品牌、型号、专利或供应商</b>。投标人可提供满足或优于下列指标的任何产品。</p>
+
+<div class="tw"><table>
+  <caption>表 1　测序平台技术要求</caption>
+  <thead><tr><th style="width:2.6em">序号</th><th style="width:8.4em">项目</th><th>技术要求</th></tr></thead>
+  <tbody><tr><td class="c">1</td><td>注册资质</td><td>所投产品应为已取得国家药品监督管理局第三类医疗器械注册证的临床用高通量基因测序系统，注册证在有效期内，且经营范围与授权文件齐备。</td></tr><tr><td class="c">2</td><td>测序原理</td><td>不限。</td></tr><tr><td class="c">3</td><td>单次运行数据产出</td><td>≥ <span class="blank">&nbsp;</span> Gb。</td></tr><tr><td class="c">4</td><td>支持读长</td><td>支持双端 100 bp 及以上读长。</td></tr><tr><td class="c">5</td><td>单次运行样本通量</td><td>≥ <span class="blank">&nbsp;</span> 例（按拟开展 panel 规模测算）。</td></tr><tr><td class="c">6</td><td>单次运行时长</td><td>≤ <span class="blank">&nbsp;</span> 小时。</td></tr><tr><td class="c">7</td><td>配套试剂注册状态</td><td>可配套使用的检测试剂盒应已取得第三类医疗器械注册证，且注册证载明的适用机型包含所投机型。投标人须逐项列明试剂盒名称与注册证编号。</td></tr><tr><td class="c">8</td><td>数据分析</td><td>应配置与所选试剂盒相匹配的分析解读软件或软硬件一体设备，支持院内本地化部署，不得要求将原始数据上传至院外。</td></tr><tr><td class="c">9</td><td>平台开放性</td><td>投标人须如实说明所投平台为封闭系统或开放系统，并明确可使用的检测试剂来源范围。</td></tr><tr><td class="c">10</td><td>环境与配套</td><td>投标人须提供设备的供电、温湿度、承重与网络接入要求，并说明是否需要配置不间断电源。</td></tr><tr><td class="c">11</td><td>数量</td><td>1 台。</td></tr></tbody>
+</table></div>
+
+<div class="dn"><b>拟稿说明｜关于参数设置。</b>表中留空的通量、读长、运行时长等数值，应由院方按预计年标本量与拟开展 panel 的规模确定。
+<b>参数区间需保证不少于三家潜在投标人能够满足</b>；将参数收窄至仅一款机型可达，属于以技术要求指向特定产品，与《招标投标法实施条例》第三十二条、《政府采购法实施条例》第二十条的规定不符，且易被质疑。</div>
+
+<h2>三、设备配置要求</h2>
+<p>（一）<b>配置原则</b>。附件一按六个功能分区列明设备与器具的通用名称、技术参数与数量，共 91 项。<b>实验室现有设备经核验符合参数要求的予以沿用，缺配部分由中标人按附件一补齐</b>。</p>
+<p>（二）<b>关于参考型号</b>。附件一「参考型号」列仅用于说明参数对应的产品形态，<b>投标人可提供同等或优于该参数的其他品牌型号，不得以未采用参考型号为由作否定性评价</b>。</p>
+<p>（三）<b>关于耗材</b>。附件一为设备与器具，不含试剂与耗材。</p>
+
+<div class="dn"><b>拟稿说明｜关于品牌型号。</b>原参照文本正文以「品牌 + 型号 + 不能更换」的方式列示三台测序仪，附件清单亦逐项指定厂商。
+此种写法属于限定或指定特定品牌、供应商，构成对潜在投标人的不合理限制。本稿已改为「通用名称 + 技术参数 + 参考型号（或同等）」，并在正文明确不得因未采用参考型号作否定性评价。</div>
+
+<h2>四、服务内容</h2>
+<p>（一）<b>设备供应、运输、安装与调试</b>。中标人负责附件一所列设备的供应、运输、就位、安装与调试，直至各功能分区具备开展临床检测的条件，并负责与院方现有设备的衔接核验。</p>
+<p>（二）<b>质量管理体系文件与性能验证支持</b>。协助建立本平台检测项目的标准操作规程及相关质量管理体系文件；协助完成方法学性能验证（精密度、正确度、检出限、可报告范围等）；协助院方参加室间质评并上报结果。</p>
+<p>（三）<b>技术培训与技术转移</b>。对院方指定人员进行系统培训，内容覆盖样本前处理、文库构建、杂交捕获、上机测序、数据分析与报告解读全流程，<b>直至院方人员具备独立操作与独立出具报告的能力</b>。培训应形成书面记录与考核结论。</p>
+<p>（四）<b>临床沟通与报告解读支持</b>。提供检测项目的临床沟通、疑难病例报告解读的技术支持；配合院方开展面向临床科室的技术交流。</p>
+<p>（五）<b>售后服务与维保</b>。提供设备的日常维护、故障响应与备件供应，具体要求见第七部分第（四）项。</p>
+<p>（六）<b>应急保障</b>。按第六部分要求提供应急响应。</p>
+
+<div class="dn"><b>拟稿说明｜关于删除的两项。</b>原参照文本列有「负责项目推广（专人负责市场运营和品牌支持、区域业务拓展）」与「科研支持（提供驻场博士，协助文章发表与标书撰写）」两项，本稿均未纳入，理由如下：<br>
+1. <b>项目推广</b>属供应商自身商业行为，不构成医院采购标的，列入采购需求缺乏依据。<br>
+2. <b>科研支持</b>不属于本次采购标的。将科研人力、论文与课题协助作为供应商义务写入采购文件，实质是以采购权换取科研资源；企业人员代写论文、代写基金申报材料亦与科研诚信管理要求相悖。<b>医企科研合作应另案另签</b>，经医院科研管理部门立项与伦理审查，经费入院统一管理，与设备试剂采购完全脱钩。</div>
+
+<h2>五、人员与培训要求</h2>
+<p>（一）中标人应指定项目负责人一名，并配备具备分子诊断与 NGS 技术背景的技术支持人员，负责安装调试、培训带教与技术响应。</p>
+<p>（二）驻场技术支持人员的工作范围限于设备调试、技术培训、方法学验证配合与故障处理。<b>临床检验的实际操作与检验报告的出具，由院方具备相应资质的人员承担</b>；中标人人员不得从事出具临床报告的检测操作。</p>
+<p>（三）中标人人员进入实验室，应遵守院方生物安全、感染控制、信息安全与廉洁从业的相关规定，并签署保密承诺。</p>
+<p>（四）培训完成并经院方考核合格后，驻场支持转为定期回访与按需响应。</p>
+
+<div class="dn"><b>拟稿说明｜关于人员派遣。</b>原参照文本要求供应商「派遣 2 名具有 PCR 上岗证书的湿实验操作人员」。
+《医疗机构临床实验室管理办法》要求临床检验工作由本机构具备资质的人员实施；非本院人员直接从事出具临床报告的检测操作，涉及执业资质与医疗责任归属问题。本稿已将供应商人员的职责限定为培训与技术支持。</div>
+
+<h2>六、应急保障</h2>
+<p>中标人应就下列情形制定应急预案并在合同中约定响应时限，保障检测报告的时效性与准确性。</p>
+<div class="tw"><table>
+  <caption>表 2　应急情形与响应要求</caption>
+  <thead><tr><th style="width:9em">应急情形</th><th>响应要求</th></tr></thead>
+  <tbody><tr><td>核心设备故障</td><td>故障响应与到场时限按第七部分第（四）项执行；无法在约定时限内修复的，应提供同等性能备机，或协助将标本委托至具备临床基因扩增检验实验室资质与相应检测项目能力的第三方医学检验机构检测。委托检验须另行签订协议并报院方医务管理部门备案。</td></tr><tr><td>试剂与耗材供应中断</td><td>中标人应建立安全库存并提前告知供应风险；发生中断的，应在 <span class="blank">&nbsp;</span> 小时内提出替代方案，因供应中断导致检测延误的，按合同约定承担违约责任。</td></tr><tr><td>危急值与加急标本</td><td>按院方危急值管理制度优先处理并复核确认，结果电话通知至临床并留存记录。</td></tr><tr><td>信息系统与数据异常</td><td>分析系统或数据链路故障时，中标人应在 <span class="blank">&nbsp;</span> 小时内响应；涉及数据完整性的，应协助完成数据恢复与追溯，并出具书面说明。</td></tr><tr><td>检验质量争议</td><td>配合院方开展原因调查，提供批次记录、质控数据与方法学资料；确因产品或服务原因造成损失的，按合同约定承担责任并提出纠正措施。</td></tr></tbody>
+</table></div>
+
+<div class="dn"><b>拟稿说明｜关于标本外送。</b>原参照文本在应急方案中直接写明外送至某一具体公司的实验室。
+在招标需求中指名特定供应商的设施，构成对标的归属的指向。本稿改为以资质与能力描述受托机构，不出现公司名称。外送涉及患者知情同意、样本与数据出院流向，应另行签订委托检验协议并报院方医务管理部门备案。</div>
+
+<h2>七、商务要求</h2>
+<p>（一）<b>交货与安装期限</b>。合同签订后 <span class="blank">&nbsp;</span> 日历天内完成全部设备到货、安装与调试，并具备验收条件。</p>
+<p>（二）<b>验收标准</b>。验收分三个环节：设备到货验收（数量、型号、外观、随机文件）；安装调试验收（各设备功能与技术参数复核）；平台运行验收（完成方法学性能验证，并支持院方通过临床基因扩增检验实验室技术审核）。三个环节全部合格后签署最终验收报告。</p>
+<p>（三）<b>付款节点</b>。合同生效后支付 <span class="blank">&nbsp;</span> %；全部设备到货并安装调试合格后支付 <span class="blank">&nbsp;</span> %；最终验收合格后支付 <span class="blank">&nbsp;</span> %；余款 <span class="blank">&nbsp;</span> % 作为质量保证金，质保期满无质量问题后支付。</p>
+<p>（四）<b>质保与维保</b>。自最终验收合格之日起提供 <span class="blank">&nbsp;</span> 年免费质保。质保期内故障响应不超过 <span class="blank">&nbsp;</span> 小时，到场时间不超过 <span class="blank">&nbsp;</span> 小时，核心设备无法在 <span class="blank">&nbsp;</span> 小时内修复的应提供备机。质保期满后的维保价格，投标人应在投标文件中一并报出并作为评审因素。</p>
+<p>（五）<b>设备所有权</b>。<b>本次采购设备的所有权自最终验收合格之日起归院方所有</b>，中标人不得设置任何形式的使用限制或与后续试剂采购相挂钩的条件。</p>
+<p>（六）<b>检测试剂与耗材</b>。检测试剂与耗材不在本次采购范围内，将另行组织采购。投标人须在投标文件中就下列事项作出书面说明，并作为评审因素：</p>
+<ol class="cl">
+  <li><b>平台开放性</b>：所投测序平台为封闭系统或开放系统，可使用的检测试剂来源范围；若为封闭系统，应明确说明。</li>
+  <li><b>配套试剂的注册状态</b>：拟配套使用的检测试剂盒的注册证编号及其载明的适用机型。</li>
+  <li><b>试剂价格承诺</b>：服务期内配套试剂的单价承诺或价格上限，及价格调整机制。</li>
+</ol>
+<p>上述三项与设备报价一并纳入<b>全生命周期成本评审</b>。</p>
+<p>（七）<b>数据权属与信息安全</b>。本平台产生的全部检测数据、原始下机数据及衍生数据，<b>所有权归院方所有</b>。中标人及其人员因技术支持接触院方数据的，限于履行本合同之目的，不得留存、复制、对外提供或用于自身研发；涉及人类遗传资源的，应遵守《人类遗传资源管理条例》及其实施细则的规定。合同终止或人员撤场时，应完成数据交接与本地留存的清除，并出具书面确认。</p>
+<p>（八）<b>违约与退出</b>。合同应约定交付逾期、验收不合格、响应超时的违约责任；服务期满或提前终止时，中标人应完成设备资料、系统账号、方法文件与在院数据的完整交接，不得以任何方式影响检测工作的连续性。</p>
+
+<div class="dn"><b>拟稿说明｜关于设备与试剂的关系。</b>「设备低价供应、后端以试剂回收」是监管重点关注的结构。
+本稿采取的处理方式是：设备买断、所有权归院方（第五项），试剂明确排除在本次采购之外并另行组织采购（第六项），
+同时要求投标人披露平台开放性并提供试剂价格承诺，纳入全生命周期成本评审。<b>如此既避免了设备与试剂的捆绑，也使院方在设备采购阶段即可掌握后续试剂的成本口径。</b><br>
+另需提示：《招标投标法》第三十三条规定投标人不得以低于成本的报价竞标。设备报价明显低于市场水平的，投标人应在投标文件中说明其合理性依据。</div>
+
+<h2>八、投标人资格与合规要求</h2>
+<p>（一）<b>资格要求</b>。投标人应具备下列条件：</p>
+<ol class="cl">
+  <li>具有独立法人资格，具备有效的营业执照；</li>
+  <li>具备《医疗器械经营许可证》或第二类医疗器械经营备案凭证，经营范围覆盖所投产品类别；</li>
+  <li>取得所投产品制造商针对本项目的授权文件；</li>
+  <li>近 <span class="blank">&nbsp;</span> 年内具有同类临床基因测序平台的供货与服务业绩，并能提供合同或验收证明；</li>
+  <li>具备本地化服务能力，能够满足本文件约定的故障响应与到场时限；</li>
+  <li>未被列入失信被执行人、政府采购严重违法失信行为记录名单及医药购销领域商业贿赂不良记录。</li>
+</ol>
+<p>（二）<b>廉洁与合规承诺</b>。投标人应出具书面承诺：不以捐赠资助、科研合作、学术会议、外出考察等任何名义，向院方工作人员输送利益或提供与采购相挂钩的资源；不通过第三方实施上述行为。经查实的，院方有权解除合同并追究责任。</p>
+
+<h2>附件一　设备配置清单</h2>
+<p>本清单按六个功能分区列明，共 91 项。「参考型号」列仅用于说明参数对应的产品形态，<b>投标人可提供同等或优于该参数的其他品牌型号</b>。</p>
+<div class="tw"><table>
+  <caption>附表 1　设备与器具配置清单（按功能分区，共 91 项）</caption>
+  <thead><tr><th style="width:8.6em">设备名称</th><th>技术参数要求</th><th style="width:11em">参考型号（或同等）</th><th style="width:3.2em">数量</th></tr></thead>
+  <tbody><tr class="grp"><td colspan="4">试剂准备间　试剂准备区　（13 项）</td></tr><tr><td>超净工作台</td><td>ACB-1300V/双人;垂直单流向</td><td>澳柯玛超净工作台</td><td class="c">1</td></tr><tr><td>纯水仪</td><td>电导率18.2MΩ</td><td>锐思捷 UNIQ-G1 纯水仪</td><td class="c">1</td></tr><tr><td>冷藏冷冻箱</td><td>2-8℃&amp;-20℃</td><td>澳柯玛 YCD-265T 冷藏冷冻箱</td><td class="c">1</td></tr><tr><td>计时器</td><td>量程覆盖常规孵育时长，具备定时提醒</td><td>得力计时器</td><td class="c">1</td></tr><tr><td>温湿度计</td><td>可显示环境温湿度，具备最值记录</td><td>雨花泽 YHZ-90191 温湿度计</td><td class="c">1</td></tr><tr><td>漩涡振荡器</td><td>转速可调，支持点动与连续两种模式</td><td>BGI Top-Mix 多管桌面混匀仪</td><td class="c">1</td></tr><tr><td>掌式离心机</td><td>适配 1.5 mL 离心管与八排管，两种转子</td><td>BGI Top-Spin 复合转子离心机</td><td class="c">1</td></tr><tr><td>单道移液器</td><td>量程分档覆盖 0.1–1000 µL，精度符合 GB/T 39374；分档：0.1-2.0µl、0.5-10µl、2-20µl、10-100µl、20-200µl、100-1000µl</td><td>TIANGEN 单道移液器</td><td class="c">6</td></tr><tr class="grp"><td colspan="4">PCR2　标本与文库制备区　（20 项）</td></tr><tr><td>冷藏冷冻箱</td><td>2-8℃&amp;-20℃</td><td>澳柯玛 YCD-265T 冷藏冷冻箱</td><td class="c">1</td></tr><tr><td>计时器</td><td>量程覆盖常规孵育时长，具备定时提醒</td><td>得力计时器</td><td class="c">1</td></tr><tr><td>温湿度计</td><td>可显示环境温湿度，具备最值记录</td><td>雨花泽 YHZ-90191 温湿度计</td><td class="c">1</td></tr><tr><td>漩涡振荡器</td><td>转速可调，支持点动与连续两种模式</td><td>BGI Top-Mix 多管桌面混匀仪</td><td class="c">1</td></tr><tr><td>掌式离心机</td><td>适配 1.5 mL 离心管与八排管，两种转子</td><td>BGI Top-Spin 复合转子离心机</td><td class="c">1</td></tr><tr><td>PCR扩增仪</td><td>≥96 孔，具备梯度扩增功能</td><td>东胜龙 ETC-821M 基因扩增仪</td><td class="c">1</td></tr><tr><td>高速离心机</td><td>1.5ml转子</td><td>湘仪 HT165R 离心机</td><td class="c">1</td></tr><tr><td>磁力架</td><td>16头；16孔(凹）;离心管用</td><td>碳环智造Mag-16W 1.5mL离心管磁力架</td><td class="c">1</td></tr><tr><td>96孔磁力架（八排管）</td><td>八排管</td><td>碳环智造Mag-96A 96孔磁力架（八排管）</td><td class="c">1</td></tr><tr><td>生物安全柜（A2型）</td><td>二级，1500*815*2270mm</td><td>苏净安泰 BSC-1304ⅡA2 生物安全柜</td><td class="c">1</td></tr><tr><td>恒温混匀仪</td><td>96孔+1.5模块</td><td>恒温混匀仪-瑞诚仪器</td><td class="c">1</td></tr><tr><td>单道移液器</td><td>量程分档覆盖 0.1–1000 µL，精度符合 GB/T 39374；分档：0.1-2.0µl、0.5-10µl、2-20µl、10-100µl、20-200µl、100-1000µl</td><td>TIANGEN 单道移液器</td><td class="c">6</td></tr><tr><td>八道移液器</td><td>八通道，与八连管、96 孔板配套；分档：0.5-10 µl、5-50 µl、30-300 µl</td><td>TIANGEN 八道移液器</td><td class="c">3</td></tr><tr class="grp"><td colspan="4">PCR3　血浆文库制备区　（20 项）</td></tr><tr><td>冷藏冷冻箱</td><td>2-8℃&amp;-20℃</td><td>澳柯玛 YCD-265T 冷藏冷冻箱</td><td class="c">1</td></tr><tr><td>计时器</td><td>量程覆盖常规孵育时长，具备定时提醒</td><td>得力计时器</td><td class="c">1</td></tr><tr><td>温湿度计</td><td>可显示环境温湿度，具备最值记录</td><td>雨花泽 YHZ-90191 温湿度计</td><td class="c">1</td></tr><tr><td>漩涡振荡器</td><td>转速可调，支持点动与连续两种模式</td><td>BGI Top-Mix 多管桌面混匀仪</td><td class="c">1</td></tr><tr><td>掌式离心机</td><td>适配 1.5 mL 离心管与八排管，两种转子</td><td>BGI Top-Spin 复合转子离心机</td><td class="c">1</td></tr><tr><td>PCR扩增仪</td><td>≥96 孔，具备梯度扩增功能</td><td>东胜龙 ETC-821M 基因扩增仪</td><td class="c">1</td></tr><tr><td>高速离心机</td><td>1.5ml转子</td><td>湘仪 HT165R 离心机</td><td class="c">1</td></tr><tr><td>磁力架</td><td>16头；16孔(凹）;离心管用</td><td>碳环智造Mag-16W 1.5mL离心管磁力架</td><td class="c">1</td></tr><tr><td>96孔磁力架（八排管）</td><td>八排管</td><td>碳环智造Mag-96A 96孔磁力架（八排管）</td><td class="c">1</td></tr><tr><td>生物安全柜（A2型）</td><td>二级，1500*815*2270mm</td><td>苏净安泰 BSC-1304ⅡA2 生物安全柜</td><td class="c">1</td></tr><tr><td>恒温混匀仪</td><td>96孔+1.5模块</td><td>恒温混匀仪-瑞诚仪器</td><td class="c">1</td></tr><tr><td>单道移液器</td><td>量程分档覆盖 0.1–1000 µL，精度符合 GB/T 39374；分档：0.1-2.0µl、0.5-10µl、2-20µl、10-100µl、20-200µl、100-1000µl</td><td>TIANGEN 单道移液器</td><td class="c">6</td></tr><tr><td>八道移液器</td><td>八通道，与八连管、96 孔板配套；分档：0.5-10 µl、5-50 µl、30-300 µl</td><td>TIANGEN 八道移液器</td><td class="c">3</td></tr><tr class="grp"><td colspan="4">PCR4　杂交捕获区　（21 项）</td></tr><tr><td>冷藏冷冻箱</td><td>2-8℃&amp;-20℃</td><td>澳柯玛 YCD-265T 冷藏冷冻箱</td><td class="c">1</td></tr><tr><td>计时器</td><td>量程覆盖常规孵育时长，具备定时提醒</td><td>得力计时器</td><td class="c">1</td></tr><tr><td>温湿度计</td><td>可显示环境温湿度，具备最值记录</td><td>雨花泽 YHZ-90191 温湿度计</td><td class="c">1</td></tr><tr><td>漩涡振荡器</td><td>转速可调，支持点动与连续两种模式</td><td>BGI Top-Mix 多管桌面混匀仪</td><td class="c">1</td></tr><tr><td>掌式离心机</td><td>适配 1.5 mL 离心管与八排管，两种转子</td><td>BGI Top-Spin 复合转子离心机</td><td class="c">1</td></tr><tr><td>PCR扩增仪</td><td>≥96 孔，具备梯度扩增功能</td><td>东胜龙 ETC-821M 基因扩增仪</td><td class="c">1</td></tr><tr><td>垂直混匀仪</td><td>满足常规分子实验操作要求</td><td>拓赫HS-3垂直混匀仪</td><td class="c">1</td></tr><tr><td>高速离心机</td><td>1.5ml转子</td><td>湘仪 HT165R 离心机</td><td class="c">1</td></tr><tr><td>磁力架</td><td>16头；16孔(凹）;离心管用</td><td>碳环智造Mag-16W 1.5mL离心管磁力架</td><td class="c">1</td></tr><tr><td>96孔磁力架（八排管）</td><td>八排管</td><td>碳环智造Mag-96A 96孔磁力架（八排管）</td><td class="c">1</td></tr><tr><td>恒温混匀仪</td><td>96孔+1.5模块</td><td>恒温混匀仪-瑞诚仪器</td><td class="c">1</td></tr><tr><td>荧光定量仪</td><td>满足常规分子实验操作要求</td><td>荧光计/杭州奥盛/Fluo-200</td><td class="c">1</td></tr><tr><td>单道移液器</td><td>量程分档覆盖 0.1–1000 µL，精度符合 GB/T 39374；分档：0.1-2.0µl、0.5-10µl、2-20µl、10-100µl、20-200µl、100-1000µl</td><td>TIANGEN 单道移液器</td><td class="c">6</td></tr><tr><td>八道移液器</td><td>八通道，与八连管、96 孔板配套；分档：0.5-10 µl、5-50 µl、30-300 µl</td><td>TIANGEN 八道移液器</td><td class="c">3</td></tr><tr class="grp"><td colspan="4">PCR5　文库扩增与检测区　（14 项）</td></tr><tr><td>冷藏冷冻箱</td><td>2-8℃&amp;-20℃</td><td>澳柯玛 YCD-265T 冷藏冷冻箱</td><td class="c">1</td></tr><tr><td>计时器</td><td>量程覆盖常规孵育时长，具备定时提醒</td><td>得力计时器</td><td class="c">1</td></tr><tr><td>温湿度计</td><td>可显示环境温湿度，具备最值记录</td><td>雨花泽 YHZ-90191 温湿度计</td><td class="c">1</td></tr><tr><td>漩涡振荡器</td><td>转速可调，支持点动与连续两种模式</td><td>BGI Top-Mix 多管桌面混匀仪</td><td class="c">1</td></tr><tr><td>掌式离心机</td><td>适配 1.5 mL 离心管与八排管，两种转子</td><td>BGI Top-Spin 复合转子离心机</td><td class="c">1</td></tr><tr><td>PCR扩增仪</td><td>≥96 孔，具备梯度扩增功能</td><td>东胜龙 ETC-821M 基因扩增仪</td><td class="c">1</td></tr><tr><td>荧光定量仪</td><td>满足常规分子实验操作要求</td><td>荧光计/杭州奥盛/Fluo-200</td><td class="c">1</td></tr><tr><td>全自动毛细管电泳仪</td><td>满足常规分子实验操作要求</td><td>全自动毛细管电泳仪/浙江光鼎/规格&amp;Qsep1</td><td class="c">1</td></tr><tr><td>单道移液器</td><td>量程分档覆盖 0.1–1000 µL，精度符合 GB/T 39374；分档：0.1-2.0µl、0.5-10µl、2-20µl、10-100µl、20-200µl、100-1000µl</td><td>TIANGEN 单道移液器</td><td class="c">6</td></tr><tr class="grp"><td colspan="4">PCR8　测序区　（3 项）</td></tr><tr><td>抽湿机</td><td>根据实验室实际情况来进行配置</td><td>欧井 OJ-501E 抽湿机</td><td class="c">1</td></tr><tr><td>MGISEQ-2000 基因组测序仪</td><td>MGISEQ-2000测序仪</td><td>MGISEQ-2000 基因测序仪</td><td class="c">1</td></tr><tr><td>分析解读一体机</td><td>满足常规分子实验操作要求</td><td>Halos 肿瘤基因检测数据分析解读 一体机</td><td class="c">1</td></tr></tbody>
+</table></div>
+
+<h2>附件二　拟开展检测项目</h2>
+<p>下列检测项目所用试剂盒均已取得国家药品监督管理局第三类医疗器械注册证，共用收费编码 012100000200000「高通量测序法检测费（病理样本）」，价格已在物价目录内。<b>本附件用于说明平台的预期检测用途，不构成本次采购标的</b>。</p>
+<div class="tw"><table>
+  <caption>附表 2　拟开展检测项目（试剂另行采购）</caption>
+  <thead><tr><th style="width:2.6em">序号</th><th>试剂盒名称</th><th style="width:9.4em">注册证编号</th><th style="width:6em">注册适用范围</th><th style="width:5.4em">物价收费</th></tr></thead>
+  <tbody><tr><td class="c">1</td><td>EGFR/KRAS/ALK基因突变联合检测试剂盒（联合探针锚定聚合测序法）</td><td class="nw">国械注准20193400621</td><td>肺癌</td><td class="n">4,500 元</td></tr><tr><td class="c">2</td><td>人KRAS/BRAF/PIK3CA基因突变检测试剂盒（可逆末端终止测序法）</td><td class="nw">国械注准20223400638</td><td>结直肠癌</td><td class="n">4,500 元</td></tr><tr><td class="c">3</td><td>NTRK1/NTRK2/NTRK3基因融合检测试剂盒(可逆末端终止测序法)</td><td class="nw">国械注准20253402191</td><td>实体瘤</td><td class="n">4,500 元</td></tr><tr><td class="c">4</td><td>EGFR/ALK/ROS1/BRAF/KRAS/HER2基因突变检测试剂盒(可逆末端终止测序法)</td><td class="nw">国械注准20183400408</td><td>肺癌</td><td class="n">7,000 元</td></tr><tr><td class="c">5</td><td>非小细胞肺癌组织TMB检测试剂盒（可逆末端终止测序法）</td><td class="nw">国械注准20233401452</td><td>肺癌TMB</td><td class="n">9,900 元</td></tr></tbody>
+</table></div>
+
+<p class="close">以上招标需求，请各位领导及相关职能部门审阅并提出修改意见。</p>
+
+<div class="sign">
+  <div class="u">苏州市立医院分子诊断中心</div>
+  <div>二〇二六年九月九日</div>
+</div>
+
+</div>
