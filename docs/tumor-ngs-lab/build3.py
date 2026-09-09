@@ -100,8 +100,26 @@ for r in ws2.iter_rows(min_row=2,values_only=True):
 kits=('<thead><tr><th>#</th><th>试剂盒 / 生产厂家</th><th>注册证号</th><th>注册适用范围</th>'
       '<th>可拓展适用范围</th><th style="text-align:right">物价收费</th></tr></thead><tbody>'+"".join(kr)+'</tbody>')
 
+
+# ---------- 其他已注册可选试剂盒（参考，公开注册信息核对） ----------
+REF=[
+ ("国械注准20183400507","人类10基因突变联合检测试剂盒（可逆末端终止测序法）","厦门艾德生物医药科技股份有限公司",
+  "非小细胞肺癌、结直肠癌",
+  "EGFR / ALK / ROS1 / RET / KRAS / NRAS / PIK3CA / BRAF / HER2 / MET 十基因联检；2018 年经创新医疗器械特别审批通道获批，为国内较早获批的肿瘤 NGS 产品之一"),
+ ("国械注准20193400099","人BRCA1/BRCA2基因突变检测试剂盒（可逆末端终止测序法）","厦门艾德生物医药科技股份有限公司",
+  "卵巢癌、乳腺癌、前列腺癌",
+  "检测编码区、外显子-内含子连接区与 UTR 区的点突变、插入缺失及纯合缺失；用于 PARP 抑制剂的伴随诊断"),
+]
+refrows="".join(
+  f'<tr><td class="code">{E(a)}</td>'
+  f'<td class="w"><b>{E(b)}</b><br><span style="font-size:12px;color:var(--muted)">{E(c)}</span></td>'
+  f'<td style="min-width:7em">{E(d)}</td>'
+  f'<td class="w" style="font-size:12.5px;color:var(--ink-2)">{E(e)}</td></tr>' for a,b,c,d,e in REF)
+REFTBL=('<thead><tr><th>注册证编号</th><th>试剂盒 / 生产厂家</th><th>注册适用范围</th><th>说明</th></tr></thead>'
+        '<tbody>'+refrows+'</tbody>')
+
 t=open("tpl3.html",encoding="utf-8").read()
-for k,v in (("__FLOW__",FLOW),("__EQUIP__","\n".join(rows)),("__KITS__",kits)):
+for k,v in (("__FLOW__",FLOW),("__EQUIP__","\n".join(rows)),("__KITS__",kits),("__REF__",REFTBL)):
     assert k in t, k
     t=t.replace(k,v)
 for banned in ("现场门牌","落位要点","非按比例平面图","我方","院方"):
