@@ -105,7 +105,10 @@
 
 | 文件 | 说明 |
 | --- | --- |
-| `ngs-tender.html` | 成品，黑白 A4 版式，浏览器可直接打印 |
+| `ngs-tender.html` | 采购需求版成品，黑白 A4 版式 |
+| `苏州市立医院-肿瘤NGS平台招标需求.docx` | 采购需求版 Word，交付格式 |
+| `ngs-plan.html` | 服务内容版成品 |
+| `苏州市立医院-肿瘤NGS平台建设需求.docx` | 服务内容版 Word，交付格式 |
 | `tender_head.html` / `tender_body.html` | 样式头与正文模板 |
 | `build_tender.py` | 生成 HTML，含守卫 |
 | `build_tender_docx.js` | 生成 Word 版，运行前自动调用 `export_docx_data.py` 重导数据 |
@@ -117,3 +120,8 @@
 docx-js 生成段落边框时子元素顺序与 OOXML 要求冲突，同时带上下框线的段落无法
 通过 schema 校验；如需框线段落，改用单格表格。本容器 LibreOffice 无法启动，
 Word 版仅通过 XML schema 校验与结构回读，未做渲染视觉复核。
+
+## 交付格式
+
+只交付 Word，不出 PDF。Word 可由院方直接编辑、批注与套用文头，PDF 在这个
+场景下没有额外用处。HTML 保留为版式与内容的单一来源，Word 由脚本从中生成。
