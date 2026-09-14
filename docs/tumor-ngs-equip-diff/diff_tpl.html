@@ -1,0 +1,99 @@
+<title>肿瘤NGS设备清单变更对照（9.13 vs 9.12）</title>
+<style>
+:root{
+  --song:"Source Han Serif SC","Noto Serif CJK SC",serif;
+  --hei:"Source Han Sans SC","Noto Sans CJK SC",sans-serif;
+  --ink:#1A1A1A; --ink-2:#555; --line:#D4D4D4; --line-2:#000;
+  --bg:#F0F0F0; --paper:#FFFFFF;
+  --add:#1B7A3D; --add-bg:#E6F4EA;
+  --chg:#9A6200; --chg-bg:#FDF2DC;
+  --move:#6B3FA0; --move-bg:#F1EAFA;
+  --del:#A32020; --del-bg:#FBEAEA;
+  --todo:#8A4B00; --todo-bg:#FFE9D6;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--song);
+     font-size:15px;line-height:1.85;-webkit-font-smoothing:antialiased}
+.page{max-width:820px;margin:24px auto;background:var(--paper);
+      padding:52px 56px 64px;box-shadow:0 1px 3px rgba(0,0,0,.14)}
+.org{text-align:center;font-family:var(--hei);font-size:13px;letter-spacing:.35em;color:var(--ink-2)}
+h1{font-family:var(--song);font-weight:700;font-size:25px;text-align:center;margin:10px 0 4px}
+.subtitle{text-align:center;color:var(--ink-2);font-size:13.5px;margin:0}
+hr.rule2{border:0;border-top:2.5px solid var(--line-2);margin:20px 0 0}
+hr.rule1{border:0;border-top:1px solid var(--line-2);margin:2px 0 24px}
+h2{font-family:var(--hei);font-size:16px;font-weight:700;margin:30px 0 10px}
+p{margin:0 0 10px;text-align:justify}
+.tw{margin:12px 0 8px;overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:12.6px;line-height:1.6}
+th,td{padding:6px 8px;vertical-align:top;border-bottom:1px solid var(--line)}
+thead th{font-family:var(--hei);border-top:2.5px solid var(--line-2);
+         border-bottom:1.2px solid var(--line-2);text-align:left;white-space:nowrap}
+tbody tr:last-child td{border-bottom:2.5px solid var(--line-2)}
+td.c{text-align:center;white-space:nowrap}
+tr.grp td{background:#F2F2F2;font-family:var(--hei);font-size:13px;padding:8px}
+tr.grp .stp{color:var(--ink-2);font-size:12px;font-family:var(--song)}
+tr.grp .nt{font-family:var(--song);font-size:11.8px;color:var(--ink-2);margin-top:3px;font-weight:400}
+tr.add td{background:var(--add-bg)}
+tr.chg td{background:var(--chg-bg)}
+tr.move td{background:var(--move-bg)}
+tr.del td{background:var(--del-bg)}
+.p{display:inline-block;font-family:var(--hei);font-size:10.5px;line-height:1.5;
+   padding:0 5px;margin-left:5px;border-radius:2px;vertical-align:1px;white-space:nowrap}
+.p.add{color:#fff;background:var(--add)} .p.chg{color:#fff;background:var(--chg)}
+.p.move{color:#fff;background:var(--move)} .p.del{color:#fff;background:var(--del)}
+.p.todo{color:#fff;background:var(--todo)}
+.old{color:var(--chg);font-size:11.5px;margin-top:2px}
+s{color:var(--ink-2)}
+.lg{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:12.5px;margin:10px 0 4px}
+.lg i{font-style:normal;display:inline-block;width:14px;height:14px;border-radius:2px;
+      margin-right:5px;vertical-align:-2px;border:1px solid rgba(0,0,0,.12)}
+.sum{border-collapse:collapse;width:100%;font-size:12.8px}
+.sum th,.sum td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left}
+.sum thead th{font-family:var(--hei);border-top:2.5px solid var(--line-2);border-bottom:1.2px solid var(--line-2)}
+.sum tbody tr:last-child td{border-bottom:2.5px solid var(--line-2)}
+@media print{
+  body{background:#fff} .page{box-shadow:none;margin:0;padding:0;max-width:none}
+  thead{display:table-header-group} tr{break-inside:avoid}
+  h2{break-after:avoid}
+}
+@media (max-width:560px){ .page{padding:24px 16px 40px} }
+</style>
+
+<div class="page">
+<div class="org">苏州市立医院分子诊断中心</div>
+<h1>肿瘤 NGS 平台设备清单　变更对照</h1>
+<p class="subtitle">底稿：9.12 版（szwzf）　·　本稿：9.13 版（郭鹏达）</p>
+<hr class="rule2"><hr class="rule1">
+
+<h2>一、分区结构的变化</h2>
+<p>9.13 版把分区由 <b>8 间调整为 9 间</b>，核心是三件事：<b>破碎区并入文库制备区</b>、<b>扩增拆成一区与二区</b>、<b>电泳单独成间</b>。</p>
+<div class="tw"><table class="sum">
+ <thead><tr><th style="width:15em">9.12 版（8 间）</th><th style="width:15em">9.13 版（9 间）</th><th>说明</th></tr></thead>
+ <tbody>
+  <tr><td>试剂准备间</td><td>试剂准备间</td><td>未变</td></tr>
+  <tr><td>PCR2 样本制备区（组织）</td><td>PCR2 样本制备区（组织）</td><td>未变</td></tr>
+  <tr><td>PCR3 样本制备区（血浆）</td><td>PCR3 样本制备区（血浆）</td><td>未变</td></tr>
+  <tr><td>PCR4 破碎区<br>PCR5 文库制备区</td><td><b>PCR4 文库制备区</b></td><td><b>两间合并</b>：核酸片段化＋末端修复＋接头连接＋文库构建同区完成</td></tr>
+  <tr><td>—</td><td><b>PCR5 扩增一区</b></td><td>原 PCR5 腾出，改作<b>文库预扩增</b></td></tr>
+  <tr><td>PCR6 杂交捕获区</td><td>PCR6 杂交捕获区</td><td>步骤增加「纯化」</td></tr>
+  <tr><td>PCR7 扩增区<br>（捕获后扩增＋上机前质检）</td><td><b>PCR7 扩增二区</b><br>（捕获后扩增）</td><td>上机前质检移出</td></tr>
+  <tr><td>PCR8 测序区</td><td>PCR8 测序区</td><td>未变</td></tr>
+  <tr><td>—</td><td><b>PCR9 电泳</b></td><td><b>新增分区</b>，承接原 PCR7 的上机前质检</td></tr>
+ </tbody>
+</table></div>
+<p>规模：<b>60 行／104 台（件）　→　70 行／106 台（件）</b>。净增 10 行、2 台（件）。</p>
+
+<h2>二、逐行对照</h2>
+<div class="lg">
+  <span><i style="background:var(--add-bg);border-color:var(--add)"></i>新增</span>
+  <span><i style="background:var(--move-bg);border-color:var(--move)"></i>由其他分区调入</span>
+  <span><i style="background:var(--chg-bg);border-color:var(--chg)"></i>参数／数量修改（表内注明原值）</span>
+  <span><i style="background:var(--del-bg);border-color:var(--del)"></i>移出本区</span>
+  <span><span class="p todo" style="margin-left:0">待补</span> 厂商与型号未填</span>
+  <span>无底色＝未变</span>
+</div>
+<div class="tw"><table>
+ <thead><tr><th style="width:10.5em">产品名称</th><th style="width:7.6em">建议厂商</th><th style="width:13em">建议规格型号</th><th style="width:3em">数量</th><th style="width:8em">用途</th><th style="width:3.6em">变更</th></tr></thead>
+ <tbody>__ROWS__</tbody>
+</table></div>
+</div>

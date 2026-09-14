@@ -1,0 +1,99 @@
+<title>肿瘤NGS设备清单变更对照（9.13 vs 9.12）</title>
+<style>
+:root{
+  --song:"Source Han Serif SC","Noto Serif CJK SC",serif;
+  --hei:"Source Han Sans SC","Noto Sans CJK SC",sans-serif;
+  --ink:#1A1A1A; --ink-2:#555; --line:#D4D4D4; --line-2:#000;
+  --bg:#F0F0F0; --paper:#FFFFFF;
+  --add:#1B7A3D; --add-bg:#E6F4EA;
+  --chg:#9A6200; --chg-bg:#FDF2DC;
+  --move:#6B3FA0; --move-bg:#F1EAFA;
+  --del:#A32020; --del-bg:#FBEAEA;
+  --todo:#8A4B00; --todo-bg:#FFE9D6;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--song);
+     font-size:15px;line-height:1.85;-webkit-font-smoothing:antialiased}
+.page{max-width:820px;margin:24px auto;background:var(--paper);
+      padding:52px 56px 64px;box-shadow:0 1px 3px rgba(0,0,0,.14)}
+.org{text-align:center;font-family:var(--hei);font-size:13px;letter-spacing:.35em;color:var(--ink-2)}
+h1{font-family:var(--song);font-weight:700;font-size:25px;text-align:center;margin:10px 0 4px}
+.subtitle{text-align:center;color:var(--ink-2);font-size:13.5px;margin:0}
+hr.rule2{border:0;border-top:2.5px solid var(--line-2);margin:20px 0 0}
+hr.rule1{border:0;border-top:1px solid var(--line-2);margin:2px 0 24px}
+h2{font-family:var(--hei);font-size:16px;font-weight:700;margin:30px 0 10px}
+p{margin:0 0 10px;text-align:justify}
+.tw{margin:12px 0 8px;overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:12.6px;line-height:1.6}
+th,td{padding:6px 8px;vertical-align:top;border-bottom:1px solid var(--line)}
+thead th{font-family:var(--hei);border-top:2.5px solid var(--line-2);
+         border-bottom:1.2px solid var(--line-2);text-align:left;white-space:nowrap}
+tbody tr:last-child td{border-bottom:2.5px solid var(--line-2)}
+td.c{text-align:center;white-space:nowrap}
+tr.grp td{background:#F2F2F2;font-family:var(--hei);font-size:13px;padding:8px}
+tr.grp .stp{color:var(--ink-2);font-size:12px;font-family:var(--song)}
+tr.grp .nt{font-family:var(--song);font-size:11.8px;color:var(--ink-2);margin-top:3px;font-weight:400}
+tr.add td{background:var(--add-bg)}
+tr.chg td{background:var(--chg-bg)}
+tr.move td{background:var(--move-bg)}
+tr.del td{background:var(--del-bg)}
+.p{display:inline-block;font-family:var(--hei);font-size:10.5px;line-height:1.5;
+   padding:0 5px;margin-left:5px;border-radius:2px;vertical-align:1px;white-space:nowrap}
+.p.add{color:#fff;background:var(--add)} .p.chg{color:#fff;background:var(--chg)}
+.p.move{color:#fff;background:var(--move)} .p.del{color:#fff;background:var(--del)}
+.p.todo{color:#fff;background:var(--todo)}
+.old{color:var(--chg);font-size:11.5px;margin-top:2px}
+s{color:var(--ink-2)}
+.lg{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:12.5px;margin:10px 0 4px}
+.lg i{font-style:normal;display:inline-block;width:14px;height:14px;border-radius:2px;
+      margin-right:5px;vertical-align:-2px;border:1px solid rgba(0,0,0,.12)}
+.sum{border-collapse:collapse;width:100%;font-size:12.8px}
+.sum th,.sum td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left}
+.sum thead th{font-family:var(--hei);border-top:2.5px solid var(--line-2);border-bottom:1.2px solid var(--line-2)}
+.sum tbody tr:last-child td{border-bottom:2.5px solid var(--line-2)}
+@media print{
+  body{background:#fff} .page{box-shadow:none;margin:0;padding:0;max-width:none}
+  thead{display:table-header-group} tr{break-inside:avoid}
+  h2{break-after:avoid}
+}
+@media (max-width:560px){ .page{padding:24px 16px 40px} }
+</style>
+
+<div class="page">
+<div class="org">苏州市立医院分子诊断中心</div>
+<h1>肿瘤 NGS 平台设备清单　变更对照</h1>
+<p class="subtitle">底稿：9.12 版（szwzf）　·　本稿：9.13 版（郭鹏达）</p>
+<hr class="rule2"><hr class="rule1">
+
+<h2>一、分区结构的变化</h2>
+<p>9.13 版把分区由 <b>8 间调整为 9 间</b>，核心是三件事：<b>破碎区并入文库制备区</b>、<b>扩增拆成一区与二区</b>、<b>电泳单独成间</b>。</p>
+<div class="tw"><table class="sum">
+ <thead><tr><th style="width:15em">9.12 版（8 间）</th><th style="width:15em">9.13 版（9 间）</th><th>说明</th></tr></thead>
+ <tbody>
+  <tr><td>试剂准备间</td><td>试剂准备间</td><td>未变</td></tr>
+  <tr><td>PCR2 样本制备区（组织）</td><td>PCR2 样本制备区（组织）</td><td>未变</td></tr>
+  <tr><td>PCR3 样本制备区（血浆）</td><td>PCR3 样本制备区（血浆）</td><td>未变</td></tr>
+  <tr><td>PCR4 破碎区<br>PCR5 文库制备区</td><td><b>PCR4 文库制备区</b></td><td><b>两间合并</b>：核酸片段化＋末端修复＋接头连接＋文库构建同区完成</td></tr>
+  <tr><td>—</td><td><b>PCR5 扩增一区</b></td><td>原 PCR5 腾出，改作<b>文库预扩增</b></td></tr>
+  <tr><td>PCR6 杂交捕获区</td><td>PCR6 杂交捕获区</td><td>步骤增加「纯化」</td></tr>
+  <tr><td>PCR7 扩增区<br>（捕获后扩增＋上机前质检）</td><td><b>PCR7 扩增二区</b><br>（捕获后扩增）</td><td>上机前质检移出</td></tr>
+  <tr><td>PCR8 测序区</td><td>PCR8 测序区</td><td>未变</td></tr>
+  <tr><td>—</td><td><b>PCR9 电泳</b></td><td><b>新增分区</b>，承接原 PCR7 的上机前质检</td></tr>
+ </tbody>
+</table></div>
+<p>规模：<b>60 行／104 台（件）　→　70 行／106 台（件）</b>。净增 10 行、2 台（件）。</p>
+
+<h2>二、逐行对照</h2>
+<div class="lg">
+  <span><i style="background:var(--add-bg);border-color:var(--add)"></i>新增</span>
+  <span><i style="background:var(--move-bg);border-color:var(--move)"></i>由其他分区调入</span>
+  <span><i style="background:var(--chg-bg);border-color:var(--chg)"></i>参数／数量修改（表内注明原值）</span>
+  <span><i style="background:var(--del-bg);border-color:var(--del)"></i>移出本区</span>
+  <span><span class="p todo" style="margin-left:0">待补</span> 厂商与型号未填</span>
+  <span>无底色＝未变</span>
+</div>
+<div class="tw"><table>
+ <thead><tr><th style="width:10.5em">产品名称</th><th style="width:7.6em">建议厂商</th><th style="width:13em">建议规格型号</th><th style="width:3em">数量</th><th style="width:8em">用途</th><th style="width:3.6em">变更</th></tr></thead>
+ <tbody><tr class="grp"><td colspan="6"><b>试剂准备间</b>　<span class="stp">试剂配制与分装</span></td></tr><tr class=""><td>超净工作台</td><td>澳柯玛</td><td>ACB-1300V</td><td class="c">1</td><td>试剂配制</td><td class="c">—</td></tr><tr class=""><td>纯水仪</td><td>锐思捷</td><td>UNIQ-G1</td><td class="c">1</td><td>实验用水制备</td><td class="c">—</td></tr><tr class=""><td>计时器</td><td>得力</td><td>—</td><td class="c">1</td><td>流程计时</td><td class="c">—</td></tr><tr class=""><td>温湿度计</td><td>雨花泽</td><td>YHZ-90191</td><td class="c">1</td><td>环境监测</td><td class="c">—</td></tr><tr class="chg"><td>单道移液器<span class="p chg">修改</span></td><td>TIANGEN</td><td>0.5-10µL／10-100µL／20-200µL／100-1000µL<div class="old">原：型号 0.1-2.0µL／0.5-10µL／2-20µL／10-100µL／20-200µL／100-1000µL；数量 6</div></td><td class="c">4</td><td>分子实验操作常规设备</td><td class="c">修改</td></tr><tr class="grp"><td colspan="6"><b>PCR2样本制备区（组织）</b>　<span class="stp">组织前处理＋基因组 DNA 提取</span></td></tr><tr class=""><td>计时器</td><td>得力</td><td>—</td><td class="c">1</td><td>流程计时</td><td class="c">—</td></tr><tr class=""><td>温湿度计</td><td>雨花泽</td><td>YHZ-90191</td><td class="c">1</td><td>环境监测</td><td class="c">—</td></tr><tr class="chg"><td>单道移液器<span class="p chg">修改</span></td><td>TIANGEN</td><td>0.5-10µL／10-100µL／20-200µL／100-1000µL<div class="old">原：型号 0.1-2.0µL／0.5-10µL／2-20µL／10-100µL／20-200µL／100-1000µL；数量 6</div></td><td class="c">4</td><td>分子实验操作常规设备</td><td class="c">修改</td></tr><tr class=""><td>八道移液器</td><td>TIANGEN</td><td>0.5-10 µL／5-50 µL／30-300 µL</td><td class="c">3</td><td>分子实验操作常规设备</td><td class="c">—</td></tr><tr class=""><td>高速离心机</td><td>湘仪</td><td>HT165R</td><td class="c">1</td><td>纯化与分离</td><td class="c">—</td></tr><tr class=""><td>磁力架</td><td>碳环智造／世和（定制）</td><td>Mag-16W／MagSH-16-1.5mL</td><td class="c">2</td><td>磁珠纯化</td><td class="c">—</td></tr><tr class=""><td>生物安全柜（A2型）</td><td>苏净安泰</td><td>BSC-1304ⅡA2</td><td class="c">1</td><td>开放性生物样本操作</td><td class="c">—</td></tr><tr class=""><td>恒温混匀仪</td><td>瑞诚仪器</td><td>—</td><td class="c">1</td><td>温控孵育与混匀</td><td class="c">—</td></tr><tr class=""><td>荧光计</td><td>Invitrogen（原厂）</td><td>Qubit 4.0</td><td class="c">1</td><td>核酸／文库浓度测定</td><td class="c">—</td></tr><tr class="grp"><td colspan="6"><b>PCR3样本制备区（血浆）</b>　<span class="stp">血浆分离＋游离 DNA 提取</span></td></tr><tr class=""><td>计时器</td><td>得力</td><td>—</td><td class="c">1</td><td>流程计时</td><td class="c">—</td></tr><tr class=""><td>温湿度计</td><td>雨花泽</td><td>YHZ-90191</td><td class="c">1</td><td>环境监测</td><td class="c">—</td></tr><tr class="chg"><td>单道移液器<span class="p chg">修改</span></td><td>TIANGEN</td><td>0.5-10µL／10-100µL／20-200µL／100-1000µL<div class="old">原：型号 0.1-2.0µL／0.5-10µL／2-20µL／10-100µL／20-200µL／100-1000µL；数量 6</div></td><td class="c">4</td><td>分子实验操作常规设备</td><td class="c">修改</td></tr><tr class=""><td>八道移液器</td><td>TIANGEN</td><td>0.5-10 µL／5-50 µL／30-300 µL</td><td class="c">3</td><td>分子实验操作常规设备</td><td class="c">—</td></tr><tr class=""><td>冷冻离心机</td><td>湘仪</td><td>H2050R</td><td class="c">1</td><td>血浆分离</td><td class="c">—</td></tr><tr class=""><td>高速离心机</td><td>湘仪</td><td>HT165R</td><td class="c">1</td><td>纯化与分离</td><td class="c">—</td></tr><tr class=""><td>磁力架</td><td>碳环智造／世和（定制）</td><td>Mag-16W／MagSH-16-1.5mL／MagSH-16-5mL</td><td class="c">3</td><td>磁珠纯化</td><td class="c">—</td></tr><tr class=""><td>生物安全柜（A2型）</td><td>苏净安泰</td><td>BSC-1304ⅡA2</td><td class="c">1</td><td>开放性生物样本操作</td><td class="c">—</td></tr><tr class=""><td>恒温混匀仪</td><td>瑞诚仪器</td><td>—</td><td class="c">1</td><td>温控孵育与混匀</td><td class="c">—</td></tr><tr class=""><td>荧光计</td><td>Invitrogen（原厂）</td><td>Qubit 4.0</td><td class="c">1</td><td>核酸／文库浓度测定</td><td class="c">—</td></tr><tr class="grp"><td colspan="6"><b>PCR4文库制备区</b>　<span class="stp">核酸片段化+末端修复＋接头连接＋文库构建</span>　<span class="p chg">改名</span> <s>PCR4破碎区</s>　<span class="p chg">步骤</span> <s>基因组 DNA 超声片段化</s><div class="nt">原「PCR4 破碎区」与「PCR5 文库制备区」合并为一间，片段化与建库同区完成</div></td></tr><tr class=""><td>超声波破碎仪</td><td>Covaris</td><td>M220</td><td class="c">1</td><td>DNA 片段化</td><td class="c">—</td></tr><tr class=""><td>制冰机</td><td>知信</td><td>ZX-20X</td><td class="c">1</td><td>实验用冰制备</td><td class="c">—</td></tr><tr class="move"><td>单道移液器<span class="p move">调入</span></td><td>TIANGEN</td><td>0.5-10µL／10-100µL／20-200µL／100-1000µL</td><td class="c">4</td><td>分子实验操作常规设备</td><td class="c">调入</td></tr><tr class="move"><td>八道移液器<span class="p move">调入</span></td><td>TIANGEN</td><td>0.5-10 µL／5-50 µL／30-300 µL</td><td class="c">3</td><td>分子实验操作常规设备</td><td class="c">调入</td></tr><tr class="move"><td>PCR扩增仪<span class="p move">调入</span><span class="p todo">待补</span></td><td>—</td><td>—</td><td class="c">1</td><td>末端修复+接头连接</td><td class="c">调入</td></tr><tr class="move"><td>漩涡振荡器<span class="p move">调入</span><span class="p todo">待补</span></td><td>—</td><td>—</td><td class="c">1</td><td>混匀</td><td class="c">调入</td></tr><tr class="move"><td>掌式离心机<span class="p move">调入</span><span class="p todo">待补</span></td><td>—</td><td>—</td><td class="c">1</td><td>瞬时离心</td><td class="c">调入</td></tr><tr class="move"><td>磁力架<span class="p move">调入</span><span class="p todo">待补</span></td><td>—</td><td>—</td><td class="c">2</td><td>磁珠纯化</td><td class="c">调入</td></tr><tr class="move"><td>计时器<span class="p move">调入</span><span class="p todo">待补</span></td><td>—</td><td>—</td><td class="c">1</td><td>流程计时</td><td class="c">调入</td></tr><tr class="move"><td>温湿度计<span class="p move">调入</span><span class="p todo">待补</span></td><td>—</td><td>—</td><td class="c">1</td><td>环境监测</td><td class="c">调入</td></tr><tr class="move"><td>生物安全柜（A2型）<span class="p move">调入</span><span class="p todo">待补</span></td><td>—</td><td>—</td><td class="c">1</td><td>—</td><td class="c">调入</td></tr><tr class="grp"><td colspan="6"><b>PCR5扩增一区</b>　<span class="stp">文库预扩增</span>　<span class="p chg">改名</span> <s>PCR5文库制备区</s>　<span class="p chg">步骤</span> <s>末端修复＋接头连接＋文库构建</s><div class="nt">原「PCR5 文库制备区」腾出，改作文库预扩增</div></td></tr><tr class=""><td>温湿度计</td><td>雨花泽</td><td>YHZ-90191</td><td class="c">1</td><td>环境监测</td><td class="c">—</td></tr><tr class=""><td>漩涡振荡器</td><td>华大智造</td><td>Top-Mix</td><td class="c">1</td><td>混匀</td><td class="c">—</td></tr><tr class=""><td>掌式离心机</td><td>华大智造</td><td>Top-Spin</td><td class="c">1</td><td>瞬时离心</td><td class="c">—</td></tr><tr class=""><td>PCR扩增仪</td><td>东胜龙</td><td>ETC-821M</td><td class="c">1</td><td>文库孵育／文库扩增</td><td class="c">—</td></tr><tr class=""><td>磁力架</td><td>碳环智造／世和（定制）</td><td>Mag-16W／MagSH-96-0.2mL＋辅助支架</td><td class="c">2</td><td>磁珠纯化</td><td class="c">—</td></tr><tr class=""><td>96孔磁力架（八排管）</td><td>碳环智造</td><td>Mag-96A</td><td class="c">1</td><td>磁珠纯化（96 孔）</td><td class="c">—</td></tr><tr class=""><td>荧光计</td><td>Invitrogen（原厂）</td><td>Qubit 4.0</td><td class="c">1</td><td>核酸／文库浓度测定</td><td class="c">—</td></tr><tr class="chg"><td>计时器<span class="p chg">修改</span><span class="p todo">待补</span></td><td>—</td><td>—<div class="old">原：厂商 得力；型号 —</div></td><td class="c">1</td><td>流程计时</td><td class="c">修改</td></tr><tr class="grp"><td colspan="6"><b>PCR6杂交捕获区</b>　<span class="stp">纯化+探针杂交＋磁珠捕获</span>　<span class="p chg">步骤</span> <s>探针杂交＋磁珠捕获</s></td></tr><tr class=""><td>计时器</td><td>得力</td><td>—</td><td class="c">1</td><td>流程计时</td><td class="c">—</td></tr><tr class=""><td>温湿度计</td><td>雨花泽</td><td>YHZ-90191</td><td class="c">1</td><td>环境监测</td><td class="c">—</td></tr><tr class=""><td>掌式离心机</td><td>华大智造</td><td>Top-Spin</td><td class="c">1</td><td>瞬时离心</td><td class="c">—</td></tr><tr class="chg"><td>单道移液器<span class="p chg">修改</span></td><td>TIANGEN</td><td>0.5-10µL／10-100µL／20-200µL／100-1000µL<div class="old">原：型号 0.1-2.0µL／0.5-10µL／2-20µL／10-100µL／20-200µL／100-1000µL；数量 6</div></td><td class="c">4</td><td>分子实验操作常规设备</td><td class="c">修改</td></tr><tr class=""><td>八道移液器</td><td>TIANGEN</td><td>0.5-10 µL／5-50 µL／30-300 µL</td><td class="c">3</td><td>分子实验操作常规设备</td><td class="c">—</td></tr><tr class=""><td>PCR扩增仪</td><td>东胜龙</td><td>ETC-821M</td><td class="c">1</td><td>文库孵育／文库扩增</td><td class="c">—</td></tr><tr class=""><td>垂直混匀仪</td><td>拓赫</td><td>HS-3</td><td class="c">1</td><td>杂交孵育混匀</td><td class="c">—</td></tr><tr class=""><td>高速离心机</td><td>湘仪</td><td>HT165R</td><td class="c">1</td><td>纯化与分离</td><td class="c">—</td></tr><tr class=""><td>磁力架</td><td>碳环智造／世和（定制）</td><td>Mag-16W／MagSH-96-0.2mL＋辅助支架／MagSH-16-1.5mL</td><td class="c">3</td><td>磁珠纯化</td><td class="c">—</td></tr><tr class=""><td>96孔磁力架（八排管）</td><td>碳环智造</td><td>Mag-96A</td><td class="c">1</td><td>磁珠纯化（96 孔）</td><td class="c">—</td></tr><tr class=""><td>恒温混匀仪</td><td>瑞诚仪器</td><td>—</td><td class="c">1</td><td>温控孵育与混匀</td><td class="c">—</td></tr><tr class=""><td>真空离心浓缩干燥仪</td><td>待定</td><td>待定</td><td class="c">1</td><td>捕获后样本与文库浓缩</td><td class="c">—</td></tr><tr class=""><td>荧光计</td><td>Invitrogen（原厂）</td><td>Qubit 4.0</td><td class="c">1</td><td>核酸／文库浓度测定</td><td class="c">—</td></tr><tr class="grp"><td colspan="6"><b>PCR7扩增二区</b>　<span class="stp">捕获后扩增</span>　<span class="p chg">改名</span> <s>PCR7扩增区</s>　<span class="p chg">步骤</span> <s>捕获后扩增＋上机前质检</s><div class="nt">原「PCR7 扩增区」，上机前质检移出</div></td></tr><tr class=""><td>计时器</td><td>得力</td><td>—</td><td class="c">1</td><td>流程计时</td><td class="c">—</td></tr><tr class=""><td>温湿度计</td><td>雨花泽</td><td>YHZ-90191</td><td class="c">1</td><td>环境监测</td><td class="c">—</td></tr><tr class="chg"><td>单道移液器<span class="p chg">修改</span></td><td>TIANGEN</td><td>0.5-10µL／10-100µL／20-200µL／100-1000µL<div class="old">原：型号 0.1-2.0µL／0.5-10µL／2-20µL／10-100µL／20-200µL／100-1000µL；数量 6</div></td><td class="c">4</td><td>分子实验操作常规设备</td><td class="c">修改</td></tr><tr class=""><td>PCR扩增仪</td><td>东胜龙</td><td>ETC-821M</td><td class="c">1</td><td>文库孵育／文库扩增</td><td class="c">—</td></tr><tr class=""><td>磁力架</td><td>世和（定制）</td><td>MagSH-16-1.5mL</td><td class="c">1</td><td>磁珠纯化</td><td class="c">—</td></tr><tr class=""><td>荧光计</td><td>Invitrogen（原厂）</td><td>Qubit 4.0</td><td class="c">1</td><td>核酸／文库浓度测定</td><td class="c">—</td></tr><tr class="del"><td colspan="6"><s>全自动毛细管电泳仪</s>　<span class="p del">移出</span>移至 PCR9</td></tr><tr class="grp"><td colspan="6"><b>PCR8测序区</b>　<span class="stp">上机测序＋数据分析</span></td></tr><tr class=""><td>MGISEQ-2000 基因组测序仪</td><td>华大智造</td><td>MGISEQ-2000</td><td class="c">1</td><td>基因测序</td><td class="c">—</td></tr><tr class=""><td>分析解读一体机</td><td>华大基因</td><td>Halos 一体机</td><td class="c">1</td><td>数据分析与报告解读</td><td class="c">—</td></tr><tr class=""><td>服务器</td><td>世和（定制）</td><td>待定</td><td class="c">1</td><td>生信分析与数据存储</td><td class="c">—</td></tr><tr class=""><td>抽湿机</td><td>欧井</td><td>OJ-501E</td><td class="c">1</td><td>环境湿度控制</td><td class="c">—</td></tr><tr class="grp"><td colspan="6"><b>PCR9电泳</b>　<span class="stp">上机前质控</span>　<span class="p add">新增分区</span><div class="nt">新增分区，承接原 PCR7 的上机前质检</div></td></tr><tr class="add"><td>计时器<span class="p add">新增</span></td><td>得力</td><td>—</td><td class="c">1</td><td>流程计时</td><td class="c">新增</td></tr><tr class="add"><td>温湿度计<span class="p add">新增</span></td><td>雨花泽</td><td>YHZ-90191</td><td class="c">1</td><td>环境监测</td><td class="c">新增</td></tr><tr class="add"><td>单道移液器<span class="p add">新增</span></td><td>TIANGEN</td><td>0.5-10µL／10-100µL／20-200µL／100-1000µL</td><td class="c">4</td><td>分子实验操作常规设备</td><td class="c">新增</td></tr><tr class="add"><td>全自动毛细管电泳仪<span class="p add">新增</span></td><td>浙江光鼎</td><td>Qsep1</td><td class="c">1</td><td>文库片段分布分析</td><td class="c">新增</td></tr></tbody>
+</table></div>
+</div>
