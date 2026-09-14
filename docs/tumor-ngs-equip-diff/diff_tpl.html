@@ -43,6 +43,8 @@ tr.del td{background:var(--del-bg)}
 .p.move{color:#fff;background:var(--move)} .p.del{color:#fff;background:var(--del)}
 .p.todo{color:#fff;background:var(--todo)}
 .old{color:var(--chg);font-size:11.5px;margin-top:2px}
+.gt{color:var(--ink-2);font-size:11.5px;margin-top:2px}
+td.sm{font-size:11.5px;color:var(--ink-2)}
 s{color:var(--ink-2)}
 .lg{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:12.5px;margin:10px 0 4px}
 .lg i{font-style:normal;display:inline-block;width:14px;height:14px;border-radius:2px;
@@ -85,8 +87,8 @@ s{color:var(--ink-2)}
 
 <h2>二、逐行对照</h2>
 <div class="lg">
-  <span><i style="background:var(--add-bg);border-color:var(--add)"></i>新增</span>
-  <span><i style="background:var(--move-bg);border-color:var(--move)"></i>由其他分区调入</span>
+  <span><i style="background:var(--add-bg);border-color:var(--add)"></i>新增（全院总数增加，需增配）</span>
+  <span><i style="background:var(--move-bg);border-color:var(--move)"></i>调入（全院总数未变，只换了分区）</span>
   <span><i style="background:var(--chg-bg);border-color:var(--chg)"></i>参数／数量修改（表内注明原值）</span>
   <span><i style="background:var(--del-bg);border-color:var(--del)"></i>移出本区</span>
   <span><span class="p todo" style="margin-left:0">待补</span> 厂商与型号未填</span>
@@ -96,4 +98,19 @@ s{color:var(--ink-2)}
  <thead><tr><th style="width:10.5em">产品名称</th><th style="width:7.6em">建议厂商</th><th style="width:13em">建议规格型号</th><th style="width:3em">数量</th><th style="width:8em">用途</th><th style="width:3.6em">变更</th></tr></thead>
  <tbody>__ROWS__</tbody>
 </table></div>
+
+<h2>三、全院台件数的变化</h2>
+<p>「调入」与「新增」的分界在这张表：<b>全院合计没变的是换了分区，合计增加的才需要增配</b>。净差额只有 +2 台（件），但那是移液器减 8 支抵掉的结果——真正增加的是仪器。</p>
+<div class="tw"><table>
+ <thead><tr><th style="width:9.6em">设备</th><th style="width:4em">9.12</th><th style="width:4em">9.13</th><th style="width:3.6em">差额</th><th>9.12 分布</th><th>9.13 分布</th></tr></thead>
+ <tbody>__QTY__</tbody>
+</table></div>
+
+<h2>四、待补项：厂商与规格型号为空</h2>
+<p>9.13 版新拉出的行有 8 行未填厂商与型号，集中在 PCR4 与 PCR5。这些设备在 9.12 版中均有取值，右两列为建议回填值。</p>
+<div class="tw"><table>
+ <thead><tr><th style="width:10em">分区</th><th style="width:10em">产品名称</th><th style="width:3em">数量</th><th style="width:8.4em">建议厂商（据 9.12）</th><th>建议规格型号（据 9.12）</th></tr></thead>
+ <tbody>__TODO__</tbody>
+</table></div>
+<p class="subtitle" style="text-align:left;margin-top:14px">另：PCR4 的生物安全柜（A2 型）用途列为空；PCR6 与 PCR7 表内各有一整行空行，本对照稿已跳过，故行数按 70 行计。</p>
 </div>

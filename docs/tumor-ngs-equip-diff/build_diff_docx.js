@@ -67,11 +67,10 @@ const table = (w, rows) => new Table({ columnWidths: w,
 
 // 变更类别 → 底色 / 文字色
 const C = {
-  '新增':   { bg: 'E6F4EA', fg: '1B7A3D', lab: '新增' },
-  '新房间': { bg: 'E6F4EA', fg: '1B7A3D', lab: '新增' },
-  '移入':   { bg: 'F1EAFA', fg: '6B3FA0', lab: '调入' },
-  '修改':   { bg: 'FDF2DC', fg: '9A6200', lab: '修改' },
-  '未变':   { bg: null,     fg: null,     lab: '—'   },
+  '新增': { bg: 'E6F4EA', fg: '1B7A3D', lab: '新增' },
+  '调入': { bg: 'F1EAFA', fg: '6B3FA0', lab: '调入' },
+  '修改': { bg: 'FDF2DC', fg: '9A6200', lab: '修改' },
+  '未变': { bg: null,     fg: null,     lab: '—'   },
 };
 const DEL = { bg: 'FBEAEA', fg: 'A32020' };
 const TODO = { bg: 'FFE9D6', fg: '8A4B00' };
@@ -124,11 +123,11 @@ k.push(table(WA, [ head(['9.12 版（8 间）', '9.13 版（9 间）', '说明']
 k.push(P('规模：**60 行／104 台（件）　→　70 行／106 台（件）**。净增 10 行、2 台（件）。'));
 
 k.push(H2('二、逐行对照'));
-k.push(P('底色含义：绿＝新增，紫＝由其他分区调入，黄＝参数或数量修改（表内注明原值），红＝移出本区，无底色＝未变。「待补」标记表示厂商与型号尚未填写。', { size: 19 }));
+k.push(P('底色含义：绿＝**新增**（全院总数增加，需增配），紫＝**调入**（全院总数未变，只换了分区），黄＝参数或数量修改（表内注明原值），红＝移出本区，无底色＝未变。「待补」标记表示厂商与型号尚未填写。', { size: 19 }));
 
 const W = [2300, 1500, 2560, 560, 1700, 1240];
 const eq = [head(['产品名称', '建议厂商', '建议规格型号', '数量', '用途', '变更'], W)];
-D.forEach((g, gi) => {
+D.groups.forEach((g, gi) => {
   // 分区标题行
   const hd = [[{ t: g.room, hei: true, bold: true, size: 19 }, { t: '　' + g.step, size: 18, color: '555555' }]];
   const marks = [];
@@ -148,6 +147,7 @@ D.forEach((g, gi) => {
     if (r.todo) name.push({ t: '　待补', hei: true, size: 17, color: TODO.fg, bold: true });
     const mod = [[{ t: r.mod }]];
     if (r.old) mod.push([{ t: '原：' + r.old, size: 17, color: C['修改'].fg }]);
+    if (r.gtot) mod.push([{ t: r.gtot, size: 17, color: '555555' }]);
     const o = { bottom: HAIR, shade: c.bg };
     eq.push(new TableRow({ children: [
       seg([name], W[0], o), seg([[{ t: r.ven }]], W[1], o), seg(mod, W[2], o),
@@ -165,6 +165,33 @@ D.forEach((g, gi) => {
   });
 });
 k.push(table(W, eq));
+
+k.push(H2('三、全院台件数的变化'));
+k.push(P('「调入」与「新增」的分界在这张表：**全院合计没变的是换了分区，合计增加的才需要增配**。净差额只有 +2 台（件），但那是移液器减 8 支抵掉的结果——真正增加的是仪器。'));
+const WQ = [1800, 720, 720, 700, 2960, 2960];
+k.push(table(WQ, [ head(['设备', '9.12', '9.13', '差额', '9.12 分布', '9.13 分布'], WQ),
+  ...D.qty.map((m, i) => { const b = i === D.qty.length - 1 ? THICK : HAIR;
+    const c = m.d > 0 ? C['新增'] : { bg: DEL.bg, fg: DEL.fg };
+    const o = { bottom: b, shade: c.bg };
+    return new TableRow({ children: [
+      seg([[{ t: m.dev }]], WQ[0], o),
+      seg([[{ t: String(m.old) }]], WQ[1], { ...o, center: true }),
+      seg([[{ t: String(m.new), bold: true }]], WQ[2], { ...o, center: true }),
+      seg([[{ t: (m.d > 0 ? '+' : '') + m.d, bold: true, color: c.fg }]], WQ[3], { ...o, center: true }),
+      seg([[{ t: m.sby, size: 17, color: '555555' }]], WQ[4], o),
+      seg([[{ t: m.gby, size: 17, color: '555555' }]], WQ[5], o)] }); }) ]));
+
+k.push(H2('四、待补项：厂商与规格型号为空'));
+k.push(P('9.13 版新拉出的行有 8 行未填厂商与型号，集中在 PCR4 与 PCR5。这些设备在 9.12 版中均有取值，右两列为建议回填值。'));
+const WT = [2200, 2200, 620, 2100, 2740];
+k.push(table(WT, [ head(['分区', '产品名称', '数量', '建议厂商（据 9.12）', '建议规格型号（据 9.12）'], WT),
+  ...D.todos.map((x, i) => { const b = i === D.todos.length - 1 ? THICK : HAIR;
+    const o = { bottom: b, shade: TODO.bg };
+    return new TableRow({ children: [
+      seg([[{ t: x.room }]], WT[0], o), seg([[{ t: x.dev }]], WT[1], o),
+      seg([[{ t: x.qty }]], WT[2], { ...o, center: true }),
+      seg([[{ t: x.ven }]], WT[3], o), seg([[{ t: x.mod }]], WT[4], o)] }); }) ]));
+k.push(P('另：PCR4 的生物安全柜（A2 型）用途列为空；PCR6 与 PCR7 表内各有一整行空行，本对照稿已跳过，故行数按 70 行计。', { size: 19 }));
 
 k.push(new Paragraph({ children: [run('苏州市立医院分子诊断中心', { hei: true, bold: true })],
   alignment: AlignmentType.RIGHT, spacing: { before: 400, line: LINE }, indent: { right: 400 } }));

@@ -30,6 +30,17 @@ def where(gr):
     return w
 WS, WG = where(SS), where(GG)
 
+def totals(gr):
+    q=collections.Counter()
+    for items in gr.values():
+        for d,ven,mod,qty,use in items: q[d]+=int(qty or 0)
+    return q
+TS, TG = totals(SS), totals(GG)
+# 9.12 版里每台设备的厂商／型号，用作待补项的建议值
+REF={}
+for items in SS.values():
+    for d,ven,mod,qty,use in items: REF.setdefault(d,(ven,mod))
+
 out=[]; notes=[]
 for n,(gk,gitems) in sorted(Gby.items()):
     groom, gstep = gk
@@ -44,9 +55,10 @@ for n,(gk,gitems) in sorted(Gby.items()):
     rws=[]
     for d,ven,mod,qty,use in gitems:
         if sroom is None:
-            tag="新房间"
+            tag = "调入" if (d in TS and TS[d]==TG[d]) else "新增"
         elif d not in sidx:
-            tag = "移入" if (d in WS and WS[d]-{n}) else "新增"
+            # 只有全院总台件数未变，才是真正换了房间；否则是增配
+            tag = "调入" if (d in TS and TS[d]==TG[d]) else "新增"
         else:
             od=sitems[sidx[d]]
             diff=[]
@@ -57,7 +69,10 @@ for n,(gk,gitems) in sorted(Gby.items()):
             tag="修改" if diff else "未变"
         row={"dev":d,"ven":ven,"mod":mod,"qty":qty,"use":use,"tag":tag}
         if tag=="修改": row["diff"]=diff
-        if not ven.strip() and not mod.strip(): row["todo"]=True
+        if tag in ("新增","调入"): row["gtot"]=[TS.get(d,0), TG.get(d,0)]
+        if not ven.strip() and not mod.strip():
+            row["todo"]=True
+            if d in REF: row["ref"]=list(REF[d])
         rws.append(row)
     # 本房间在 szwzf 有、郭已没有的设备
     # 通用器具几乎每间都有，逐间报「移出」只是噪音；只报专用仪器的真实迁移
@@ -72,8 +87,16 @@ for n,(gk,gitems) in sorted(Gby.items()):
 for n,(sk,sitems) in sorted(Sby.items()):
     if n not in Gby: notes.append(f"整间取消：{sk[0]}（{len(sitems)} 项）")
 
-json.dump({"groups":out,"notes":notes}, open("equip_cmp.json","w",encoding="utf-8"),
-          ensure_ascii=False, indent=1)
+qty_moves=[{"dev":d,"old":TS.get(d,0),"new":TG.get(d,0),
+            "sby":dict(sorted(((r,sum(1*int(i[3] or 0) for i in v if i[0]==d)) for r,v in
+                      ((k[0],v) for k,v in SS.items())) )),
+            "gby":dict(sorted(((r,sum(1*int(i[3] or 0) for i in v if i[0]==d)) for r,v in
+                      ((k[0],v) for k,v in GG.items())) ))}
+           for d in sorted(set(TS)|set(TG)) if TS.get(d,0)!=TG.get(d,0)]
+todos=[{"room":g["hdr"]["room"], **{k:v for k,v in r.items() if k in ("dev","ref","qty","use")}}
+       for g in out for r in g["rows"] if r.get("todo")]
+json.dump({"groups":out,"notes":notes,"qty_moves":qty_moves,"todos":todos},
+          open("equip_cmp.json","w",encoding="utf-8"), ensure_ascii=False, indent=1)
 tot=sum(len(g["rows"]) for g in out)
 cnt=collections.Counter(r["tag"] for g in out for r in g["rows"])
 print("郭 9.13：",len(out),"个分区 ／",tot,"行 ／",
