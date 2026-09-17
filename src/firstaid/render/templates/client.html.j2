@@ -42,6 +42,43 @@ section{padding:32px 30px;border-bottom:1px solid var(--line)}
 padding-top:14px;border-top:1px solid var(--line)}
 .sub:first-of-type{border-top:0;padding-top:0;margin-top:0}
 
+/* ---- 1.5 查了什么 ---- */
+.scope{padding:28px 30px;border-bottom:1px solid var(--line);background:#FBFCFD}
+.scope .big{font-size:17px;font-weight:650;line-height:1.55;margin-bottom:4px}
+.scope .sd2{font-size:13px;color:var(--ink2);margin-bottom:18px}
+.ov{display:grid;gap:7px}
+.ovr{display:grid;grid-template-columns:8.4em 1fr auto;align-items:center;gap:10px}
+.ovr .nm{font-size:13.5px;color:var(--ink2)}
+.ovr .bar{height:9px;border-radius:5px;background:#E4E9ED;position:relative;overflow:hidden}
+.ovr .bar i{position:absolute;left:0;top:0;bottom:0;border-radius:5px;background:#C3CCD4}
+.ovr.hit .bar i{background:var(--act)}
+.ovr.hit .nm{color:var(--ink);font-weight:600}
+.ovr .ct{font-size:11.5px;color:var(--mute);font-variant-numeric:tabular-nums;
+min-width:5.4em;text-align:right}
+.ovr.hit .ct{color:var(--act);font-weight:600}
+
+/* ---- 决定性数值 ---- */
+.nums{display:grid;gap:6px;margin:11px 0 4px}
+.nrow{display:grid;grid-template-columns:1fr auto auto;gap:9px;align-items:baseline;
+font-size:13.5px;padding:6px 0;border-top:1px solid rgba(0,0,0,.055)}
+.nrow .nn{color:var(--ink2)}
+.nrow .nv{font-weight:700;font-variant-numeric:tabular-nums}
+.nrow .nr{font-size:11px;color:var(--mute);font-variant-numeric:tabular-nums;min-width:5.5em;text-align:right}
+.nrow.hi .nv,.nrow.ab .nv{color:var(--act)}
+.nrow.lo .nv{color:var(--clar)}
+.nrow.ok .nv{color:var(--calm)}
+.nrow.txt{display:block}
+.nrow .nn2{display:block;font-size:11.5px;color:var(--mute);letter-spacing:.03em}
+.nrow .nt2{display:block;font-size:13.3px;color:var(--ink2);line-height:1.6;margin-top:1px}
+.nrow.txt.ab .nt2,.nrow.txt.hi .nt2{color:var(--ink)}
+
+/* ---- 位置示意图 ---- */
+.anat{margin-top:14px;background:#FFF;border:1px solid rgba(0,0,0,.07);
+border-radius:9px;padding:12px 10px 8px;text-align:center}
+.anat .cap{font-size:11.5px;color:var(--mute);margin-top:4px;line-height:1.55}
+.anat .cap b{color:var(--ink2)}
+.anat svg{margin:0 auto}
+
 /* ---- 2 没回答的 ---- */
 .gap{border-left:3px solid var(--clar);padding:1px 0 1px 15px;margin-bottom:17px}
 .gap.free{border-left-color:var(--warn)}
@@ -115,6 +152,23 @@ footer p{margin-bottom:14px}
   </div>
 </div>
 
+{# ---------- 1.5 查了什么 ---------- #}
+<div class="scope">
+  <p class="big">这一次一共查了 {{ n_obs }} 项，来自 {{ n_sources }} 份报告。</p>
+  <p class="sd2">其中 {{ n_abnormal }} 项带箭头，合并重读之后是 {{ n_chains }} 条判读；
+     另有 {{ n_derived }} 个原报告没有计算、而由这些数据算出来的指标。
+     下面是它们落在身体的哪些地方——<b>条数多不等于问题重</b>，它只说明这个区有东西要讲。</p>
+  <div class="ov">
+    {% for r in overview %}
+    <div class="ovr {% if r.chains %}hit{% endif %}">
+      <span class="nm">{{ r.label }}</span>
+      <span class="bar"><i style="width:{{ (r.n / n_obs * 260) | round(1) }}%"></i></span>
+      <span class="ct">{{ r.n }} 项{% if r.chains %} · {{ r.chains|length }} 条{% endif %}</span>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
 {# ---------- 2. 这次没回答的 ---------- #}
 <section>
   <p class="sh">这次没回答的 {{ gaps|length }} 件</p>
@@ -157,7 +211,33 @@ footer p{margin-bottom:14px}
       <span class="n">{{ by_h[h]|length }} 条</span></div>
     <ul>
       {% for c in by_h[h] %}
-      <li>{{ c.headline }}</li>
+      <li>{{ c.headline }}
+        {% if c.numbers %}
+        <div class="nums">
+          {% for n in c.numbers %}
+          {% if n.kind == 'num' %}
+          <div class="nrow {{ n.state }}">
+            <span class="nn">{{ n.name }}</span>
+            <span class="nv">{{ n.value }}{% if n.unit %} {{ n.unit }}{% endif %}</span>
+            <span class="nr">{{ n.ref }}</span>
+          </div>
+          {% else %}
+          <div class="nrow txt {{ n.state }}">
+            <span class="nn2">{{ n.name }}</span>
+            <span class="nt2">{{ n.text }}</span>
+          </div>
+          {% endif %}
+          {% endfor %}
+        </div>
+        {% endif %}
+        {% if c.svg %}
+        <div class="anat">
+          {{ c.svg }}
+          <p class="cap"><b>{{ c.site }}</b><br>
+             位置示意图，<b>不是你的影像</b>；只标位置，不表示程度或大小。</p>
+        </div>
+        {% endif %}
+      </li>
       {% endfor %}
     </ul>
   </div>

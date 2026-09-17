@@ -545,3 +545,62 @@ lessons:
     note: >-
       判断一句话该不该结构化，有个简单的检验：换一个渲染目标，它还取得到吗？
       取不到就说明它现在只是排版，不是知识
+
+  # ---- 以下四条来自"客户版说得太少"的评审。内核先补，可视化才有东西可画。----
+
+  - id: L037
+    phase: design
+    symptom: 客户版每条只有一句结论，没有任何数字，读起来像断言而不是判读
+    root_cause: >-
+      "进入判断的数值"整块被划给了完整版，客户版一个数都不给。
+      但结论与凭据是一体的：拿掉凭据，剩下的就只是让人相信我们
+    layer: criterion
+    fix: >-
+      每条结论带 1–3 个**决定性数值**——不是全部数值，是担任 lead 角色的那几项。
+      不需要新字段，角色本体里已经有了
+    guarded_by:
+      - tests/test_render.py::test_client_shows_the_decisive_numbers
+    note: >-
+      "说得少"的感觉几乎总是"没给凭据"，不是"字数不够"。
+      加字不解决，加一个数就解决
+
+  - id: L038
+    phase: design
+    symptom: >-
+      客户的第二个问题是"那你都查了什么"，而两版都没人回答。
+      完整版把 196 条观察摊在各章，客户版一条都不给
+    root_cause: >-
+      本体里的 system 是按化验单分组的（血流变、肿瘤标志物、风湿三项），
+      那是给判读用的，直接打到客户脸上他不认识
+    layer: invariant
+    fix: >-
+      加一层显式映射（实验室分组 → 身体分区），并立不变式：
+      本体里出现过的每个 system 都必须有归属，漏一个即构建失败——
+      没归属的指标会在总览里凭空消失，而"我查了多少"正是那句话的全部意义
+    guarded_by:
+      - tests/test_render.py::test_client_overview_covers_every_observation
+
+  - id: L039
+    phase: design
+    symptom: 总览把 13 个派生值算进了"这一次查了多少项"
+    root_cause: 派生值也是 Observation，按观察计数时自然被算进去
+    layer: criterion
+    fix: >-
+      派生值不算"查过的项目"——它们是我们算出来的，不是医院测的，
+      算进覆盖面就是虚报。改为单独一句："另有 N 个原报告没有计算的指标"
+    guarded_by:
+      - tests/test_render.py::test_client_overview_covers_every_observation
+    note: 这一条与"广告不得夸大检查覆盖面"是同一件事，只是它发生在我们自己这边
+
+  - id: L040
+    phase: design
+    symptom: 位置示意图看起来像影像，读者会默认那是自己的片子
+    root_cause: 我们手里没有本人的原始影像，而一张血管图天然会被当成影像
+    layer: invariant
+    fix: >-
+      示意图只做一件事——标位置，不表现程度或大小；
+      并且每次渲染都必须带"不是你的影像"这句话，缺了即测试失败。
+      同时校验图名真的存在：写错会让位置图静默消失
+    guarded_by:
+      - tests/test_render.py::test_anatomy_diagram_never_claims_to_be_the_patient_image
+      - tests/test_render.py::test_anatomy_diagrams_are_registered

@@ -207,6 +207,10 @@ rules:
 
   # 模式 1：上游异常 / 下游全阴 —— 走行迂曲是解剖变异，同一份 MRA 已经答了狭窄
   - id: neuro.vertebrobasilar_tortuosity_is_anatomy
+    anatomy:
+      site: 椎基底动脉
+      diagram: cerebral_arteries
+      mark: basilar
     horizon:
       when: know_it
       why: >-

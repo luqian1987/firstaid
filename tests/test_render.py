@@ -133,3 +133,53 @@ def test_client_never_promises_a_severity_score(real, tmp_path):
     for banned in ("轻度风险", "中度风险", "高危", "健康评分", "风险等级"):
         assert banned not in cli, banned
     assert "等它，会不会变" in cli
+
+
+def test_client_shows_the_decisive_numbers(real, tmp_path):
+    """每条结论要带支撑它的那一两个数。
+
+    上一版只有结论没有凭据，读起来像断言——"从结论的角度说得少"
+    的感觉就是从这来的。数字不是全部数值（那是完整版的事），
+    是担任主角的那几项。
+    """
+    cli = _client(real, tmp_path)
+    lpa = real.encounter.observations.get("LPA")
+    assert lpa.display_value() in cli, "主角指标的数值必须出现在客户版里"
+
+
+def test_client_overview_covers_every_observation(real):
+    """总览不能让任何一项凭空消失。
+
+    "这一次一共查了 196 项"是客户版的第一个事实，
+    而它必须等于按身体分区分出去的项数之和。
+    """
+    from firstaid.assemble.overview import build_overview, load_systems
+    from firstaid.render.client import KNOWLEDGE_SYSTEMS
+    spec = load_systems(KNOWLEDGE_SYSTEMS)
+    rows = build_overview(real.encounter, real.chains, real.ontology, spec)
+    from firstaid.assemble.overview import counted
+    total = len(counted(real.encounter, real.ontology,
+                        set(spec.get("excluded", []))))
+    assert sum(r["n"] for r in rows) == total
+
+
+def test_anatomy_diagram_never_claims_to_be_the_patient_image(real, tmp_path):
+    """位置示意图必须每次都写明它不是本人的影像。
+
+    我们手里没有他的原始影像。一张看起来像影像的图，
+    读者默认会当成自己的——这是最容易造成误解的一处。
+    """
+    cli = _client(real, tmp_path)
+    if "<svg" in cli and "位置示意图" in cli:
+        assert "不是你的影像" in cli
+        assert "非本人影像" in cli
+
+
+def test_anatomy_diagrams_are_registered():
+    """规则引用的示意图必须真的存在——写错图名会让位置图静默消失。"""
+    from firstaid.loader import load_knowledge
+    from firstaid.render.anatomy import DIAGRAMS
+    _, _, rules, _ = load_knowledge()
+    for r in rules.rules:
+        if r.anatomy and r.anatomy.diagram:
+            assert r.anatomy.diagram in DIAGRAMS, r.id

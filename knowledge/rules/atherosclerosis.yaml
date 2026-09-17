@@ -3,6 +3,10 @@ rules:
   # 与「常规血脂正常但风险主线在 Lp(a)」那条的区别：那条要论证的是
   # "看不见的风险存在"；这条不用论证风险存在——斑块已经看得见了。
   - id: athero.convergence_with_plaque
+    anatomy:
+      site: 右侧颈动脉球部
+      diagram: carotid
+      mark: bulb_right
     gaps:
       - what: 糖化血红蛋白
         because: >-

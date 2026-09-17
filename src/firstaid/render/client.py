@@ -20,12 +20,50 @@ from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
+from markupsafe import Markup
+
 from ..assemble.gaps import group_gaps
-from ..model import Band, EFFORT_LABELS, Tag, band_of
+from ..assemble.overview import LEAD_ROLES, build_overview, counted, load_systems
+from ..model import Band, EFFORT_LABELS, ObservationKind, Tag, band_of
+from .anatomy import render_anatomy
 from ..patterns.rule import HORIZON_LABELS, HORIZON_WHY, HORIZONS
 from ..pipeline import Analysis
 
 TEMPLATES = Path(__file__).parent / "templates"
+
+
+KNOWLEDGE_SYSTEMS = Path(__file__).resolve().parents[3] / "knowledge" / "ontology" / "_systems.yaml"
+
+
+def _key_numbers(chain, limit: int = 3) -> list[dict]:
+    """决定性的那一两个数。
+
+    不是"进入判断的全部数值"——那是完整版的事。客户版给的是
+    支撑这条结论的主角：担任 lead 角色的那几项。
+    不给数字是客户版上一版最大的问题：只有结论没有凭据，读起来像断言。
+    """
+    out = []
+    for e in chain.inputs:
+        if e.role not in LEAD_ROLES:
+            continue
+        o = e.observation
+        # 影像与定性项没有数字，硬塞进三栏网格会把指标名挤成竖排。
+        # 它们本来就是一句话，就按一句话排。
+        numeric = o.value is not None
+        out.append({
+            "kind": "num" if numeric else "text",
+            "name": o.raw_name,
+            "value": o.display_value() if numeric else "",
+            "unit": o.unit or "" if numeric else "",
+            "ref": o.ref.display() if (o.ref and (o.ref.low is not None
+                                                  or o.ref.high is not None)) else "",
+            "state": ("hi" if o.is_high else "lo" if o.is_low
+                      else "ab" if o.abnormal else "ok"),
+            "text": (o.text or o.display_value() or "") if not numeric else "",
+        })
+        if len(out) >= limit:
+            break
+    return out
 
 
 def _horizon_of(a: Analysis, chain_id: str) -> str:
@@ -41,12 +79,17 @@ def build_client_context(a: Analysis) -> dict:
     for c in sorted(a.chains, key=lambda c: -c.priority):
         w = _horizon_of(a, c.id)
         r = a.rules.by_id(c.id) if a.rules else None
+        an = r.anatomy if r else None
         by_h[w].append({
             "id": c.id, "headline": c.headline, "title": c.title,
             "band": band_of(c.tag).value,
             "why": r.horizon.why if (r and r.horizon) else "",
             "steps": list(c.verdict.next_steps) if c.verdict else [],
             "certain": c.verdict.certain if c.verdict else "",
+            "numbers": _key_numbers(c),
+            "site": an.site if an else None,
+            "svg": (Markup(render_anatomy(an.diagram, an.mark))
+                    if (an and an.diagram) else None),
         })
 
     free = group_gaps([g for g in a.gaps if g.free])
@@ -65,7 +108,18 @@ def build_client_context(a: Analysis) -> dict:
                     if not now_items else
                     f"本次查过的项目里，有 {len(now_items)} 件需要现在处理。")
 
+    spec = load_systems(KNOWLEDGE_SYSTEMS)
+    overview = build_overview(enc, a.chains, a.ontology, spec) if a.ontology else []
+    checked = counted(enc, a.ontology, set(spec.get("excluded", []))) if a.ontology else []
+
     return {
+        "overview": overview,
+        "n_obs": len(checked),
+        "n_derived": len([o for o in enc.observations
+                          if o.kind is ObservationKind.DERIVED and o.code != "AGE"]),
+        "n_abnormal": len([o for o in checked if o.abnormal]),
+        "n_sources": len(enc.sources),
+        "n_chains": len(a.chains),
         "subject_id": enc.subject_id.upper(),
         "age": a.timeline.subject.age_on(enc.anchor_date),
         "sex": {"male": "男", "female": "女"}.get(a.timeline.subject.sex.value, ""),

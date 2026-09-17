@@ -3,6 +3,10 @@ rules:
   # 模式 8：常规组套全正常，但组合提示风险
   # ======================================================================
   - id: lipid.lpa_intracranial_lead
+    anatomy:
+      site: 左侧大脑中动脉 M1 段
+      diagram: cerebral_arteries
+      mark: mca_m1_left
     gaps:
       - what: 直系亲属各查一次脂蛋白(a)
         because: >-

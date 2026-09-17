@@ -41,6 +41,7 @@ class Analysis:
     topo_excluded: list = field(default_factory=list)
     gaps: list = field(default_factory=list)   # 这次体检没回答的
     rules: object | None = None                # 客户版要回查 horizon
+    ontology: object | None = None             # 客户版按身体分区做总览
     depth: dict[str, Depth] = field(default_factory=dict)
     derived_notes: dict[str, str] = field(default_factory=dict)
     plan: ComparisonPlan | None = None
@@ -72,6 +73,7 @@ def analyze(timeline: Timeline, ontology=None, units=None, rules=None,
     assert enc is not None, "timeline 里没有体检记录"
     a = Analysis(timeline=timeline, encounter=enc)
     a.rules = rules
+    a.ontology = ontology
 
     # 规则库自检先行：规则写不完整，不允许开始分析
     a.errors += rules.validate_all()
@@ -120,6 +122,11 @@ def analyze(timeline: Timeline, ontology=None, units=None, rules=None,
     a.errors += scope_errs
     a.errors += de.check_absent_modifiers(enc, a.chains)
     a.errors += de.check_modifier_relations(a.chains, a.topology)
+
+    # 客户版总览：本体里的每个分组都要有身体分区归属，漏一个就有指标凭空消失
+    from .assemble.overview import check_systems, load_systems
+    from .render.client import KNOWLEDGE_SYSTEMS
+    a.errors += check_systems(load_systems(KNOWLEDGE_SYSTEMS), ontology)
     for c in a.chains:
         d = de.depth_for(enc, c, {i.key.code for i in c.verdict.compare_next}
                          if c.verdict else set())

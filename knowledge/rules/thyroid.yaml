@@ -3,6 +3,10 @@ rules:
   # 与脂蛋白(a) 那条同一个骨架：功能五项全正常，而抗体两项显著升高，
   # 影像形态学与之一致。三条不是三个发现，是一个诊断。
   - id: thyroid.hashimoto_euthyroid
+    anatomy:
+      site: 甲状腺（两叶弥漫性）
+      diagram: thyroid
+      mark: whole
     gaps:
       - what: 抗壁细胞抗体与内因子抗体
         because: >-

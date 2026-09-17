@@ -104,6 +104,19 @@ class GapSpec(BaseModel):
     effort: str = "test"           # recall 回想 / fetch 取回 / home 在家做 / test 加一项检查
 
 
+class AnatomySpec(BaseModel):
+    """这条判读落在身体的哪儿。
+
+    只用来标位置，不用来表现程度——**画的是示意图，不是他的影像**。
+    我们手里没有他的原始影像，画出"狭窄了多少"就是编造。
+    所以图上只有一个高亮点：位置在这里。
+    """
+    model_config = ConfigDict(extra="forbid")
+    site: str                      # 文字位置，如「左侧大脑中动脉 M1 段」
+    diagram: str | None = None     # 引用哪张内置示意图
+    mark: str | None = None        # 在那张图上高亮哪个部位
+
+
 class RuleSpec(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -133,6 +146,7 @@ class RuleSpec(BaseModel):
     horizon: HorizonSpec | None = None
     # 这条判读打开了哪些"本次没覆盖"的口子
     gaps: list[GapSpec] = Field(default_factory=list)
+    anatomy: AnatomySpec | None = None     # 落在身体哪儿（客户版画位置示意图用）
 
     def validate_shape(self) -> list[str]:
         """构建期自检。规则写不完整，构建就该失败，而不是产出半截判读。"""
@@ -189,6 +203,18 @@ class RuleSet(BaseModel):
     def by_id(self, rid: str) -> RuleSpec | None:
         return next((r for r in self.rules if r.id == rid), None)
 
+    def validate_anatomy(self) -> list[str]:
+        """引用的示意图必须真的存在。
+
+        图名写错时 render_anatomy 返回空串，位置图就静默消失——
+        又是一次"构建全绿而东西不在"。
+        """
+        from ..render.anatomy import DIAGRAMS
+        return [f"{r.id}: 引用了不存在的示意图 {r.anatomy.diagram!r}"
+                for r in self.rules
+                if r.anatomy and r.anatomy.diagram
+                and r.anatomy.diagram not in DIAGRAMS]
+
     def validate_horizons(self) -> list[str]:
         """band 与 horizon 必须自洽。
 
@@ -241,6 +267,7 @@ class RuleSet(BaseModel):
             errs += r.validate_shape()
         errs += self.validate_params()
         errs += self.validate_horizons()
+        errs += self.validate_anatomy()
         return errs
 
 

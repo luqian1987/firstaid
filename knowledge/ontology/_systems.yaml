@@ -1,0 +1,62 @@
+# 实验室分组 → 体检者看得懂的身体分区。
+#
+# 本体里的 system 是按化验单分组的（血流变、肿瘤标志物、风湿三项……），
+# 那是给判读用的。客户看的是身体：心血管、肝胆、肾、内分泌。
+# 两者不是一回事，所以这里做一次显式映射，而不是直接把 system 打到客户脸上。
+#
+# 不变式：本体里出现过的每一个 system 都必须在这里有归属，漏一个即构建失败。
+# 没有归属的指标会在总览里凭空消失，而"我查了多少"正是客户版的第一个问题。
+order:
+  - cardiovascular
+  - metabolic
+  - liver
+  - kidney
+  - blood
+  - digestive
+  - endocrine
+  - immune
+  - imaging
+  - body
+  - oral_eye
+  - gyn
+
+groups:
+  cardiovascular:
+    label: 心脏与血管
+    of: [cardiac, cardiovascular, lipid, hemorheology, coagulation]
+  metabolic:
+    label: 血糖与代谢
+    of: [glucose, electrolyte]
+  liver:
+    label: 肝胆胰
+    of: [liver, pancreas]
+  kidney:
+    label: 肾与泌尿
+    of: [renal, urine]
+  blood:
+    label: 血常规与血液
+    of: [hematology]
+  digestive:
+    label: 胃与消化道
+    of: [gastric]
+  endocrine:
+    label: 甲状腺与激素
+    of: [thyroid, hormone]
+  immune:
+    label: 免疫、炎症与肿瘤标志物
+    of: [immunity, inflammation, tumor_marker]
+  imaging:
+    label: 影像与结构
+    of: [imaging]
+  body:
+    label: 体格与营养
+    of: [anthropometry, nutrition, physical_exam]
+  oral_eye:
+    label: 口腔与眼
+    of: [oral, eye]
+  gyn:
+    label: 妇科
+    of: [gyn]
+
+# 不进客户总览的：它们不是体检项目
+excluded: [demographics]
