@@ -4,6 +4,18 @@ rules:
   # 两张单子各打一个箭头，总检就把它数成两条异常，
   # 再加上血小板聚集率，凑成"建议血液科门诊"。
   - id: hematology.hematocrit_counted_twice
+    gaps:
+      - what: 铁蛋白
+        because: >-
+          血红蛋白 115 正好压在下限、红细胞压积低，而形态三项正常。不查铁蛋白，就分不开「本来就在正常低限」与「缺铁的
+          早期」，而育龄女性这两者的处理完全不同
+        triggered_by: [HGB, HCT, MCV]
+        horizon: weeks
+        effort: test
+    horizon:
+      when: none
+      why: >-
+        同一个量被数了两遍，而红细胞形态三项全部正常；这一条本身不需要处理
     archetype: duplicate_quantity
     title: 红细胞压积在两张单子上各被标了一次低，是同一个数
     headline: 两张单子上的压积是同一个数；红细胞形态正常，不是缺铁的样子
@@ -66,6 +78,10 @@ rules:
 
   # 模式 6：孤立异常缺乏佐证
   - id: hematology.mar_low_without_bleeding
+    horizon:
+      when: weeks
+      why: >-
+        对药物极敏感，而用药史是一句问话；不问清楚这个数解释不了
     archetype: isolated_abnormal
     title: 血小板最大聚集率低，而血小板计数与凝血全套都正常
     headline: 聚集率低而计数与凝血全正常，先要问的是在吃什么药

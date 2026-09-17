@@ -3,6 +3,18 @@ rules:
   # 与「常规血脂正常但风险主线在 Lp(a)」那条的区别：那条要论证的是
   # "看不见的风险存在"；这条不用论证风险存在——斑块已经看得见了。
   - id: athero.convergence_with_plaque
+    gaps:
+      - what: 糖化血红蛋白
+        because: >-
+          空腹血糖 6.24
+          是单点。糖化血红蛋白反映近两三个月的平均水平，能分开「那天没睡好」与「已经持续偏高」这两种完全不同的处境
+        triggered_by: [GLU_FASTING, CAROTID_PLAQUE]
+        horizon: weeks
+        effort: test
+    horizon:
+      when: next_checkup
+      why: >-
+        斑块与那几个代谢指标都以年为尺度变化，而其中可改变的几项（腰围、血糖、高密度脂蛋白）本来就要一段时间才看得出回落
     archetype: risk_convergence
     title: 多个致动脉粥样硬化因素同时偏离，而斑块已经形成
     headline: 风险不用再论证——斑块已经看得见；要分清的是哪些因素能动

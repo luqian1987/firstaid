@@ -1,6 +1,10 @@
 rules:
   # 模式 5：多层排除
   - id: spleen.layered_exclusion
+    horizon:
+      when: none
+      why: >-
+        尺寸、功能、上游三层逐一排除；本次没有需要处理的对象
     archetype: layered_exclusion
     headline: 长径仍在界值内，三系正常无脾亢，上游无门脉高压证据
     title: 脾脏增大：三系正常、无纤维化、门静脉正常

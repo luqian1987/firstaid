@@ -1,6 +1,10 @@
 rules:
   # 模式 9：无区间的结构性发现 → 不判高低，转"比较口径"
   - id: structural.baseline_ledger
+    horizon:
+      when: know_it
+      why: >-
+        这一组的价值全在于下次能按同一口径比较，本身不指向任何需要现在做的事
     archetype: unranged_structural
     headline: 结构性发现按可比口径存档，记数字和设备，不记结论词
     title: 结构性发现：记录可比口径，而不是记录结论

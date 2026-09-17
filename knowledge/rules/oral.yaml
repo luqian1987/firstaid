@@ -3,6 +3,10 @@ rules:
   # 这条判读两份参考实现都没有做：牙龈出血与同一份报告里的低纤维蛋白原并列出现，
   # 很容易被读成"凝血有问题"。凝血全套正常 + 牙结石在场，方向完全不同。
   - id: oral.gingival_bleeding_is_local
+    horizon:
+      when: next_checkup
+      why: >-
+        结石与龈缘炎症会重新累积但以月计，洁牙后下一次体检比堆积量正好
     archetype: isolated_abnormal
     headline: 凝血全套正常，出血的入口在洁牙，不在血液科
     title: 牙龈出血的原因在牙结石，不在凝血

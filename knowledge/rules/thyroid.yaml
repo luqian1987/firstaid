@@ -3,6 +3,18 @@ rules:
   # 与脂蛋白(a) 那条同一个骨架：功能五项全正常，而抗体两项显著升高，
   # 影像形态学与之一致。三条不是三个发现，是一个诊断。
   - id: thyroid.hashimoto_euthyroid
+    gaps:
+      - what: 抗壁细胞抗体与内因子抗体
+        because: >-
+          自身免疫甲状腺病常与自身免疫性胃炎同时出现，而同一份报告里胃泌素17
+          已经是上限的三倍。本次没有查这两项，所以「胃泌素17 高只是抑酸药」这个解释还留了一个口子
+        triggered_by: [TPO_AB, GASTRIN17]
+        horizon: weeks
+        effort: test
+    horizon:
+      when: next_checkup
+      why: >-
+        抗体本身不再变化，会变的是功能；而功能失代偿是以年计的慢过程，早期没有危害，按约定间隔查促甲状腺激素即可
     archetype: normal_panel_hidden_risk
     title: 甲状腺功能五项全部正常，而抗体与超声指向同一个诊断
     headline: 抗体与超声合起来是桥本，功能目前仍正常——要变的是监测节奏

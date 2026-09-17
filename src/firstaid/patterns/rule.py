@@ -59,6 +59,51 @@ class RuleTest(BaseModel):
     overrides: dict[str, Any] = Field(default_factory=dict)
 
 
+# 时限。刻意不叫"严重程度"——那是我编的，不可核对。
+# 判据只有一条，而且可以逐条核对：**等它，会不会变？变了能不能回来？**
+#
+#   now          会变，而且不可逆（龋损只往深走）
+#   weeks        判读现在悬着，而一个问题或一项便宜检查就能定性
+#   next_checkup 会变，但慢且可逆
+#   know_it      不会变（遗传、解剖变异、既往改变）——知道就行
+#   none         已经明确不需要处理
+HORIZONS = ("now", "weeks", "next_checkup", "know_it", "none")
+HORIZON_LABELS = {
+    "now": "现在",
+    "weeks": "几周内",
+    "next_checkup": "明年体检",
+    "know_it": "知道就行",
+    "none": "不用管",
+}
+HORIZON_WHY = {
+    "now": "会变，而且不可逆",
+    "weeks": "判读现在悬着，一个问题或一项便宜检查就能定性",
+    "next_checkup": "会变，但慢且可逆",
+    "know_it": "不会变",
+    "none": "已经明确不需要处理",
+}
+
+
+class HorizonSpec(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    when: str
+    why: str                       # 为什么落这一档，按可逆性判据写
+
+
+class GapSpec(BaseModel):
+    """由本次结果延伸出来、而本次没有覆盖的一项。
+
+    triggered_by 是它和"套餐里没买这一项"的分界：本次必须真的有一个发现在指向它，
+    这条缺失才成立。否则就是拿规则库比病人的套餐大来制造焦虑。
+    """
+    model_config = ConfigDict(extra="forbid")
+    what: str                      # 缺的是什么
+    because: str                   # 本次哪个结果指向了它
+    triggered_by: list[str]        # 这些指标本次必须在场，否则这条缺失不成立
+    horizon: str = "weeks"
+    effort: str = "test"           # recall 回想 / fetch 取回 / home 在家做 / test 加一项检查
+
+
 class RuleSpec(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -84,6 +129,10 @@ class RuleSpec(BaseModel):
     tests: list[RuleTest] = Field(default_factory=list)
     enabled: bool = True
     source: str | None = None              # 规则出自哪份指南/文献
+    # 客户版按它分组。band 回答"要不要做"，horizon 回答"多急"，两件事。
+    horizon: HorizonSpec | None = None
+    # 这条判读打开了哪些"本次没覆盖"的口子
+    gaps: list[GapSpec] = Field(default_factory=list)
 
     def validate_shape(self) -> list[str]:
         """构建期自检。规则写不完整，构建就该失败，而不是产出半截判读。"""
@@ -111,6 +160,23 @@ class RuleSpec(BaseModel):
                 "——这正是 Lp(a) 被配上一套饮食方案的那类分类错误")
         if not self.tests:
             errs.append(f"{self.id}: 规则必须自带至少一个测试夹具")
+        if self.correction is None:
+            if self.horizon is None:
+                errs.append(f"{self.id}: 缺 horizon —— 客户版要回答的第一件事是「多急」，"
+                            "而它不能由 band 推出来：band 说要不要做，horizon 说等不等得")
+            elif self.horizon.when not in HORIZONS:
+                errs.append(f"{self.id}: horizon.when={self.horizon.when!r} 不在 "
+                            f"{'/'.join(HORIZONS)} 之内")
+            elif not self.horizon.why.strip():
+                errs.append(f"{self.id}: horizon 没写理由。判据是「等它会不会变、"
+                            "变了能不能回来」，写不出这句话就是还没想清楚")
+        for g in self.gaps:
+            if g.horizon not in HORIZONS:
+                errs.append(f"{self.id}: 缺失项「{g.what}」的 horizon 不合法")
+            if not g.triggered_by:
+                errs.append(f"{self.id}: 缺失项「{g.what}」没有 triggered_by。"
+                            "说不出本次哪个结果指向它，那就不是「由结果延伸」，"
+                            "只是套餐里没买这一项")
         return errs
 
 
@@ -122,6 +188,28 @@ class RuleSet(BaseModel):
 
     def by_id(self, rid: str) -> RuleSpec | None:
         return next((r for r in self.rules if r.id == rid), None)
+
+    def validate_horizons(self) -> list[str]:
+        """band 与 horizon 必须自洽。
+
+        两者是独立声明的两件事——band 说"要不要做"，horizon 说"等不等得"。
+        正因为独立，它们互相是对方的校验：说"现在要做"却又说"不用管"，
+        一定有一个写错了。
+        """
+        from ..model import band_of, Band
+        errs: list[str] = []
+        for r in self.rules:
+            if r.correction is not None or r.horizon is None:
+                continue
+            b, w = band_of(r.tag, r.band), r.horizon.when
+            if b is Band.ACT and w in ("know_it", "none"):
+                errs.append(f"{r.id}: 归在「现在要做」档，horizon 却是 {w}（不用做）")
+            if b is Band.SETTLE and w in ("now", "weeks"):
+                errs.append(f"{r.id}: 归在「可以放下」档，horizon 却是 {w}（要尽快）")
+            if b is Band.CLARIFY and w != "weeks":
+                errs.append(f"{r.id}: 归在「先弄清楚」档，horizon 却是 {w}；"
+                            "先弄清楚的意思就是短期内能定性，两者对不上")
+        return errs
 
     def validate_params(self) -> list[str]:
         """参数必须能被对应模式的参数模型接住。
@@ -152,6 +240,7 @@ class RuleSet(BaseModel):
             seen.add(r.id)
             errs += r.validate_shape()
         errs += self.validate_params()
+        errs += self.validate_horizons()
         return errs
 
 

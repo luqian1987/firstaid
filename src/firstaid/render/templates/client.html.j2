@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>体检二次判读 · {{ subject_id }}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#16191D;--ink2:#464F58;--mute:#8D959E;--line:#E7EAEE;--bg:#EEF0F2;
+--act:#B04226;--act-bg:#FCF0EC;--act-ln:#F0DCD4;
+--clar:#2F5D8C;--clar-bg:#EDF3F9;--clar-ln:#D6E3F0;
+--calm:#1D6155;--calm-bg:#E9F2EF;--calm-ln:#CFE2DC;
+--warn:#8A6B18;--warn-bg:#FDF8EA;--warn-ln:#EADFBE;
+--s:"PingFang SC","Hiragino Sans GB","Source Han Sans SC","Microsoft YaHei",system-ui,sans-serif}
+body{background:var(--bg);font-family:var(--s);color:var(--ink);line-height:1.7;
+-webkit-font-smoothing:antialiased;font-size:15px}
+.page{max-width:580px;margin:0 auto;background:#FFF;min-height:100vh;
+box-shadow:0 0 50px rgba(0,0,0,.07)}
+.meta{font-size:11.5px;color:var(--mute);letter-spacing:.06em;
+padding:34px 30px 0;font-variant-numeric:tabular-nums}
+
+/* ---- 1 我有事吗 ---- */
+.verdict{padding:18px 30px 34px;border-bottom:1px solid var(--line)}
+.verdict h1{font-size:25px;line-height:1.5;font-weight:700;letter-spacing:-.2px}
+.nowlist{margin-top:18px;background:var(--act-bg);border:1px solid var(--act-ln);
+border-radius:10px;padding:16px 18px}
+.nowlist b{font-size:11.5px;color:var(--act);letter-spacing:.07em;display:block;margin-bottom:6px}
+.nowlist p{font-size:16px;font-weight:600;line-height:1.55}
+.nowlist em{font-style:normal;display:block;font-size:12.5px;color:var(--ink2);
+font-weight:400;margin-top:4px}
+.est{margin-top:16px;border-left:3px solid var(--calm);padding:2px 0 2px 14px}
+.est b{font-size:11.5px;color:var(--calm);letter-spacing:.07em;display:block;margin-bottom:3px}
+.est p{font-size:16px;font-weight:600;line-height:1.55}
+.limit{margin-top:18px;border-left:3px solid var(--warn);padding:2px 0 2px 14px}
+.limit p{font-size:15.5px;font-weight:600;line-height:1.55}
+.limit span{font-size:13.5px;color:var(--ink2);font-weight:400;display:block;margin-top:3px}
+
+/* ---- 通用段 ---- */
+section{padding:32px 30px;border-bottom:1px solid var(--line)}
+.sh{font-size:19px;font-weight:700;margin-bottom:4px}
+.sd{font-size:13.5px;color:var(--ink2);margin-bottom:20px}
+.sub{font-size:11.5px;letter-spacing:.07em;color:var(--mute);margin:22px 0 10px;
+padding-top:14px;border-top:1px solid var(--line)}
+.sub:first-of-type{border-top:0;padding-top:0;margin-top:0}
+
+/* ---- 2 没回答的 ---- */
+.gap{border-left:3px solid var(--clar);padding:1px 0 1px 15px;margin-bottom:17px}
+.gap.free{border-left-color:var(--warn)}
+.gap .gw{font-size:16.5px;font-weight:650;line-height:1.5}
+.gap .gb{font-size:13.2px;color:var(--ink2);margin-top:4px}
+.tag{display:inline-block;font-size:10.5px;padding:1px 7px;border-radius:3px;
+margin-left:7px;vertical-align:2px;font-weight:600;letter-spacing:.03em}
+.tag.free{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-ln)}
+.tag.test{background:var(--clar-bg);color:var(--clar);border:1px solid var(--clar-ln)}
+
+/* ---- 3 时限 ---- */
+.hgroup{margin-bottom:22px}
+.hh{display:flex;align-items:baseline;gap:9px;margin-bottom:3px}
+.hh b{font-size:17px;font-weight:700}
+.hh i{font-style:normal;font-size:11.5px;color:var(--mute)}
+.hh .n{margin-left:auto;font-size:12px;color:var(--mute)}
+.hw{font-size:12.3px;color:var(--mute);margin-bottom:9px}
+.hgroup ul{list-style:none}
+.hgroup li{font-size:14.5px;padding:10px 0 10px 20px;border-top:1px solid var(--line);
+position:relative;color:var(--ink2);line-height:1.6}
+.hgroup li:before{content:"";position:absolute;left:3px;top:19px;width:7px;height:7px;
+border-radius:50%}
+.h-now li:before{background:var(--act)}
+.h-weeks li:before{background:var(--clar)}
+.h-next_checkup li:before{background:#9AA6B2}
+.h-know_it li:before{background:#B8BFC7}
+.h-none li:before{background:var(--calm)}
+.h-none li{color:var(--mute)}
+
+/* ---- 4 怎么做 ---- */
+.card{border-radius:10px;padding:19px 20px;margin-bottom:13px;border:1px solid}
+.card.act{background:var(--act-bg);border-color:var(--act-ln)}
+.card.clarify{background:var(--clar-bg);border-color:var(--clar-ln)}
+.card h3{font-size:16.5px;font-weight:650;line-height:1.5;margin-bottom:9px}
+.card.act h3{color:var(--act)} .card.clarify h3{color:var(--clar)}
+.card ul{list-style:none}
+.card li{font-size:14px;padding:8px 0 8px 17px;position:relative;line-height:1.62}
+.card li:before{content:"·";position:absolute;left:3px;top:7px;font-weight:700;opacity:.5}
+footer{padding:30px;font-size:12.5px;color:var(--mute);line-height:1.8}
+footer b{color:var(--ink2);display:block;margin-bottom:4px}
+footer p{margin-bottom:14px}
+@media print{.page{box-shadow:none}}
+</style>
+</head>
+<body><div class="page">
+
+<p class="meta">{{ subject_id }} · {{ sex }} · {{ age }} 岁 · 健检 {{ period }}</p>
+
+{# ---------- 1. 我有事吗 ---------- #}
+<div class="verdict">
+  <h1>{{ verdict_line }}</h1>
+  {% if now_items %}
+  <div class="nowlist">
+    <b>现在就要做的</b>
+    {% for c in now_items %}
+    <p>{{ c.headline }}<em>{{ c.why }}</em></p>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% if established %}
+  <div class="est">
+    <b>本次确立的</b>
+    {% for e in established %}
+    <p>{{ e.headline }}</p>
+    {% endfor %}
+  </div>
+  {% endif %}
+  <div class="limit">
+    <p>这句话只覆盖查过的东西。</p>
+    <span>下面 {{ gaps|length }} 件是这次体检没有回答的——其中 {{ free_gaps|length }} 件不用再做检查。</span>
+  </div>
+</div>
+
+{# ---------- 2. 这次没回答的 ---------- #}
+<section>
+  <p class="sh">这次没回答的 {{ gaps|length }} 件</p>
+  <p class="sd">每一件都是<b>本次某个结果指向了它、而这次没有覆盖</b>。
+     套餐里本来就没买的项目不在这里——那不是缺失。</p>
+
+  {% if free_gaps %}
+  <p class="sub">不用再做检查 · {{ n_free }} 件</p>
+  {% for grp in free_gaps %}
+  <div class="gap free">
+    {% for g in grp.gaps %}
+    <p class="gw">{{ g.what }}<span class="tag free">{{ effort_labels[g.effort] }}</span></p>
+    {% endfor %}
+    <p class="gb">{{ grp.because }}</p>
+  </div>
+  {% endfor %}
+  {% endif %}
+
+  {% if test_gaps %}
+  <p class="sub">要加一项检查 · {{ n_test }} 件</p>
+  {% for grp in test_gaps %}
+  <div class="gap">
+    {% for g in grp.gaps %}
+    <p class="gw">{{ g.what }}<span class="tag test">{{ effort_labels[g.effort] }}</span></p>
+    {% endfor %}
+    <p class="gb">{{ grp.because }}</p>
+  </div>
+  {% endfor %}
+  {% endif %}
+</section>
+
+{# ---------- 3. 什么时候各看一次 ---------- #}
+<section>
+  <p class="sh">什么时候各看一次</p>
+  <p class="sd">分组的判据只有一条，而且可以逐条核对：<b>等它，会不会变？变了能不能回来？</b>
+     不是我给的严重程度评分。</p>
+  {% for h in horizons %}
+  <div class="hgroup h-{{ h }}">
+    <div class="hh"><b>{{ horizon_labels[h] }}</b><i>{{ horizon_why[h] }}</i>
+      <span class="n">{{ by_h[h]|length }} 条</span></div>
+    <ul>
+      {% for c in by_h[h] %}
+      <li>{{ c.headline }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endfor %}
+</section>
+
+{# ---------- 4. 具体怎么做 ---------- #}
+{% if by_h['now'] or by_h['weeks'] %}
+<section>
+  <p class="sh">具体怎么做</p>
+  <p class="sd">只列「现在」和「几周内」这两档。其余几档本次不需要你做什么。</p>
+  {% for h in ['now', 'weeks'] %}
+  {% for c in by_h[h] %}
+  {% if c.steps %}
+  <div class="card {{ c.band }}">
+    <h3>{{ c.headline }}</h3>
+    <ul>
+      {% for s in c.steps %}
+      <li>{{ s }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+  {% endfor %}
+  {% endfor %}
+</section>
+{% endif %}
+
+<footer>
+  <p><b>这份文件不是什么</b>
+     不是诊断，不构成用药建议，也不替代经治医生的判断。
+     它做的只有一件事：把原报告的 {{ n_orig }} 条结论按组合重读一遍，
+     然后告诉你哪几条需要你现在动手、哪几件这次其实没回答。</p>
+  <p><b>每一条结论是怎么推出来的</b>
+     进入判断的每一个数值、以及「不能由此认定什么」，都在完整版里。
+     这一份是从那一份里挑出来的，没有多出任何一句。</p>
+  <p style="color:#B0B7BE">生成于 {{ generated }}</p>
+</footer>
+
+</div></body></html>

@@ -10,6 +10,7 @@ from pathlib import Path
 
 from .assemble.rank import check_chapters, group_by_chapter, rank
 from .assemble.depth import DepthEngine, load_depth_spec
+from .assemble.gaps import collect_gaps
 from .assemble.reconcile import reconcile
 from .audit.coverage import build_coverage
 from .derive.engine import DeriveEngine
@@ -38,6 +39,8 @@ class Analysis:
     recon: Reconciliation | None = None
     topology: Topology | None = None
     topo_excluded: list = field(default_factory=list)
+    gaps: list = field(default_factory=list)   # 这次体检没回答的
+    rules: object | None = None                # 客户版要回查 horizon
     depth: dict[str, Depth] = field(default_factory=dict)
     derived_notes: dict[str, str] = field(default_factory=dict)
     plan: ComparisonPlan | None = None
@@ -68,6 +71,7 @@ def analyze(timeline: Timeline, ontology=None, units=None, rules=None,
     enc = timeline.latest()
     assert enc is not None, "timeline 里没有体检记录"
     a = Analysis(timeline=timeline, encounter=enc)
+    a.rules = rules
 
     # 规则库自检先行：规则写不完整，不允许开始分析
     a.errors += rules.validate_all()
@@ -121,6 +125,9 @@ def analyze(timeline: Timeline, ontology=None, units=None, rules=None,
                          if c.verdict else set())
         if d and d.any():
             a.depth[c.id] = d
+
+    # 这次体检没回答的（客户版的第一等公民）
+    a.gaps = collect_gaps(enc, a.chains, rules, a.missing_context)
 
     # L5 覆盖率
     a.coverage = build_coverage(enc, res, ontology)

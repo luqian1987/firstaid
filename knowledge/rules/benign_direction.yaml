@@ -4,6 +4,10 @@ rules:
   # 报告照区间打箭头，总检照箭头写建议，于是保护因素被配上了减重戒油的方案。
 
   - id: lipid.apoa1_high_is_hdl_high
+    horizon:
+      when: none
+      why: >-
+        箭头指向有利的一侧，而其余血脂项全部在区间内；没有需要处理的对象
     archetype: benign_direction
     title: 载脂蛋白AⅠ 高与高密度脂蛋白高是同一件事，而且是有利的一侧
     headline: 载脂蛋白AⅠ 的箭头指向好的一侧，它和高密度脂蛋白是同一批颗粒
@@ -62,6 +66,10 @@ rules:
       - {name: 病例1载脂蛋白AⅠ不在有利侧, fixture: zhang_real_2026-03-30, expect: not_triggered}
 
   - id: glucose.low_insulin_with_normal_glucose
+    horizon:
+      when: none
+      why: >-
+        血糖与糖化血红蛋白都正常，低胰岛素是敏感性好；没有需要处理的对象
     archetype: benign_direction
     title: 空腹胰岛素低，而血糖与糖化血红蛋白都正常
     headline: 血糖正常时的低空腹胰岛素说明敏感性好，不是需要查病因的低

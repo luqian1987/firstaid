@@ -775,6 +775,9 @@ class SettlingTest(Params):
     code: str
     what: str                               # 这项检查能定什么
     how: str | None = None                  # 怎么补（门诊/自测/下次体检加项）
+    # 要费多大劲。客户版靠它把"不用再做检查就能回答的"单独归一组——
+    # 那一组最该先做，而现在它们混在一堆"建议进一步检查"里看不见。
+    effort: str = "test"                    # recall / fetch / home / test
 
 
 class UnsettledFindingParams(Params):

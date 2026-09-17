@@ -4,6 +4,10 @@ rules:
   # 顺带看到的东西不能按"专门做这项检查"的标准去解读——
   # 序列不是为它设计的，阴性预测值也不一样。
   - id: ent.sinus_incidental_on_brain_mri
+    horizon:
+      when: none
+      why: >-
+        附带发现，要不要处理取决于症状而不是影像上这行字；没有症状就没有需要做的事
     archetype: incidental_on_other_study
     title: 鼻窦所见是颅脑 MRI 的附带发现，不是一次鼻窦检查的结论
     headline: 这是扫脑时顺带看到的，主目标（脑血管）本次是通畅的

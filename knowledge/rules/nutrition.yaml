@@ -3,6 +3,10 @@
 rules:
   # 模式 6：孤立异常缺乏佐证
   - id: nutrition.prealbumin_isolated_high
+    horizon:
+      when: none
+      why: >-
+        单次轻度偏离，没有过程可言，也没有需要处理的对象
     archetype: isolated_abnormal
     headline: 白蛋白与肝功能其余项全正常，单项轻度升高无独立意义
     title: 前白蛋白略高，在其余蛋白与肝功能正常的背景下无独立意义
@@ -40,6 +44,10 @@ rules:
 
   # 模式 10：区间口径不当
   - id: nutrition.coq10_lab_percentile
+    horizon:
+      when: none
+      why: >-
+        问题在区间口径不在身体状态；被标为不足用的不是疾病界值
     archetype: range_kind_caveat
     headline: 这个「不足」用的是实验室百分位区间，不是疾病界值
     title: 辅酶Q10 的"不足"用的是实验室自有区间，不是疾病界值
@@ -89,6 +97,10 @@ rules:
 
   # 模式 6：孤立异常缺乏佐证
   - id: nutrition.vitamin_a_isolated_high
+    horizon:
+      when: weeks
+      why: >-
+        单项升高的来源（膳食、补充剂、检测）靠一份补充剂清单就能缩小，不需要等一年
     archetype: isolated_abnormal
     headline: 其余三项脂溶性维生素都正常，先列补充剂清单再说
     title: 维生素A 单独升高，其余脂溶性维生素都在区间内

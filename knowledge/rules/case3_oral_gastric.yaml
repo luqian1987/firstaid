@@ -1,6 +1,10 @@
 rules:
   # 模式 5：多层排除 —— 胃泌素17 单独高，能解释它的两条通路都被同一份报告排除了
   - id: gastric.g17_high_with_atrophy_and_hp_excluded
+    horizon:
+      when: weeks
+      why: >-
+        萎缩与幽门螺杆菌都排除之后，剩下最常见的解释是抑酸药；一句问话就能定性，在此之前这个三倍上限的数字悬着
     archetype: layered_exclusion
     title: 胃泌素17 高，而萎缩与幽门螺杆菌两条通路都已排除
     headline: 萎缩和幽门螺杆菌都排除了，剩下最常见的解释是抑酸药——而用药史空白
@@ -74,6 +78,10 @@ rules:
 
   # 模式 1：上游异常 / 下游全阴 —— 牙结石在场，而牙龈的活动性炎症指标全阴
   - id: oral.calculus_without_active_inflammation
+    horizon:
+      when: next_checkup
+      why: >-
+        结石会重新堆积，但以月计；退缩已经发生且不可逆，能管的只有速度。本次可与补牙同一次预约顺带解决
     archetype: upstream_contradicted
     title: 牙结石轻度、牙龈退缩已发生，而出血、肿胀、溃疡全部阴性
     headline: 退缩是已经发生的累积，出血肿胀全阴说明现在不在活动期
@@ -134,9 +142,13 @@ rules:
 
   # 模式 9 之外的一条：龋齿是本报告里唯一一条确定、有明确入口、且拖延会变贵的事
   - id: oral.caries_is_the_one_definite_action
+    horizon:
+      when: now
+      why: >-
+        龋损只往深处走，不会自行停下也不会长回来；从充填到根管是费用与不适的数量级差别
     archetype: isolated_abnormal
     title: 36 龋齿伴牙体缺损：本次唯一一条确定且有明确入口的处理
-    headline: 这是整份报告里唯一确定要做、而且拖久了会变贵的一件事
+    headline: 36 号牙龋坏伴缺损，去补上；拖下去就是根管，费用和不适差一个量级
     lede: >-
       这份报告里大多数条目要么需要先补一项判据，要么可以放下。
       龋齿不同：它已经确诊、处理方式明确、且只会往一个方向走。

@@ -4,6 +4,10 @@ rules:
   # 淋巴细胞百分比必然被压下来——这时候低的是那个比值，不是淋巴细胞本身。
   # 绝对值才是"有多少个"。原报告读的是百分比，读出了"细胞免疫功能下降"。
   - id: hematology.lymph_pct_vs_absolute
+    horizon:
+      when: none
+      why: >-
+        低的是百分比不是细胞数，绝对值与白细胞总数都正常；没有需要处理的对象
     archetype: corrected_vs_raw
     title: 淋巴细胞百分比低，而绝对值与白细胞总数都在区间内
     headline: 低的是百分比不是细胞数，淋巴细胞绝对值正常，这一条可以放下

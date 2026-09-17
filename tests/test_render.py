@@ -1,6 +1,8 @@
 """渲染层不做判断，只排版。这里锁死的是"不许泄漏内部标识、不许出现未渲染残留"。"""
 from __future__ import annotations
 
+import pytest
+
 import re
 
 from firstaid.pipeline import analyze
@@ -85,3 +87,49 @@ def test_every_css_variable_is_defined():
     defined = set(re.findall(r"(--[a-z0-9-]+)\s*:", root))
     used = set(re.findall(r"var\((--[a-z0-9-]+)\)", tpl))
     assert used <= defined, f"这些变量没有定义: {sorted(used - defined)}"
+
+
+@pytest.fixture
+def real(zhang_real, knowledge):
+    from firstaid.pipeline import analyze
+    ont, units, rules, derived = knowledge
+    return analyze(zhang_real, ont, units, rules, derived)
+
+
+def _client(a, tmp_path):
+    from firstaid.render.client import render_client
+    return render_client(a, tmp_path / "c.html").read_text(encoding="utf-8")
+
+
+def test_client_is_a_projection_of_the_full_report(real, tmp_path):
+    """客户版是完整版的投影：它显示的每一条结论，完整版里都必须有。
+
+    两版一旦可以各写各的，就会漂移成两套不一样的医学主张。
+    这是这个产品最危险的失败模式，所以它必须是一条断言而不是一条纪律。
+    """
+    from firstaid.render.html import render
+    full = render(a := real, tmp_path / "f.html").read_text(encoding="utf-8")
+    cli = _client(a, tmp_path)
+    for c in a.chains:
+        if c.headline and c.headline in cli:
+            assert c.headline in full, c.id
+
+
+def test_client_gaps_are_all_pointed_at_by_this_report(real):
+    """缺失必须是"本次某个结果指向了它"，不能是"套餐里没买这一项"。
+
+    不加这条判据，缺失清单会变成"你没查维生素B6、你没查脾脏厚径"，
+    那是凭空制造焦虑。
+    """
+    for g in real.gaps:
+        if g.origin == "rule":
+            assert g.evidence, g.what          # 触发它的指标必须真的在场
+        assert g.what and g.because, g.what
+
+
+def test_client_never_promises_a_severity_score(real, tmp_path):
+    """客户版不给严重程度评分。分组判据是可逆性，不是我编的风险分级。"""
+    cli = _client(real, tmp_path)
+    for banned in ("轻度风险", "中度风险", "高危", "健康评分", "风险等级"):
+        assert banned not in cli, banned
+    assert "等它，会不会变" in cli

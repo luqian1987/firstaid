@@ -41,6 +41,10 @@ rules:
 
   # 模式 6，配合新派生的阴离子间隙
   - id: metabolic.co2cp_low_with_normal_gap
+    horizon:
+      when: none
+      why: >-
+        阴离子间隙正常、肾功能正常、无酮症；不指向需要处理的代谢性酸中毒
     archetype: isolated_abnormal
     title: 二氧化碳结合力轻度偏低，而阴离子间隙与肾功能都正常
     headline: 阴离子间隙正常、肾功能正常，这个轻度偏低不指向代谢性酸中毒
@@ -100,6 +104,10 @@ rules:
 
   # 模式 3：配对背离（单对）—— 载脂蛋白B 与它的胆固醇载荷不同步
   - id: lipid.apob_discordant_alone
+    horizon:
+      when: weeks
+      why: >-
+        单次配对背离分不出检测侧还是个体侧，复测一次即可；复测前不该按一个风险层级处理
     archetype: paired_divergence
     title: 载脂蛋白B 偏高，而它对应的胆固醇载荷全部正常
     headline: 颗粒数与胆固醇量对不上，复测前不按一个风险层级处理

@@ -22,7 +22,9 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="firstaid")
     ap.add_argument("fixture", type=Path, help="夹具 YAML 路径")
     ap.add_argument("--verbose", "-v", action="store_true")
-    ap.add_argument("--html", type=Path, help="同时渲染 HTML 报告到该路径")
+    ap.add_argument("--html", type=Path, help="同时渲染完整版 HTML 到该路径")
+    ap.add_argument("--client", type=Path,
+                    help="同时渲染客户版 HTML 到该路径（完整版的投影，不新增任何句子）")
     args = ap.parse_args(argv)
 
     a = analyze_fixture(args.fixture)
@@ -123,7 +125,13 @@ def main(argv=None) -> int:
     if args.html:
         from .render.html import render
         p = render(a, args.html)
-        w(f"\n【L6 渲染】{p}  ({p.stat().st_size // 1024} KB)")
+        w(f"\n【L6 渲染 · 完整版】{p}  ({p.stat().st_size // 1024} KB)")
+
+    if args.client:
+        from .render.client import render_client
+        p = render_client(a, args.client)
+        w(f"【L6 渲染 · 客户版】{p}  ({p.stat().st_size // 1024} KB)"
+          f"  本次没回答 {len(a.gaps)} 件")
 
     w("\n" + "=" * 74)
     if a.ok():

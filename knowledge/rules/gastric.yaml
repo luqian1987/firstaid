@@ -1,6 +1,10 @@
 rules:
   # 模式 6：孤立异常缺乏佐证
   - id: gastric.saliva_pepsin_vs_normal_panel
+    horizon:
+      when: weeks
+      why: >-
+        胃肠镜已经做完了，取回报告即可；镜下所见的效力高于任何血清学，不取回就一直只有筛查层面的结论
     archetype: isolated_abnormal
     headline: 胃蛋白酶原这一组不支持萎缩，唾液这一条指向的是反流
     title: 唾液胃蛋白酶阳性，而萎缩的直接判据（胃蛋白酶原组）正常

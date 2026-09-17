@@ -3,6 +3,17 @@ rules:
   # 模式 8：常规组套全正常，但组合提示风险
   # ======================================================================
   - id: lipid.lpa_intracranial_lead
+    gaps:
+      - what: 直系亲属各查一次脂蛋白(a)
+        because: >-
+          脂蛋白(a) 由基因决定、一生基本恒定，因此是家族性的；而它一生只需要查一次
+        triggered_by: [LPA, MRA_MCA_M1]
+        horizon: know_it
+        effort: test
+    horizon:
+      when: next_checkup
+      why: >-
+        脂蛋白(a) 终生不变，会变的是影像那一关，而它的随访间隔以年计、由专科定
     archetype: normal_panel_hidden_risk
     headline: 常规血脂正常，但脂蛋白(a) 与颅内狭窄合起来是本次第一优先
     title: 常规血脂全部正常，而风险主线不在常规血脂里
@@ -72,6 +83,10 @@ rules:
   # 模式 3：配对同向背离 → 系统性偏差
   # ======================================================================
   - id: lipid.apo_paired_divergence
+    horizon:
+      when: weeks
+      why: >-
+        同上：复测一次就能分开方法学与真实异常，而在此之前不应据此加重风险分层
     archetype: paired_divergence
     headline: 两个载脂蛋白与各自胆固醇同向背离，复测前不按风险层级处理
     title: 两个载脂蛋白同时偏离各自的胆固醇，方向还一致

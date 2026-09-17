@@ -1,6 +1,10 @@
 rules:
   # 模式 5：多层排除 —— 轻度三尖瓣反流长在一颗各项径线都正常的心脏上
   - id: cardiac.trivial_tr_on_normal_heart
+    horizon:
+      when: none
+      why: >-
+        心腔径线、室壁厚度、收缩功能、肺动脉内径四层全部正常；真正的复查理由是症状，不是日历
     archetype: layered_exclusion
     title: 三尖瓣轻度反流，而心腔径线、室壁厚度与收缩功能都在正常范围
     headline: 长在一颗各项都正常的心脏上，这是超声灵敏度的产物
@@ -66,6 +70,10 @@ rules:
 
   # 模式 5：多层排除 —— 宫颈囊肿，而宫颈风险的真正判据是筛查那两项
   - id: gyn.cervical_cyst_with_clean_screening
+    horizon:
+      when: none
+      why: >-
+        宫颈风险由 TCT 与 HPV 决定，两项都阴性；潴留囊肿本身不是筛查对象也不需要处理
     archetype: layered_exclusion
     title: 宫颈囊肿，而宫颈癌筛查的两项都是阴性
     headline: 宫颈风险由 TCT 与 HPV 决定，这两项都阴性；囊肿不是筛查对象
@@ -125,6 +133,17 @@ rules:
 
   # 模式 5：多层排除 —— BI-RADS 2-3 类结节，排除层已在同一份超声里写清
   - id: breast.birads23_nodule_downgrade
+    gaps:
+      - what: 一级亲属的乳腺癌与卵巢癌家族史
+        because: >-
+          BI-RADS 分类给出的是形态学层级，而随访间隔要结合家族史定。这一项不需要做任何检查，报告里却是空白
+        triggered_by: [BREAST_NODULE]
+        horizon: weeks
+        effort: recall
+    horizon:
+      when: none
+      why: >-
+        BI-RADS 2-3 类对应的处理就是按间隔复查，而间隔由专科定；本次没有要你现在做的事
     archetype: layered_exclusion
     title: 双乳结节 BI-RADS 2-3 类，血流与引流区淋巴结均为阴性
     headline: 分类本身已经给出了处理层级：按间隔复查超声，不是去确诊
@@ -188,6 +207,10 @@ rules:
 
   # 模式 1：上游异常 / 下游全阴 —— 走行迂曲是解剖变异，同一份 MRA 已经答了狭窄
   - id: neuro.vertebrobasilar_tortuosity_is_anatomy
+    horizon:
+      when: know_it
+      why: >-
+        走行迂曲是解剖变异，不是过程；它不会变，也没有可观察的下一关
     archetype: upstream_contradicted
     title: 椎基底动脉走行迂曲，而同一份 MRA 明确写了未见狭窄
     headline: 迂曲说的是形状不是通畅度，同一份 MRA 已经回答了狭窄这个问题

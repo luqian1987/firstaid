@@ -1,6 +1,10 @@
 rules:
   # 模式 14：判据不全的发现 —— 三条，都是"报告自己点了名要什么，却没有人去拿"
   - id: cardio.low_sbp_needs_symptoms_not_clinic
+    horizon:
+      when: weeks
+      why: >-
+        在家一次立卧位血压加一周记录就能定性；在拿到之前既不能说有事也不能说没事
     archetype: unsettled_finding
     title: 收缩压 84：判断它要不要紧，缺的是体位与症状，不是一次门诊
     headline: 一次坐位测量说明不了什么，缺的是立卧位血压和症状记录
@@ -17,9 +21,9 @@ rules:
       finding_expect: low
       settled_by:
         - {code: ORTHOSTATIC_BP, what: 从卧位到站立 3 分钟内血压掉多少,
-           how: 在家用电子血压计就能做，躺 5 分钟测一次、站起来 1 分钟和 3 分钟各测一次}
+           how: 在家用电子血压计就能做，躺 5 分钟测一次、站起来 1 分钟和 3 分钟各测一次, effort: home}
         - {code: HOME_BP_SERIES, what: 一周的日常血压序列，而不是体检当天的一次,
-           how: 每天固定时间测两次，记一周}
+           how: 每天固定时间测两次，记一周, effort: home}
       co_findings: [DBP, PULSE, HGB, HCT, BMI, GLU_FASTING, TSH, FT4]
     needs_context: [symptoms, medications]
     narration:
@@ -70,6 +74,10 @@ rules:
       - {name: 病例1收缩压不低, fixture: zhang_real_2026-03-30, expect: not_triggered}
 
   - id: eye.uncorrected_vision_needs_correction_test
+    horizon:
+      when: weeks
+      why: >-
+        能不能矫正决定它是配镜的事还是查眼底的事，插片验光几分钟；裸眼视力本身不会因为等而变
     archetype: unsettled_finding
     title: 视力右 4.9：报告表格里留了矫正视力这一栏，但没有填
     headline: 裸眼 4.9 要不要处理，取决于能不能矫正——而那一栏是空的
@@ -86,8 +94,8 @@ rules:
       finding_expect: low_or_advisory_low
       settled_by:
         - {code: VISION_R_CORRECTED, what: 右眼戴镜或插片后能到多少,
-           how: 任何一家眼镜店或眼科门诊，几分钟}
-        - {code: VISION_L_CORRECTED, what: 左眼的对照值, how: 同上}
+           how: 任何一家眼镜店或眼科门诊，几分钟, effort: test}
+        - {code: VISION_L_CORRECTED, what: 左眼的对照值, how: 同上, effort: test}
       co_findings: [VISION_L, COLOR_VISION, CONJUNCTIVA]
     narration:
       single_read: >-
@@ -128,6 +136,10 @@ rules:
       - {name: 病例1没做眼科, fixture: zhang_real_2026-03-30, expect: indeterminate}
 
   - id: bone.rib_cortex_needs_history_not_followup
+    horizon:
+      when: weeks
+      why: >-
+        影像分不出新旧，而外伤史是一句问话、既往片子是找一找；两样都不花钱，但不补上就一直悬着
     archetype: unsettled_finding
     title: 左侧第 3、4 前肋皮质欠光整——报告自己写了"请结合病史"
     headline: 影像分不出新旧，分开它们的是外伤史和既往片子，两样都没有
@@ -144,8 +156,8 @@ rules:
       finding_expect: abnormal
       settled_by:
         - {code: PRIOR_CHEST_IMAGING, what: 既往胸片或胸部CT，用来看这处改变是不是一直都在,
-           how: 找出以前的片子，不是报告单——报告单上多半没提这一处}
-        - {code: RIB_XRAY_LOCAL, what: 必要时的肋骨局部摄片, how: 只有在既往影像也拿不到时才需要}
+           how: 找出以前的片子，不是报告单——报告单上多半没提这一处, effort: fetch}
+        - {code: RIB_XRAY_LOCAL, what: 必要时的肋骨局部摄片, how: 只有在既往影像也拿不到时才需要, effort: test}
       co_findings: [CHEST_CT, CALCIUM, PHOS, ALP]
     needs_context: [trauma_history, prior_imaging]
     narration:

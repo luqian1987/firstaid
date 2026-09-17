@@ -473,3 +473,75 @@ lessons:
     guarded_by:
       - tests/test_depth.py::test_diagram_lives_with_its_own_chain
       - tests/test_render.py::test_no_unrendered_template_markers
+
+  # ---- 以下四条来自客户版的第一次评审。第一条是组织轴选错，后三条是它逼出来的判据。----
+
+  - id: L033
+    phase: design
+    symptom: >-
+      客户版第一版从第一屏就在派活：「2 次预约、6 个要回答的问题」。
+      读者的原话是"我的角度怎么变成了一个问诊"
+    root_cause: >-
+      组织轴选的是「动作」——去哪儿、做什么、花多少。那是健管师视角：
+      一个要执行的人需要的清单。而体检者的第一问不是"我要做什么"，是"我有事吗"
+    layer: criterion
+    fix: >-
+      客户版的段落顺序由体检者的提问顺序决定，不由我们的数据结构决定：
+      (1) 我有事吗 (2) 这次有什么没回答 (3) 这些各自什么时候再看 (4) 最后才是怎么做。
+      "怎么做"从第一位降到第四位
+    guarded_by:
+      - tests/test_render.py::test_client_is_a_projection_of_the_full_report
+    note: >-
+      完整版按判读组织是对的（那是它的读者要的），客户版按提问顺序组织也是对的。
+      错在把前者的轴直接搬给后者
+
+  - id: L034
+    phase: design
+    symptom: >-
+      「本次判不了」的清单在病例 3 上有 7 条，逐条查下来 7 条全是噪音：
+      没查维生素B6、没查辅酶Q10、没量脾脏厚径——她压根没有那些发现
+    root_cause: >-
+      规则库比某个人的套餐大是常态。规则因缺指标而 INDETERMINATE，
+      与"这次体检漏了一个该查的方向"是两回事，而系统把它们混在一张表里。
+      直接给客户看就是凭空制造焦虑
+    layer: criterion
+    fix: >-
+      一条缺失要成立，**本次必须真有一个发现在指向它**（triggered_by 全部在场）。
+      主角压根不在的，是套餐差异，不进客户版
+    guarded_by:
+      - tests/test_render.py::test_client_gaps_are_all_pointed_at_by_this_report
+    note: >-
+      这一条是整个客户版里最该守住的。"这次体检没回答什么"是二次判读唯一能给、
+      原报告绝对给不了的东西——正因为它值钱，掺进噪音的代价也最大
+
+  - id: L035
+    phase: design
+    symptom: >-
+      客户版要回答"这件事急不急"，而系统里只有 band（要不要做），
+      没有任何东西表达"等不等得"
+    root_cause: >-
+      band 与时限是两件事：结节按间隔复查属于「可以放下」，但它并非"永远不用看"；
+      龋齿属于「现在要做」，理由不是它严重，是它不可逆
+    layer: criterion
+    fix: >-
+      新增 horizon，判据只有一条且可逐条核对：**等它，会不会变？变了能不能回来？**
+      刻意不做成"严重程度评分"——那是编的，不可核对。
+      band 与 horizon 独立声明，因此互为校验：说"现在要做"又说"不用管"，
+      一定有一个写错了，构建期报错
+    guarded_by:
+      - tests/test_rules.py::test_ruleset_shape
+      - tests/test_render.py::test_client_never_promises_a_severity_score
+
+  - id: L036
+    phase: design
+    symptom: >-
+      三条最该告诉客户的缺失取不出来：血红蛋白卡在下限而没查铁蛋白、
+      桥本确诊而没查抗壁细胞抗体、乳腺结节而家族史空白
+    root_cause: 它们只在某段 not_certain 或 next_steps 的散文里出现过一次，没有结构
+    layer: knowledge
+    fix: 规则新增 gaps 声明（what / because / triggered_by / horizon / effort）
+    guarded_by:
+      - tests/test_render.py::test_client_gaps_are_all_pointed_at_by_this_report
+    note: >-
+      判断一句话该不该结构化，有个简单的检验：换一个渲染目标，它还取得到吗？
+      取不到就说明它现在只是排版，不是知识

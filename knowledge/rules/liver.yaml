@@ -1,6 +1,17 @@
 rules:
   # 模式 4：形态脱节
   - id: liver.ggt_transaminase_dissociation
+    gaps:
+      - what: 病毒性肝炎血清学
+        because: >-
+          脂肪肝之外最常见的慢性肝病病因，本次未查；GGT 脱节的形态在排除它之前解释不完整
+        triggered_by: [GGT, CAP]
+        horizon: weeks
+        effort: test
+    horizon:
+      when: next_checkup
+      why: >-
+        脂肪变在纤维化之前是可逆的，而两者都以月到年为尺度变化；本次纤维化两法一致未跨过
     archetype: pattern_dissociation
     headline: 纤维化尚未发生，处在可逆窗口；先量化的是饮酒而不是糖
     title: 脂肪已经不少，纤维化还没开始，而首要变量可能是酒

@@ -15,6 +15,7 @@ from .depth import (
 )
 from .subject import Encounter, Subject, Timeline
 from .derived import AdvisoryCutoff, DerivedDef, DerivedRegistry
+from .gap import EFFORT_LABELS, EFFORTS, Gap
 from .comparison import (
     Comparability, ComparabilityKey, ComparisonItem, ComparisonPlan, ComparisonResult,
 )
